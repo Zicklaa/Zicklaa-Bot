@@ -16,6 +16,7 @@ LYRICS_KEY = config.LYRICS_KEY
 
 userdict = {}
 
+# Wer das liest ist blöd :P
 
 class MyClient(discord.Client):
 
