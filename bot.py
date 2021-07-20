@@ -16,7 +16,6 @@ LYRICS_KEY = config.LYRICS_KEY
 
 userdict = {}
 
-# Wer das liest ist blöd :P
 
 class MyClient(discord.Client):
 
@@ -42,45 +41,63 @@ class MyClient(discord.Client):
 
                 if dauer > 10:
                     await wiki(message)
-                    await lyrics(message)
-                    await bruh(message)
+                    if message.channel.id == 608746970340786282:
+                        await lyrics(message)
+                    # await bruh(message)
                     await wetter(message)
+                    await helpfunction(message)
 
-
-async def test(message):
-    if message.content == "stop":
-        liste = []
-        blacklist = ['ich', 'das', 'die', 'ist', 'von', 'in', 'was', 'der', 'du', 'a', 'nicht', 'so', 'ja', 'zu', 'und'
-            , 'mit', 'dann', 'es', 'auch', 'hier', 'aber', 'nur', 'da', 'man', 'ein', 'hat', 'mal', 'hab', 'schon'
-            , 'wie', 'auf', 'hat', 'wird', 'wenn', 'is', 'mein', 'alles', 'ne', 'dass', 'bin', 'den', 'aus', 'mich',
-                     'ok', 'für', 'mir', 'sind', 'eine', 'doch', 'warum', '', '', '', '', '', '', '', '', '', '', '',
-                     '', '', '']
-        blackliste = []
-        dict = {}
-        nummer = 25000
-        zahl = 0
-        messages = await message.channel.history(limit=nummer).flatten()
-        for m in messages:
-            if str(m.author) == str(message.author):
-                zahl = zahl + 1
-                liste = m.content.lower().split()
-                for i in liste:
-                    if i in blackliste:
-                        pass
-                    else:
-                        if i in dict:
-                            number = dict.get(i)
-                            dict[str(i)] = number + 1
-                        else:
-                            dict[str(i)] = 1
-        sorted_dict = sorted(dict.items(), key=operator.itemgetter(1), reverse=True)
-        embed = discord.Embed(title='Häufigste Wörter', color=0x00ff00)
-        d = sorted_dict[:8]
-        for i in d:
-            embed.add_field(name='Wort', value=i[0])
-            embed.add_field(name='Anzahl', value=i[1], inline=True)
-            embed.add_field(name='Häufigkeit', value=(str(round((int(i[1]) / zahl) * 100))) + "%", inline=True)
+async def helpfunction(message):
+    if message.content == "help":
+        userdict[str(message.author)] = time.time()
+        embed = discord.Embed(title='Help', description='Hier wird Ihnen geholfen!', color=0x00ff00)
+        embed.add_field(name='+help', value="Öffnet das Hilfefenster ", inline=False)
+        embed.add_field(name='+lyrics', value="Format: +lyrics (now/recent/topartists/toptracks) [USERNAME]", inline=False)
+        embed.add_field(name='+wetter', value="Format: +wetter [ORTNAME]", inline=False)
+        embed.add_field(name='+wiki', value="Format: +wiki [SUCHBEGRIFF]", inline=False)
+        embed.set_author(name='Gott', icon_url='https://cdn.psychologytoday.com/sites'
+                                               '/default/files/field_blog_entry_images/God_the_Father.jpg')
         await message.channel.send(embed=embed)
+
+
+''' def test(message):
+         if message.content == "stop":
+             liste = []
+             blacklist = ['ich', 'das', 'die', 'ist', 'von', 'in', 'was', 'der', 'du', 'a', 'nicht', 'so', 'ja',
+                          'zu', 'und'
+                 , 'mit', 'dann', 'es', 'auch', 'hier', 'aber', 'nur', 'da', 'man', 'ein', 'hat', 'mal', 'hab',
+                          'schon'
+                 , 'wie', 'auf', 'hat', 'wird', 'wenn', 'is', 'mein', 'alles', 'ne', 'dass', 'bin', 'den', 'aus',
+                          'mich',
+                          'ok', 'für', 'mir', 'sind', 'eine', 'doch', 'warum', '', '', '', '', '', '', '', '', '',
+                          '', '',
+                          '', '', '']
+             blackliste = []
+             dict = {}
+             nummer = 25000
+             zahl = 0
+             messages = await message.channel.history(limit=nummer).flatten()
+             for m in messages:
+                 if str(m.author) == str(message.author):
+                     zahl = zahl + 1
+                     liste = m.content.lower().split()
+                     for i in liste:
+                         if i in blackliste:
+                             pass
+                         else:
+                             if i in dict:
+                                 number = dict.get(i)
+                                 dict[str(i)] = number + 1
+                             else:
+                                 dict[str(i)] = 1
+             sorted_dict = sorted(dict.items(), key=operator.itemgetter(1), reverse=True)
+             embed = discord.Embed(title='Häufigste Wörter', color=0x00ff00)
+             d = sorted_dict[:8]
+             for i in d:
+                 embed.add_field(name='Wort', value=i[0])
+                 embed.add_field(name='Anzahl', value=i[1], inline=True)
+                 embed.add_field(name='Häufigkeit', value=(str(round((int(i[1]) / zahl) * 100))) + "%", inline=True)
+             await message.channel.send(embed=embed)'''
 
 
 async def bruh(message):
@@ -212,7 +229,8 @@ async def lyrics(message):
                         embed.add_field(name='Fortsetzung', value=(gesamter_text[0:1020]), inline=False)
                         gesamter_text = gesamter_text[1020:]
                 except:
-                    await message.channel.send('Irgendwas is schiefgelaufen lol. Vielleicht ist der Songtext länger als Discord zulässt?')
+                    await message.channel.send(
+                        'Irgendwas is schiefgelaufen lol. Vielleicht ist der Songtext länger als Discord zulässt?')
 
                 await message.channel.send(embed=embed)
             except:
@@ -319,3 +337,4 @@ async def wetter(message):
 
 client = MyClient()
 client.run(CLIENT_RUN)
+
