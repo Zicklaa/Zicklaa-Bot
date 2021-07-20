@@ -16,7 +16,6 @@ LYRICS_KEY = config.LYRICS_KEY
 
 userdict = {}
 
-# Wer das liest ist blöd :P
 
 class MyClient(discord.Client):
 
@@ -204,12 +203,15 @@ async def lyrics(message):
                 footer = 'Album: ' + album + ' | ' + 'Duration: ' \
                          + str(minutes) + ':' + str(seconds) + ' | ' + 'Plays: ' + str(lied.get_playcount())
                 embed.set_footer(text=footer)
-                genius = lyricsgenius.Genius(LYRICS_KEY)
-                text = genius.search_song(title=str(lied.get_name()), artist=str(lied.get_artist()))
-                gesamter_text = str(text.lyrics).replace('EmbedShare URLCopyEmbedCopy', '')
-                while gesamter_text != "":
-                    embed.add_field(name='Fortsetzung', value=(gesamter_text[0:1020]), inline=False)
-                    gesamter_text = gesamter_text[1020:]
+                try:
+                    genius = lyricsgenius.Genius(LYRICS_KEY)
+                    text = genius.search_song(title=str(lied.get_name()), artist=str(lied.get_artist()))
+                    gesamter_text = str(text.lyrics).replace('EmbedShare URLCopyEmbedCopy', '')[0:5500]
+                    while gesamter_text != "":
+                        embed.add_field(name='Fortsetzung', value=(gesamter_text[0:1020]), inline=False)
+                        gesamter_text = gesamter_text[1020:]
+                except:
+                    await message.channel.send('Irgendwas is schiefgelaufen lol. Vielleicht ist der Songtext länger als Discord zulässt?')
 
                 await message.channel.send(embed=embed)
             except:
