@@ -1,12 +1,17 @@
 import time
 import urllib.request
+from datetime import datetime
+
 import pylast
 import discord
 from bs4 import BeautifulSoup
 import lyricsgenius
+from discord import channel
 from pyowm import OWM
 import operator
 import config
+import sqlite3
+import asyncio
 
 API_KEY = config.API_KEY
 API_SECRET = config.API_SECRET
@@ -16,13 +21,25 @@ LYRICS_KEY = config.LYRICS_KEY
 
 userdict = {}
 
-# Wer das liest ist blöd :P
+# connection
+connection = sqlite3.connect('reminder.db')
+cursor = connection.cursor()
+
+# table createn
+try:
+    creation = """CREATE TABLE IF NOT EXISTS
+    reminders(id INTEGER PRIMARY KEY, user_id INTEGER, reminder_text TEXT, reminder_time INTEGER, channel INTEGER )"""
+    cursor.execute(creation)
+except:
+    pass
+
 
 class MyClient(discord.Client):
 
     @staticmethod
     async def on_ready():
         print("Hallo I bim omnline :^)")
+        await get_reminder_startup()
 
     # Nachricht
     @staticmethod
@@ -40,78 +57,110 @@ class MyClient(discord.Client):
                     timealt = userdict[str(message.author)]
                 dauer = time.time() - timealt
 
-                if dauer > 10:
+                if dauer > 5:
                     await wiki(message)
                     if message.channel.id == 608746970340786282:
                         await lyrics(message)
                     # await bruh(message)
                     await wetter(message)
                     await helpfunction(message)
+                    await reminder(message)
+
+
+async def reminder(message):
+    if "remindme" in message.content:
+        try:
+            userdict[str(message.author)] = time.time()
+            user_id = message.author.id
+            split_message = message.content.split(" ")
+            if split_message[2] == "seconds" or split_message[2] == "s":
+                reminder_time1 = round(time.time() + float(split_message[1]), 2)
+            elif split_message[2] == "minutes" or split_message[2] == "m":
+                reminder_time1 = round(time.time() + (float(split_message[1]) * 60), 2)
+            elif split_message[2] == "hours" or split_message[2] == "h":
+                reminder_time1 = round(time.time() + (int(split_message[1]) * 3600), 2)
+            elif split_message[2] == "days" or split_message[2] == "d":
+                reminder_time1 = round(time.time() + (int(split_message[1]) * 86400), 2)
+            elif split_message[2] == "weeks" or split_message[2] == "w":
+                reminder_time1 = round(time.time() + (int(split_message[1]) * 604800), 2)
+            elif split_message[2] == "months" or split_message[2] == "m":
+                reminder_time1 = round(time.time() + (int(split_message[1]) * 2678400), 2)
+            del split_message[:3]
+            reminder_text = " ".join(split_message)
+            channel = message.channel.id
+            sql = "INSERT INTO reminders (user_id, reminder_text, reminder_time, channel) VALUES (?, ?, ?, ?)"
+            val = (user_id, reminder_text, reminder_time1, channel)
+            cursor.execute(sql, val)
+            connection.commit()
+            await message.channel.send("Ok Meister, wird gemacht 👍 Ich erriner dich dann.")
+            await wait_for_reminder(reminder_text, reminder_time1, message)
+        except:
+            await message.channel.send("Hm ne irgendwas gefällt mir daran nich. Nochmal? 🤷")
+
+
+async def get_reminder_startup():
+    try:
+        cursor.execute("SELECT * FROM reminders ORDER BY reminder_time ASC LIMIT 1")
+        result = cursor.fetchall()
+        id = result[0][0]
+        user_id = result[0][1]
+        reminder_text = result[0][2]
+        reminder_time1 = result[0][3]
+        channel_id = result[0][4]
+        await wait_for_reminder_startup(id, user_id, reminder_text, reminder_time1, channel_id)
+    except:
+        pass
+
+
+async def wait_for_reminder(reminder_text, reminder_time1, message):
+    try:
+        if (reminder_time1 - time.time()) < 0:
+            await message.channel.send(
+                "{} Meister, pass auf, ich werde dich wissen lassen: {}".format(message.author.mention, reminder_text))
+            cursor.execute("DELETE FROM reminders WHERE reminder_time=?", (reminder_time1,))
+            connection.commit()
+        else:
+            await asyncio.sleep(reminder_time1 - time.time())
+            await message.channel.send(
+                "{} Meister, pass auf, ich werde dich wissen lassen: {}".format(message.author.mention, reminder_text))
+            cursor.execute("DELETE FROM reminders WHERE reminder_time=?", (reminder_time1,))
+            connection.commit()
+    except:
+        await message.channel.send('Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind.')
+
+
+async def wait_for_reminder_startup(id, user_id, reminder_text, reminder_time1, channel_id):
+    try:
+        channel = client.get_channel(channel_id)
+        if (reminder_time1 - time.time()) < 0:
+            await channel.send(
+                "<@{}> Meister, pass auf, ich werde dich wissen lassen: {}".format(user_id, reminder_text))
+            cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
+            connection.commit()
+        else:
+            await asyncio.sleep(reminder_time1 - time.time())
+            await channel.send(
+                "<@{}> Meister, pass auf, ich werde dich wissen lassen: {}".format(user_id, reminder_text))
+            cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
+            connection.commit()
+        await get_reminder_startup()
+    except:
+        await channel.send('Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind.')
+
 
 async def helpfunction(message):
     if message.content == "help":
         userdict[str(message.author)] = time.time()
         embed = discord.Embed(title='Help', description='Hier wird Ihnen geholfen!', color=0x00ff00)
         embed.add_field(name='+help', value="Öffnet das Hilfefenster ", inline=False)
-        embed.add_field(name='+lyrics', value="Format: +lyrics (now/recent/topartists/toptracks) [USERNAME]", inline=False)
+        embed.add_field(name='+lyrics', value="Format: +lyrics (now/recent/topartists/toptracks) [USERNAME]",
+                        inline=False)
         embed.add_field(name='+wetter', value="Format: +wetter [ORTNAME]", inline=False)
         embed.add_field(name='+wiki', value="Format: +wiki [SUCHBEGRIFF]", inline=False)
+        embed.add_field(name='+remindme', value="Format: +remindme [ZAHL] [SECONDS/MINUTES/HOURS/DAYS/MONTHS] [TEXT]",
+                        inline=False)
         embed.set_author(name='Gott', icon_url='https://cdn.psychologytoday.com/sites'
                                                '/default/files/field_blog_entry_images/God_the_Father.jpg')
-        await message.channel.send(embed=embed)
-
-
-''' def test(message):
-         if message.content == "stop":
-             liste = []
-             blacklist = ['ich', 'das', 'die', 'ist', 'von', 'in', 'was', 'der', 'du', 'a', 'nicht', 'so', 'ja',
-                          'zu', 'und'
-                 , 'mit', 'dann', 'es', 'auch', 'hier', 'aber', 'nur', 'da', 'man', 'ein', 'hat', 'mal', 'hab',
-                          'schon'
-                 , 'wie', 'auf', 'hat', 'wird', 'wenn', 'is', 'mein', 'alles', 'ne', 'dass', 'bin', 'den', 'aus',
-                          'mich',
-                          'ok', 'für', 'mir', 'sind', 'eine', 'doch', 'warum', '', '', '', '', '', '', '', '', '',
-                          '', '',
-                          '', '', '']
-             blackliste = []
-             dict = {}
-             nummer = 25000
-             zahl = 0
-             messages = await message.channel.history(limit=nummer).flatten()
-             for m in messages:
-                 if str(m.author) == str(message.author):
-                     zahl = zahl + 1
-                     liste = m.content.lower().split()
-                     for i in liste:
-                         if i in blackliste:
-                             pass
-                         else:
-                             if i in dict:
-                                 number = dict.get(i)
-                                 dict[str(i)] = number + 1
-                             else:
-                                 dict[str(i)] = 1
-             sorted_dict = sorted(dict.items(), key=operator.itemgetter(1), reverse=True)
-             embed = discord.Embed(title='Häufigste Wörter', color=0x00ff00)
-             d = sorted_dict[:8]
-             for i in d:
-                 embed.add_field(name='Wort', value=i[0])
-                 embed.add_field(name='Anzahl', value=i[1], inline=True)
-                 embed.add_field(name='Häufigkeit', value=(str(round((int(i[1]) / zahl) * 100))) + "%", inline=True)
-             await message.channel.send(embed=embed)'''
-
-
-async def bruh(message):
-    if message.content == "bruh":
-        userdict[str(message.author)] = time.time()
-        await message.delete()
-        embed = discord.Embed(title='Bruh', description='Bruh', url='https://www.youtube.com/watch?v=2ZIpFytCSVc',
-                              color=0x00ff00)
-        embed.set_footer(text='Bruh')
-        embed.add_field(name='Bruh', value=message.author.mention + " sagt:")
-        embed.set_image(url='https://i.imgur.com/qslkBXI.gif')
-        embed.set_thumbnail(url='https://i.imgur.com/qslkBXI.gif')
-        embed.set_author(name='Bruh', url='https://i.imgur.com/qslkBXI.gif')
         await message.channel.send(embed=embed)
 
 
@@ -333,9 +382,61 @@ async def wetter(message):
             embed.add_field(name='Status', value=wetter_neu.detailed_status, inline=False)
             await message.channel.send(embed=embed)
         except:
-            await message.channel.send('Oopsie whoopsie, I did a fucky-wucky OwO.')
+            await message.channel.send(
+                'Ich möchte mich für den Furry Talk entschuldigen. Irgendwas klappt aber trotzdem nicht lul.')
 
+
+''' def test(message):
+         if message.content == "stop":
+             liste = []
+             blacklist = ['ich', 'das', 'die', 'ist', 'von', 'in', 'was', 'der', 'du', 'a', 'nicht', 'so', 'ja',
+                          'zu', 'und'
+                 , 'mit', 'dann', 'es', 'auch', 'hier', 'aber', 'nur', 'da', 'man', 'ein', 'hat', 'mal', 'hab',
+                          'schon'
+                 , 'wie', 'auf', 'hat', 'wird', 'wenn', 'is', 'mein', 'alles', 'ne', 'dass', 'bin', 'den', 'aus',
+                          'mich',
+                          'ok', 'für', 'mir', 'sind', 'eine', 'doch', 'warum', '', '', '', '', '', '', '', '', '',
+                          '', '',
+                          '', '', '']
+             blackliste = []
+             dict = {}
+             nummer = 25000
+             zahl = 0
+             messages = await message.channel.history(limit=nummer).flatten()
+             for m in messages:
+                 if str(m.author) == str(message.author):
+                     zahl = zahl + 1
+                     liste = m.content.lower().split()
+                     for i in liste:
+                         if i in blackliste:
+                             pass
+                         else:
+                             if i in dict:
+                                 number = dict.get(i)
+                                 dict[str(i)] = number + 1
+                             else:
+                                 dict[str(i)] = 1
+             sorted_dict = sorted(dict.items(), key=operator.itemgetter(1), reverse=True)
+             embed = discord.Embed(title='Häufigste Wörter', color=0x00ff00)
+             d = sorted_dict[:8]
+             for i in d:
+                 embed.add_field(name='Wort', value=i[0])
+                 embed.add_field(name='Anzahl', value=i[1], inline=True)
+                 embed.add_field(name='Häufigkeit', value=(str(round((int(i[1]) / zahl) * 100))) + "%", inline=True)
+             await message.channel.send(embed=embed)'''
+
+'''async def bruh(message):
+    if message.content == "bruh":
+        userdict[str(message.author)] = time.time()
+        await message.delete()
+        embed = discord.Embed(title='Bruh', description='Bruh', url='https://www.youtube.com/watch?v=2ZIpFytCSVc',
+                              color=0x00ff00)
+        embed.set_footer(text='Bruh')
+        embed.add_field(name='Bruh', value=message.author.mention + " sagt:")
+        embed.set_image(url='https://i.imgur.com/qslkBXI.gif')
+        embed.set_thumbnail(url='https://i.imgur.com/qslkBXI.gif')
+        embed.set_author(name='Bruh', url='https://i.imgur.com/qslkBXI.gif')
+        await message.channel.send(embed=embed)'''
 
 client = MyClient()
 client.run(CLIENT_RUN)
-
