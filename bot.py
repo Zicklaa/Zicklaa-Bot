@@ -3,6 +3,7 @@ import urllib.request
 import pylast
 import discord
 from bs4 import BeautifulSoup
+from lyricsgenius import Genius
 import lyricsgenius
 from pyowm import OWM
 import config
@@ -14,6 +15,8 @@ API_SECRET = config.API_SECRET
 OMV_KEY = config.OMV_KEY
 CLIENT_RUN = config.CLIENT_RUN
 LYRICS_KEY = config.LYRICS_KEY
+
+# Wer das liest ist blöd XD
 
 userdict = {}
 
@@ -58,8 +61,8 @@ class MyClient(discord.Client):
                     await wetter(message)
                     await helpfunction(message)
                     await reminder(message)
-                    if message.channel.id == 608746970340786282:
-                        await lyrics(message)
+                    #if message.channel.id == 608746970340786282:
+                    await lyrics(message)
 
 
 async def reminder(message):
@@ -298,7 +301,6 @@ async def lyrics(message):
                 songurl = artisturl + '/_/' + str(lied.get_name()).replace(' ', '+').replace('/', '%2F')
                 name = str('[' + str(lied.get_name()) + '](' + str(songurl) + ')')
                 artist = str('[' + str(lied.get_artist()) + '](' + str(artisturl) + ')')
-
                 embed = discord.Embed(title='', color=1917791)
 
                 if user.get_image() is not None:
@@ -315,8 +317,9 @@ async def lyrics(message):
                 footer = 'Album: ' + album + ' | ' + 'Duration: ' \
                          + str(minutes) + ':' + str(seconds) + ' | ' + 'Plays: ' + str(lied.get_playcount())
                 embed.set_footer(text=footer)
-                url = "https://genius.com/" + str(lied).replace(" - ", "-").replace(" ", "-") + "-lyrics"
-                embed.add_field(name='Link', value=str('[' + str(lied) + '](' + str(url.replace(",", "")) + ')'),
+                genius = Genius(LYRICS_KEY)
+                song = genius.search_song(title=lied.get_title(), artist=lied.get_artist())
+                embed.add_field(name='Link', value=str('[' + str(lied) + '](' + str(song.url) + ')'),
                                 inline=False)
 
                 await message.channel.send(embed=embed)
