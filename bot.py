@@ -1,14 +1,10 @@
 import time
 import urllib.request
-from datetime import datetime
-
 import pylast
 import discord
 from bs4 import BeautifulSoup
 import lyricsgenius
-from discord import channel
 from pyowm import OWM
-import operator
 import config
 import sqlite3
 import asyncio
@@ -28,7 +24,7 @@ cursor = connection.cursor()
 # table createn
 try:
     creation = """CREATE TABLE IF NOT EXISTS
-    reminders(id INTEGER PRIMARY KEY, user_id INTEGER, reminder_text TEXT, reminder_time INTEGER, channel INTEGER )"""
+    reminders(id INTEGER PRIMARY KEY, user_id INTEGER, reminder_text TEXT, reminder_time INTEGER, channel INTEGER, message_id INTEGER)"""
     cursor.execute(creation)
 except:
     pass
@@ -59,12 +55,11 @@ class MyClient(discord.Client):
 
                 if dauer > 5:
                     await wiki(message)
-                    if message.channel.id == 608746970340786282:
-                        await lyrics(message)
-                    # await bruh(message)
                     await wetter(message)
                     await helpfunction(message)
                     await reminder(message)
+                    if message.channel.id == 608746970340786282:
+                        await lyrics(message)
 
 
 async def reminder(message):
@@ -83,16 +78,16 @@ async def reminder(message):
                 reminder_time1 = round(time.time() + (int(split_message[1]) * 86400), 2)
             elif split_message[2] == "weeks" or split_message[2] == "w":
                 reminder_time1 = round(time.time() + (int(split_message[1]) * 604800), 2)
-            elif split_message[2] == "months" or split_message[2] == "m":
+            elif split_message[2] == "months":
                 reminder_time1 = round(time.time() + (int(split_message[1]) * 2678400), 2)
             del split_message[:3]
             reminder_text = " ".join(split_message)
             channel = message.channel.id
-            sql = "INSERT INTO reminders (user_id, reminder_text, reminder_time, channel) VALUES (?, ?, ?, ?)"
-            val = (user_id, reminder_text, reminder_time1, channel)
+            sql = "INSERT INTO reminders (user_id, reminder_text, reminder_time, channel, message_id) VALUES (?, ?, ?, ?, ?)"
+            val = (user_id, reminder_text, reminder_time1, channel, message.id)
             cursor.execute(sql, val)
             connection.commit()
-            await message.channel.send("Ok Meister, wird gemacht 👍 Ich erriner dich dann.")
+            await message.add_reaction('\N{THUMBS UP SIGN}')
             await wait_for_reminder(reminder_text, reminder_time1, message)
         except:
             await message.channel.send("Hm ne irgendwas gefällt mir daran nich. Nochmal? 🤷")
@@ -102,50 +97,54 @@ async def get_reminder_startup():
     try:
         cursor.execute("SELECT * FROM reminders ORDER BY reminder_time ASC LIMIT 1")
         result = cursor.fetchall()
-        id = result[0][0]
-        user_id = result[0][1]
-        reminder_text = result[0][2]
-        reminder_time1 = result[0][3]
-        channel_id = result[0][4]
-        await wait_for_reminder_startup(id, user_id, reminder_text, reminder_time1, channel_id)
+        if result:
+            id = result[0][0]
+            user_id = result[0][1]
+            reminder_text = result[0][2]
+            reminder_time1 = result[0][3]
+            channel_id = result[0][4]
+            channel = client.get_channel(channel_id)
+            message = await channel.fetch_message(id=result[0][5])
+            await wait_for_reminder_startup(id, user_id, reminder_text, reminder_time1, channel_id, message)
     except:
-        pass
+        await message.channel.send(
+            'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: get_reminder_startup()')
 
 
 async def wait_for_reminder(reminder_text, reminder_time1, message):
     try:
         if (reminder_time1 - time.time()) < 0:
-            await message.channel.send(
-                "{} Meister, pass auf, ich werde dich wissen lassen: {}".format(message.author.mention, reminder_text))
+            await message.reply(
+                "Ich werde dich wissen lassen:\n **{}**".format(reminder_text), mention_author=True)
             cursor.execute("DELETE FROM reminders WHERE reminder_time=?", (reminder_time1,))
             connection.commit()
         else:
             await asyncio.sleep(reminder_time1 - time.time())
-            await message.channel.send(
-                "{} Meister, pass auf, ich werde dich wissen lassen: {}".format(message.author.mention, reminder_text))
+            await message.reply(
+                "Ich werde dich wissen lassen:\n **{}**".format(reminder_text), mention_author=True)
             cursor.execute("DELETE FROM reminders WHERE reminder_time=?", (reminder_time1,))
             connection.commit()
     except:
-        await message.channel.send('Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind.')
+        await message.channel.send('Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wait_for_reminder()')
 
 
-async def wait_for_reminder_startup(id, user_id, reminder_text, reminder_time1, channel_id):
+async def wait_for_reminder_startup(id, user_id, reminder_text, reminder_time1, channel_id, message):
     try:
         channel = client.get_channel(channel_id)
         if (reminder_time1 - time.time()) < 0:
-            await channel.send(
-                "<@{}> Meister, pass auf, ich werde dich wissen lassen: {}".format(user_id, reminder_text))
+            await message.reply(
+                "Ich werde dich wissen lassen:\n **{}**".format(reminder_text), mention_author=True)
             cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
             connection.commit()
         else:
             await asyncio.sleep(reminder_time1 - time.time())
-            await channel.send(
-                "<@{}> Meister, pass auf, ich werde dich wissen lassen: {}".format(user_id, reminder_text))
+            await message.reply(
+                "Ich werde dich wissen lassen:\n **{}**".format(reminder_text), mention_author=True)
             cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
             connection.commit()
         await get_reminder_startup()
     except:
-        await channel.send('Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind.')
+        await channel.send('Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wait_for_reminder_startup()')
 
 
 async def helpfunction(message):
@@ -153,11 +152,12 @@ async def helpfunction(message):
         userdict[str(message.author)] = time.time()
         embed = discord.Embed(title='Help', description='Hier wird Ihnen geholfen!', color=0x00ff00)
         embed.add_field(name='+help', value="Öffnet das Hilfefenster ", inline=False)
-        embed.add_field(name='+lyrics', value="Format: +lyrics (now/recent/topartists/toptracks) [USERNAME]",
+        embed.add_field(name='+lyrics', value="Format: +lyrics (full/link) [USERNAME]",
                         inline=False)
         embed.add_field(name='+wetter', value="Format: +wetter [ORTNAME]", inline=False)
         embed.add_field(name='+wiki', value="Format: +wiki [SUCHBEGRIFF]", inline=False)
-        embed.add_field(name='+remindme', value="Format: +remindme [ZAHL] [SECONDS/MINUTES/HOURS/DAYS/MONTHS] [TEXT]",
+        embed.add_field(name='+remindme',
+                        value="Format: +remindme [ZAHL] [seconds or s/minutes or m/hours or h/days or d/months] [TEXT]",
                         inline=False)
         embed.set_author(name='Gott', icon_url='https://cdn.psychologytoday.com/sites'
                                                '/default/files/field_blog_entry_images/God_the_Father.jpg')
@@ -226,13 +226,12 @@ async def lyrics(message):
     if message.content.startswith('lyrics'):
         userdict[str(message.author)] = time.time()
         if message.content == 'lyrics':
-            await message.channel.send('Format: "lyrics (now/recent/topartists/toptracks) [USERNAME]"')
+            await message.channel.send('Format: "+lyrics (full/link) [USERNAME]"')
             return
-        if message.content == 'lyrics now' or message.content == 'lyrics recent':
+        if message.content == 'lyrics full' or message.content == 'lyrics link':
             await message.channel.send('Ein Username wäre ganz hilfreich, retard.')
             return
-        username = message.content.replace('lyrics now ', '').replace('lyrics recent ', '') \
-            .replace('lyrics topartists ', '').replace('lyrics toptracks ', '').replace('lyrics topalbums ', '')
+        username = message.content.replace('lyrics full ', '').replace('lyrics link ', '')
         wort = message.content.replace('lyrics ', '')
         try:
             network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET)
@@ -240,7 +239,7 @@ async def lyrics(message):
         except:
             await message.channel.send('User nit gefunden.')
             return
-        if wort.startswith('now'):
+        if wort.startswith('full'):
             try:
                 lied = user.get_now_playing()
                 seconds = (lied.get_duration() / 1000) % 60
@@ -285,83 +284,44 @@ async def lyrics(message):
                 await message.channel.send(embed=embed)
             except:
                 await message.channel.send('Dieser User hört gerade nix.')
-        elif wort.startswith('recent'):
-            liste = ''
-            embed = discord.Embed(title='', color=1917791)
+        elif wort.startswith('link'):
+            try:
+                lied = user.get_now_playing()
+                seconds = (lied.get_duration() / 1000) % 60
+                seconds = int(seconds)
+                minutes = (lied.get_duration() / (1000 * 60)) % 60
+                minutes = int(minutes)
+                if seconds < 10:
+                    seconds = "0" + str(seconds)
 
-            for i in user.get_recent_tracks():
-                liste = liste + str(i.track) + '\n'
-            if liste == '':
-                await message.channel.send('Keine kürzlich gespielten Lieder.')
-            else:
+                artisturl = 'https://www.last.fm/de/music/' + str(lied.get_artist()).replace(' ', '+')
+                songurl = artisturl + '/_/' + str(lied.get_name()).replace(' ', '+').replace('/', '%2F')
+                name = str('[' + str(lied.get_name()) + '](' + str(songurl) + ')')
+                artist = str('[' + str(lied.get_artist()) + '](' + str(artisturl) + ')')
+
+                embed = discord.Embed(title='', color=1917791)
+
                 if user.get_image() is not None:
                     embed.set_author(name=username, icon_url=user.get_image(),
                                      url='https://www.last.fm/user/' + username)
                 else:
                     embed.set_author(name=username, url='https://www.last.fm/user/' + username)
-                embed.add_field(name='Kürzlich gespielte Lieder:', value=liste)
+
+                embed.set_thumbnail(url=str(lied.get_cover_image()))
+                embed.add_field(name='Titel', value=name)
+                album = str(lied.get_album())
+                album = album.replace(str(lied.get_artist()), '').replace(' - ', '')
+                embed.add_field(name='Artist', value=artist, inline=True)
+                footer = 'Album: ' + album + ' | ' + 'Duration: ' \
+                         + str(minutes) + ':' + str(seconds) + ' | ' + 'Plays: ' + str(lied.get_playcount())
+                embed.set_footer(text=footer)
+                url = "https://genius.com/" + str(lied).replace(" - ", "-").replace(" ", "-") + "-lyrics"
+                embed.add_field(name='Link', value=str('[' + str(lied) + '](' + str(url.replace(",", "")) + ')'),
+                                inline=False)
+
                 await message.channel.send(embed=embed)
-        elif wort.startswith('topartists'):
-            try:
-                liste = user.get_top_artists(username, limit=10)
             except:
-                await message.channel.send('User nit gefunden.')
-                return
-            x = 1
-            text = ''
-            embed = discord.Embed(title='', color=1917791)
-            for i in liste:
-                text = text + '\n' + str(x) + ': ' + i.item.name + ' (Plays: ' + str(i.weight) + ')'
-                x = x + 1
-
-            if user.get_image() is not None:
-                embed.set_author(name=username, icon_url=user.get_image(),
-                                 url='https://www.last.fm/user/' + username)
-            else:
-                embed.set_author(name=username, url='https://www.last.fm/user/' + username)
-            embed.add_field(name='Most played artists:', value=text)
-            await message.channel.send(embed=embed)
-        elif wort.startswith('toptracks'):
-            try:
-                liste = user.get_top_tracks(username, limit=10)
-            except:
-                await message.channel.send('User nit gefunden.')
-                return
-            x = 1
-            text = ''
-            embed = discord.Embed(title='', color=1917791)
-            for i in liste:
-                print(i.item)
-                text = text + '\n' + str(x) + ': ' + str(i.item) + ' (Plays: ' + str(i.weight) + ')'
-                x = x + 1
-
-            if user.get_image() is not None:
-                embed.set_author(name=username, icon_url=user.get_image(),
-                                 url='https://www.last.fm/user/' + username)
-            else:
-                embed.set_author(name=username, url='https://www.last.fm/user/' + username)
-            embed.add_field(name='Most played tracks:', value=text)
-            await message.channel.send(embed=embed)
-        elif wort.startswith('topalbums'):
-            try:
-                liste = user.get_top_albums(username, limit=10)
-            except:
-                await message.channel.send('User nit gefunden.')
-                return
-            x = 1
-            text = ''
-            embed = discord.Embed(title='', color=1917791)
-            for i in liste:
-                print(i.item)
-                text = text + '\n' + str(x) + ': ' + str(i.item) + ' (Plays: ' + str(i.weight) + ')'
-                x = x + 1
-            if user.get_image() is not None:
-                embed.set_author(name=username, icon_url=user.get_image(),
-                                 url='https://www.last.fm/user/' + username)
-            else:
-                embed.set_author(name=username, url='https://www.last.fm/user/' + username)
-            embed.add_field(name='Most played albums:', value=text)
-            await message.channel.send(embed=embed)
+                await message.channel.send('Dieser User hört gerade nix.')
 
 
 async def wetter(message):
@@ -383,7 +343,7 @@ async def wetter(message):
             await message.channel.send(embed=embed)
         except:
             await message.channel.send(
-                'Ich möchte mich für den Furry Talk entschuldigen. Irgendwas klappt aber trotzdem nicht lul.')
+                'Wetter schmetter, sag ich schon immer.')
 
 
 ''' def test(message):
