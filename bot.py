@@ -1,5 +1,7 @@
 import time
 import urllib.request
+from datetime import datetime
+
 import pylast
 import discord
 from bs4 import BeautifulSoup
@@ -38,6 +40,7 @@ class MyClient(discord.Client):
     @staticmethod
     async def on_ready():
         print("Hallo I bim omnline :^)")
+        logging('========================Startup============================')
         await get_reminder_startup()
 
     # Nachricht
@@ -93,11 +96,21 @@ async def reminder(message):
             val = (user_id, reminder_text, reminder_time1, channel, message.id)
             cursor.execute(sql, val)
             connection.commit()
+            cursor.execute("SELECT id FROM reminders WHERE reminder_time=?", (reminder_time1,))
+            id = cursor.fetchall()[0][0]
+            logging('Neuer Reminder in die DB gepusht: ' + str(id))
             channel = client.get_channel(channel)
             await message.add_reaction('\N{THUMBS UP SIGN}')
-            await wait_for_reminder(user_id, reminder_text, reminder_time1, message, channel)
+            logging('Thumbsup reagiert auf Reminder')
+            await wait_for_reminder(user_id, reminder_text, reminder_time1, message, channel, id)
         except:
             await message.channel.send("Hm ne irgendwas gefällt mir daran nich. Nochmal? 🤷")
+            logging('ERROR: reminder()')
+
+
+def logging(text):
+    with open('log.txt', 'a') as file:
+        file.write(str(datetime.now().strftime("%Y/%m/%d, %H:%M:%S") + ': ' + text + '\n'))
 
 
 async def get_reminder_startup():
@@ -114,47 +127,52 @@ async def get_reminder_startup():
             try:
                 message = await channel.fetch_message(id=result[0][5])
             except:
-                print('Nächster Reminder ist in ' + str(
-                    reminder_time1 - time.time()) + ' Sekunden, mit dem Inhalt: ' + str(
-                    reminder_text))
-                print("'Die Originale Massage scheint gelöscht zu sein'")
+                logging('Nächster Reminder geladen')
                 await asyncio.sleep(reminder_time1 - time.time())
                 await channel.send(
                     "<@{}>: Ich werde dich wissen lassen:\n **{}**".format(user_id, reminder_text))
                 cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
                 connection.commit()
+                logging('Reminder gelöscht')
                 await get_reminder_startup()
             await wait_for_reminder_startup(id, user_id, reminder_text, reminder_time1, channel_id, message)
     except:
         await message.channel.send(
             'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: get_reminder_startup()')
+        logging('ERROR: get_reminder_startup()')
 
 
-async def wait_for_reminder(user_id, reminder_text, reminder_time1, message, channel):
+async def wait_for_reminder(user_id, reminder_text, reminder_time1, message, channel, id):
     try:
         if (reminder_time1 - time.time()) < 0:
             try:
                 await message.reply(
                     "Ich werde dich wissen lassen:\n **{}**".format(reminder_text), mention_author=True)
+                logging('Auf Reminder geantortet: ' + str(id))
             except:
                 await channel.send(
                     "<@{}>: Ich werde dich wissen lassen:\n **{}**".format(user_id, reminder_text))
-            cursor.execute("DELETE FROM reminders WHERE reminder_time=?", (reminder_time1,))
+                logging('Auf Reminder geantortet: ' + str(id))
+            cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
             connection.commit()
+            logging('Reminder gelöscht: ' + str(id))
         else:
-            print('Nächster Reminder ist in ' + str(reminder_time1 - time.time()) + ' Sekunden, mit dem Inhalt: ' + str(
-                reminder_text))
+            logging('Nächster Reminder geladen: ' + str(id))
             await asyncio.sleep(reminder_time1 - time.time())
             try:
                 await message.reply(
                     "Ich werde dich wissen lassen:\n **{}**".format(reminder_text), mention_author=True)
+                logging('Auf Reminder geantortet: ' + str(id))
             except:
                 await channel.send(
                     "<@{}>: Ich werde dich wissen lassen:\n **{}**".format(user_id, reminder_text))
-            cursor.execute("DELETE FROM reminders WHERE reminder_time=?", (reminder_time1,))
+                logging('Auf Reminder geantortet: ' + str(id))
+            cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
             connection.commit()
+            logging('Reminder gelöscht: ' + str(id))
     except:
         await message.channel.send('Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wait_for_reminder()')
+        logging('ERROR: wait_for_reminder()')
 
 
 async def wait_for_reminder_startup(id, user_id, reminder_text, reminder_time1, channel_id, message):
@@ -163,19 +181,23 @@ async def wait_for_reminder_startup(id, user_id, reminder_text, reminder_time1, 
         if (reminder_time1 - time.time()) < 0:
             await message.reply(
                 "Ich werde dich wissen lassen:\n **{}**".format(reminder_text), mention_author=True)
+            logging('Auf Reminder geantortet: ' + str(id))
             cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
             connection.commit()
+            logging('Reminder gelöscht: ' + str(id))
         else:
-            print('Nächster Reminder ist in ' + str(reminder_time1 - time.time()) + ' Sekunden, mit dem Inhalt: ' + str(
-                reminder_text))
+            logging('Nächster Reminder geladen: ' + str(id))
             await asyncio.sleep(reminder_time1 - time.time())
             await message.reply(
                 "Ich werde dich wissen lassen:\n **{}**".format(reminder_text), mention_author=True)
+            logging('Auf Reminder geantortet: ' + str(id))
             cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
             connection.commit()
+            logging('Reminder gelöscht: ' + str(id))
         await get_reminder_startup()
     except:
         await channel.send('Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wait_for_reminder_startup()')
+        logging('ERROR: wait_for_reminder_startup() von ' + message.author.name)
 
 
 async def helpfunction(message):
@@ -196,6 +218,7 @@ async def helpfunction(message):
         embed.set_author(name='Gott', icon_url='https://cdn.psychologytoday.com/sites'
                                                '/default/files/field_blog_entry_images/God_the_Father.jpg')
         await message.channel.send(embed=embed)
+        logging('Hilfefunktion ausgeführt von ' + message.author.name)
 
 
 async def wiki(message):
@@ -205,6 +228,7 @@ async def wiki(message):
             if message.content == 'wiki feet' or message.content == 'wikifeet':
                 await message.channel.send(
                     'https://images.squarespace-cdn.com/content/v1/51323aa1e4b0b73e528cb71c/1567786369681-938Z512OX2Z03BDUGU62/Monty-Python-foot-1024x803.jpg')
+                logging('Wikifeet gepostet für ' + message.author.name)
             else:
                 wiki1 = message.content.replace('wiki ', '')
                 wiki2 = wiki1.replace(' ', '_')
@@ -250,6 +274,7 @@ async def wiki(message):
                         embed.set_thumbnail(url=bild_url)
                         break
                 await message.channel.send(embed=embed)
+                logging('Wikiartikel gepostet für ' + message.author.name + ': ' + wiki1)
     except:
         if message.content.startswith('wiki'):
             userdict[str(message.author)] = time.time()
@@ -258,6 +283,7 @@ async def wiki(message):
             wiki22 = wiki2.title()
             url = 'https://de.wikipedia.org/wiki/' + wiki22
             await message.channel.send('Jibtet nit. Probier doch mal selber: ' + url)
+            logging('Wikiartikel nicht gefunden für ' + message.author.name + ': ' + wiki1)
 
 
 async def lyrics(message):
@@ -265,9 +291,11 @@ async def lyrics(message):
         userdict[str(message.author)] = time.time()
         if message.content == 'lyrics':
             await message.channel.send('Format: "+lyrics (full/link) [USERNAME]"')
+            logging('Lyrics: Hilfe gepostet für ' + message.author.name)
             return
         if message.content == 'lyrics full' or message.content == 'lyrics link':
             await message.channel.send('Ein Username wäre ganz hilfreich, retard.')
+            logging('Lyrics: kein Username angegeben von ' + message.author.name)
             return
         username = message.content.replace('lyrics full ', '').replace('lyrics link ', '')
         wort = message.content.replace('lyrics ', '')
@@ -276,6 +304,7 @@ async def lyrics(message):
             user = network.get_user(username)
         except:
             await message.channel.send('User nit gefunden.')
+            logging('Lyrics: User nicht gefunden für ' + message.author.name)
             return
         if wort.startswith('full'):
             try:
@@ -318,10 +347,13 @@ async def lyrics(message):
                 except:
                     await message.channel.send(
                         'Irgendwas is schiefgelaufen lol. Vielleicht ist der Songtext länger als Discord zulässt?')
+                    logging('ERROR: Lyrics Full von ' + message.author.name)
 
                 await message.channel.send(embed=embed)
+                logging('Lyrics: Full gepostet für ' + message.author.name)
             except:
                 await message.channel.send('Dieser User hört gerade nix.')
+                logging('Lyrics: Full: User hört nichts für ' + message.author.name)
         elif wort.startswith('link'):
             try:
                 lied = user.get_now_playing()
@@ -358,8 +390,10 @@ async def lyrics(message):
                                 inline=False)
 
                 await message.channel.send(embed=embed)
+                logging('Lyrics: Link gepostet für ' + message.author.name)
             except:
                 await message.channel.send('Dieser User hört gerade nix.')
+                logging('ERROR: Lyrics: Link: User hört nichts von ' + message.author.name)
 
 
 async def wetter(message):
@@ -379,18 +413,22 @@ async def wetter(message):
             embed.add_field(name='Luftfeuchtigkeit', value=str(wetter_neu.humidity) + '%', inline=True)
             embed.add_field(name='Status', value=wetter_neu.detailed_status, inline=False)
             await message.channel.send(embed=embed)
+            logging('Wetter gepostet für ' + message.author.name + ': ' + place)
         except:
             await message.channel.send(
                 'Wetter schmetter, sag ich schon immer.')
+            logging('ERROR: Wetter für ' + message.author.name)
 
 
 async def git_gud(message):
     if message.content == 'git':
         try:
             await message.channel.send("https://github.com/Zicklaa/Zicklaa-Bot")
+            logging('Git Link gepostet für ' + message.author.name)
         except:
             await message.channel.send(
                 'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: git_gud()')
+            logging('ERROR: Git von ' + message.author.name)
 
 
 async def wishlist(message):
@@ -400,14 +438,17 @@ async def wishlist(message):
             if not wunsch:
                 await message.channel.send(
                     'Leere Wünsche: Name meiner Autobiographie.')
+                logging('Wishlist: Leerer Wunsch von ' + message.author.name)
             else:
                 wunsch = wunsch + ' \n'
                 with open('wishes.txt', 'a') as file:
                     file.write(wunsch)
                 await message.add_reaction('\N{THUMBS UP SIGN}')
+                logging('Wishlist: neuer Wunsch + Reaktion')
     except:
         await message.channel.send(
             'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wishlist()')
+        logging('ERROR: Wishlist von ' + message.author.name)
 
 
 async def show_wishlist(message):
@@ -418,6 +459,7 @@ async def show_wishlist(message):
                 if not wishes:
                     await message.channel.send(
                         'Ihr seid wunschlos glücklich :3')
+                    logging('Wishlist: Leer für ' + message.author.name)
                 else:
                     await message.channel.send(
                         'Folgendes wünscht ihr euch:')
@@ -425,9 +467,11 @@ async def show_wishlist(message):
                     for wish in wishes:
                         all_wishes = all_wishes + wish + '\n'
                     await message.channel.send(all_wishes)
+                    logging('Wishlist: Liste gepostet für ' + message.author.name)
     except:
         await message.channel.send(
             'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: show_wishlist()')
+        logging('ERROR: Wishlist von ' + message.author.name)
 
 
 ''' def test(message):
