@@ -358,8 +358,8 @@ async def wishlist(message):
 async def show_wishlist(message):
     if message.content.startswith('zeig wishlist '):
         with open('wishes.txt') as f:
-        wishes = f.readlines()
-        await message.channel.send(wishes)
+            wishes = f.readlines()
+            await message.channel.send(wishes)
 
 
 ''' def test(message):
