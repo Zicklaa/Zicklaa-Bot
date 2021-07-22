@@ -29,7 +29,7 @@ cursor = connection.cursor()
 # table createn
 try:
     creation = """CREATE TABLE IF NOT EXISTS
-    reminders(id INTEGER PRIMARY KEY, user_id INTEGER, reminder_text TEXT, reminder_time INTEGER, channel INTEGER, message_id INTEGER)"""
+    reminders(id INTEGER PRIMARY KEY AUTOINCREMENT , user_id INTEGER, reminder_text TEXT, reminder_time INTEGER, channel INTEGER, message_id INTEGER)"""
     cursor.execute(creation)
 except:
     pass
