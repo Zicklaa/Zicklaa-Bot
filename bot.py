@@ -348,6 +348,19 @@ async def wetter(message):
             await message.channel.send(
                 'Wetter schmetter, sag ich schon immer.')
 
+async def wishlist(message):
+    if message.content.startswith('wishlist '):
+    wunsch = message.content.replace('wishlist ', '')
+    with open('wishes.txt', 'a') as file:
+        file.write(wunsch)
+
+
+async def show_wishlist(message):
+    if message.content.startswith('zeig wishlist '):
+        with open('wishes.txt') as f:
+            wishes = f.readlines()
+            await message.channel.send(wishes)
+
 
 ''' def test(message):
          if message.content == "stop":
