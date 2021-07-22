@@ -93,8 +93,9 @@ async def reminder(message):
             val = (user_id, reminder_text, reminder_time1, channel, message.id)
             cursor.execute(sql, val)
             connection.commit()
+            channel = client.get_channel(channel)
             await message.add_reaction('\N{THUMBS UP SIGN}')
-            await wait_for_reminder(reminder_text, reminder_time1, message)
+            await wait_for_reminder(user_id, reminder_text, reminder_time1, message, channel)
         except:
             await message.channel.send("Hm ne irgendwas gefällt mir daran nich. Nochmal? 🤷")
 
@@ -110,26 +111,46 @@ async def get_reminder_startup():
             reminder_time1 = result[0][3]
             channel_id = result[0][4]
             channel = client.get_channel(channel_id)
-            message = await channel.fetch_message(id=result[0][5])
+            try:
+                message = await channel.fetch_message(id=result[0][5])
+            except:
+                print('Nächster Reminder ist in ' + str(
+                    reminder_time1 - time.time()) + ' Sekunden, mit dem Inhalt: ' + str(
+                    reminder_text))
+                print("'Die Originale Massage scheint gelöscht zu sein'")
+                await asyncio.sleep(reminder_time1 - time.time())
+                await channel.send(
+                    "<@{}>: Ich werde dich wissen lassen:\n **{}**".format(user_id, reminder_text))
+                cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
+                connection.commit()
+                await get_reminder_startup()
             await wait_for_reminder_startup(id, user_id, reminder_text, reminder_time1, channel_id, message)
     except:
         await message.channel.send(
             'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: get_reminder_startup()')
 
 
-async def wait_for_reminder(reminder_text, reminder_time1, message):
+async def wait_for_reminder(user_id, reminder_text, reminder_time1, message, channel):
     try:
         if (reminder_time1 - time.time()) < 0:
-            await message.reply(
-                "Ich werde dich wissen lassen:\n **{}**".format(reminder_text), mention_author=True)
+            try:
+                await message.reply(
+                    "Ich werde dich wissen lassen:\n **{}**".format(reminder_text), mention_author=True)
+            except:
+                await channel.send(
+                    "<@{}>: Ich werde dich wissen lassen:\n **{}**".format(user_id, reminder_text))
             cursor.execute("DELETE FROM reminders WHERE reminder_time=?", (reminder_time1,))
             connection.commit()
         else:
             print('Nächster Reminder ist in ' + str(reminder_time1 - time.time()) + ' Sekunden, mit dem Inhalt: ' + str(
                 reminder_text))
             await asyncio.sleep(reminder_time1 - time.time())
-            await message.reply(
-                "Ich werde dich wissen lassen:\n **{}**".format(reminder_text), mention_author=True)
+            try:
+                await message.reply(
+                    "Ich werde dich wissen lassen:\n **{}**".format(reminder_text), mention_author=True)
+            except:
+                await channel.send(
+                    "<@{}>: Ich werde dich wissen lassen:\n **{}**".format(user_id, reminder_text))
             cursor.execute("DELETE FROM reminders WHERE reminder_time=?", (reminder_time1,))
             connection.commit()
     except:
