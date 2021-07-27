@@ -66,32 +66,35 @@ class MyClient(discord.Client):
 
 
 async def reminder(message):
+    unit_to_second = {"s": 1, "m": 60, "h": 60*60, "d": 60*60*24, "w": 60*60*24*7,  "w": 60*60*24*7*30}
+
     if "remindme" in message.content:
-        try:
-            userdict[str(message.author)] = time.time()
+        try: 
+            msg = message.removeprefix("remindme ")
+
+            userdict[str(message.author)] = time.time() #die sollte global sein oder?
             user_id = message.author.id
-            split_message = message.content.split(" ")
-            if split_message[2] == "seconds" or split_message[2] == "s":
-                reminder_time1 = round(time.time() + float(split_message[1]), 2)
-            elif split_message[2] == "minutes" or split_message[2] == "m":
-                reminder_time1 = round(time.time() + (float(split_message[1]) * 60), 2)
-            elif split_message[2] == "hours" or split_message[2] == "h":
-                reminder_time1 = round(time.time() + (int(split_message[1]) * 3600), 2)
-            elif split_message[2] == "days" or split_message[2] == "d":
-                reminder_time1 = round(time.time() + (int(split_message[1]) * 86400), 2)
-            elif split_message[2] == "weeks" or split_message[2] == "w":
-                reminder_time1 = round(time.time() + (int(split_message[1]) * 604800), 2)
-            elif split_message[2] == "months":
-                reminder_time1 = round(time.time() + (int(split_message[1]) * 2678400), 2)
-            del split_message[:3]
-            reminder_text = " ".join(split_message)
             channel = message.channel.id
+
+            split_message = msg.split(" ")
+            if split_message[0].isdigit():
+               digits = split_message[0]
+               unit = split_message[1]
+               reminder_text = msg.split(" ", 2)[2]
+            else:
+                unit = split_message[0][-1] 
+                digits = split_message[0][:-1] 
+                reminder_text = msg.split(" ", 1)[1]
+
+            reminder_time = int(digits) * int ( unit_to_second[unit] )
+
             sql = "INSERT INTO reminders (user_id, reminder_text, reminder_time, channel, message_id) VALUES (?, ?, ?, ?, ?)"
-            val = (user_id, reminder_text, reminder_time1, channel, message.id)
+            val = (user_id, reminder_text, reminder_time, channel, message.id)
             cursor.execute(sql, val)
             connection.commit()
             await message.add_reaction('\N{THUMBS UP SIGN}')
-            await wait_for_reminder(reminder_text, reminder_time1, message)
+            await wait_for_reminder(reminder_text, reminder_time, message)
+
         except:
             await message.channel.send("Hm ne irgendwas gefällt mir daran nich. Nochmal? 🤷")
 
