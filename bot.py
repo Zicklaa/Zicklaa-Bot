@@ -1,9 +1,11 @@
 import time
 import urllib.request
 from datetime import datetime
+import random
 
 import pylast
 import discord
+import requests
 from bs4 import BeautifulSoup
 from lyricsgenius import Genius
 import lyricsgenius
@@ -11,6 +13,7 @@ from pyowm import OWM
 import config
 import sqlite3
 import asyncio
+import urllib.request
 
 API_KEY = config.API_KEY
 API_SECRET = config.API_SECRET
@@ -23,14 +26,16 @@ LYRICS_KEY = config.LYRICS_KEY
 userdict = {}
 
 # connection
-connection = sqlite3.connect('reminder.db')
+connection = sqlite3.connect('reminder-wishlist.db')
 cursor = connection.cursor()
 
 # table createn
 try:
-    creation = """CREATE TABLE IF NOT EXISTS
-    reminders(id INTEGER PRIMARY KEY AUTOINCREMENT , user_id INTEGER, reminder_text TEXT, reminder_time INTEGER, channel INTEGER, message_id INTEGER)"""
-    cursor.execute(creation)
+    creation1 = """CREATE TABLE IF NOT EXISTS
+    reminders(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, reminder_text TEXT, reminder_time INTEGER, channel INTEGER, message_id INTEGER)"""
+    cursor.execute(creation1)
+    creation2 = """CREATE TABLE IF NOT EXISTS wishlist(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, wishtext TEXT, ts TEXT)"""
+    cursor.execute(creation2)
 except:
     pass
 
@@ -46,7 +51,6 @@ class MyClient(discord.Client):
     # Nachricht
     @staticmethod
     async def on_message(message):
-
         if message.author == client.user:
             return
         else:
@@ -67,47 +71,92 @@ class MyClient(discord.Client):
                     await git_gud(message)
                     await wishlist(message)
                     await show_wishlist(message)
+                    await choose(message)
+                    await benwach(message)
+                    if message.author.id == 288413759117066241 or message.author.id == 156136437887008771:
+                        await delete_wish(message)
                     if message.channel.id == 608746970340786282:
                         await lyrics(message)
 
 
-async def reminder(message):
-    unit_to_second = {"s": 1, "m": 60, "h": 60*60, "d": 60*60*24, "w": 60*60*24*7,  "w": 60*60*24*7*30}
-
-    if "remindme" in message.content:
-        try: 
-            msg = message.removeprefix("remindme ")
-
-            userdict[str(message.author)] = time.time() #die sollte global sein oder?
-            user_id = message.author.id
-            channel = message.channel.id
-
-            split_message = msg.split(" ")
-            if split_message[0].isdigit():
-               digits = split_message[0]
-               unit = split_message[1]
-               reminder_text = msg.split(" ", 2)[2]
+async def choose(message):
+    if message.content.startswith('choose'):
+        try:
+            userdict[str(message.author)] = time.time()
+            new_message = message.content.replace('choose ', '').replace('choose', '')
+            if new_message == "":
+                await message.channel.send("Gib Optionen, Moruk")
             else:
-                unit = split_message[0][-1] 
-                digits = split_message[0][:-1] 
-                reminder_text = msg.split(" ", 1)[1]
+                if '"' in new_message:
+                    new_message_list = new_message.split('"')
+                    cleared_list = []
+                    for item in new_message_list:
+                        if item == " " or item == "":
+                            pass
+                        else:
+                            cleared_list.append(item)
+                    if len(cleared_list) < 2:
+                        await message.channel.send("Gib mehr als 1 Optionen, Moruk")
+                        logging("ERROR: choose(): Zu wenig Optionen gegeben")
+                    else:
+                        choice = random.choice(cleared_list)
+                        await message.channel.send(
+                            "Oh magische Miesmuschel! Wie lautet deine Antwort? \n" + "**" + choice + "**")
+                        logging("choose(): Antwort gepostet für: " + message.author.name)
+                else:
+                    new_message_list = new_message.split()
+                    if len(new_message_list) < 2:
+                        await message.channel.send("Gib mehr als 1 Optionen, Moruk")
+                        logging("ERROR: choose(): Zu wenig Optionen gegeben")
+                    else:
+                        choice = random.choice(new_message_list)
+                        await message.channel.send(
+                            "Oh magische Miesmuschel! Wie lautet deine Antwort? \n" + "**" + choice + "**")
+                        logging("choose(): Antwort gepostet für: " + message.author.name)
 
-            reminder_time = int(digits) * int ( unit_to_second[unit] )
-
-            sql = "INSERT INTO reminders (user_id, reminder_text, reminder_time, channel, message_id) VALUES (?, ?, ?, ?, ?)"
-            val = (user_id, reminder_text, reminder_time, channel, message.id)
-            cursor.execute(sql, val)
-            connection.commit()
-            cursor.execute("SELECT id FROM reminders WHERE reminder_time=?", (reminder_time1,))
-            id = cursor.fetchall()[0][0]
-            logging('Neuer Reminder in die DB gepusht: ' + str(id))
-            channel = client.get_channel(channel)
-            await message.add_reaction('\N{THUMBS UP SIGN}')
-
-            await wait_for_reminder(reminder_text, reminder_time, message)
         except:
+            await message.channel.send("Klappt nit lol 🤷")
+            logging('ERROR: choose()')
+    pass
+
+
+async def reminder(message):
+    unit_to_second = {"s": 1, "m": 60, "h": 60 * 60, "d": 60 * 60 * 24, "w": 60 * 60 * 24 * 7,
+                      "mon": 60 * 60 * 24 * 7 * 30}
+
+    if message.content.startswith('remindme'):
+        # try:
+        msg = message.content.replace("remindme ", '')
+
+        userdict[str(message.author)] = time.time()  # die sollte global sein oder? #ja lol
+        user_id = message.author.id
+        channel = message.channel.id
+
+        split_message = msg.split(" ")
+        if split_message[0].isdigit():
+            digits = split_message[0]
+            unit = split_message[1]
+            reminder_text = msg.split(" ", 2)[2]
+        else:
+            unit = split_message[0][-1]
+            digits = split_message[0][:-1]
+            reminder_text = msg.split(" ", 1)[1]
+
+        reminder_time = round(time.time() + (float(int(digits) * int(unit_to_second[unit]))), 2)
+        sql = "INSERT INTO reminders (user_id, reminder_text, reminder_time, channel, message_id) VALUES (?, ?, ?, ?, ?)"
+        val = (user_id, reminder_text, reminder_time, channel, message.id)
+        cursor.execute(sql, val)
+        connection.commit()
+        cursor.execute("SELECT id FROM reminders WHERE reminder_time=?", (reminder_time,))
+        id = cursor.fetchall()[0][0]
+        logging('Neuer Reminder in die DB gepusht: ' + str(id))
+        channel = client.get_channel(channel)
+        await message.add_reaction('\N{THUMBS UP SIGN}')
+        logging('reminder(): Thumbs Up auf Nachricht reagiert')
+        await wait_for_reminder(user_id, reminder_text, reminder_time, message, channel, id)
+        '''except:
             await message.channel.send("Hm ne irgendwas gefällt mir daran nich. Nochmal? 🤷")
-            logging('ERROR: reminder()')
+            logging('ERROR: reminder()')'''
 
 
 def logging(text):
@@ -132,7 +181,7 @@ async def get_reminder_startup():
                 logging('Nächster Reminder geladen')
                 await asyncio.sleep(reminder_time1 - time.time())
                 await channel.send(
-                    "<@{}>: Ich werde dich wissen lassen:\n **{}**".format(user_id, reminder_text))
+                    "<@{}>: Ich werde dich wissen lassen:\n**{}**".format(user_id, reminder_text))
                 cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
                 connection.commit()
                 logging('Reminder gelöscht')
@@ -149,11 +198,11 @@ async def wait_for_reminder(user_id, reminder_text, reminder_time1, message, cha
         if (reminder_time1 - time.time()) < 0:
             try:
                 await message.reply(
-                    "Ich werde dich wissen lassen:\n **{}**".format(reminder_text), mention_author=True)
+                    "Ich werde dich wissen lassen:\n**{}**".format(reminder_text), mention_author=True)
                 logging('Auf Reminder geantortet: ' + str(id))
             except:
                 await channel.send(
-                    "<@{}>: Ich werde dich wissen lassen:\n **{}**".format(user_id, reminder_text))
+                    "<@{}>: Ich werde dich wissen lassen:\n**{}**".format(user_id, reminder_text))
                 logging('Auf Reminder geantortet: ' + str(id))
             cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
             connection.commit()
@@ -163,11 +212,11 @@ async def wait_for_reminder(user_id, reminder_text, reminder_time1, message, cha
             await asyncio.sleep(reminder_time1 - time.time())
             try:
                 await message.reply(
-                    "Ich werde dich wissen lassen:\n **{}**".format(reminder_text), mention_author=True)
+                    "Ich werde dich wissen lassen:\n**{}**".format(reminder_text), mention_author=True)
                 logging('Auf Reminder geantortet: ' + str(id))
             except:
                 await channel.send(
-                    "<@{}>: Ich werde dich wissen lassen:\n **{}**".format(user_id, reminder_text))
+                    "<@{}>: Ich werde dich wissen lassen:\n**{}**".format(user_id, reminder_text))
                 logging('Auf Reminder geantortet: ' + str(id))
             cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
             connection.commit()
@@ -213,10 +262,15 @@ async def helpfunction(message):
         embed.add_field(name='+wiki', value="Format: +wiki [SUCHBEGRIFF]", inline=False)
         embed.add_field(name='+wishlist', value="Format: +wishlist [WUNSCH]", inline=False)
         embed.add_field(name='+showlist', value="Zeigt die Wunschliste an", inline=False)
+        embed.add_field(name='+delwish', value="+delwish [ID] (nur für coole Menschen tho)", inline=False)
         embed.add_field(name='+remindme',
-                        value="Format: +remindme [ZAHL] [seconds or s/minutes or m/hours or h/days or d/months] [TEXT]",
+                        value="Format: +remindme [ZAHL][s/m/h/d/mon] [TEXT]",
                         inline=False)
         embed.add_field(name='+git', value="Poschded den link zum Github Repository", inline=False)
+        embed.add_field(name='+benwach', value="Ben wach?", inline=False)
+        embed.add_field(name='+choose',
+                        value='+choose [Option 1] [Option 2] [...]\nBei mehreren Wörtern pro Option bitte jede Option in " " setzen.',
+                        inline=False)
         embed.set_author(name='Gott', icon_url='https://cdn.psychologytoday.com/sites'
                                                '/default/files/field_blog_entry_images/God_the_Father.jpg')
         await message.channel.send(embed=embed)
@@ -398,7 +452,7 @@ async def lyrics(message):
                 logging('ERROR: Lyrics: Link: User hört nichts von ' + message.author.name)
 
 
-async def wetter(message):
+'''async def wetter(message):
     owm = OWM(OMV_KEY)
     if message.content.startswith('wetter'):
         try:
@@ -415,6 +469,27 @@ async def wetter(message):
             embed.add_field(name='Luftfeuchtigkeit', value=str(wetter_neu.humidity) + '%', inline=True)
             embed.add_field(name='Status', value=wetter_neu.detailed_status, inline=False)
             await message.channel.send(embed=embed)
+            logging('Wetter gepostet für ' + message.author.name + ': ' + place)
+        except:
+            await message.channel.send(
+                'Wetter schmetter, sag ich schon immer.')
+            logging('ERROR: Wetter für ' + message.author.name)'''
+
+
+async def wetter(message):
+    if message.content.startswith('wetter '):
+        try:
+            userdict[str(message.author)] = time.time()
+            place = message.content.replace('wetter ', '').replace(' ', '-')
+            '''url = 'https://wttr.in/{}'.format(place) + "?n&T&2&lang=de"
+            res = requests.get(url)
+            await message.channel.send(
+                "```" + res.text.replace("Folgen Sie https://twitter.com/igor_chubin für wttr.in Updates", "") + "```")'''
+            url_png = 'https://de.wttr.in/{}'.format(place) + "_m" + ".png"
+            urllib.request.urlretrieve(url_png,
+                                       "wetter.png")
+
+            await message.channel.send(file=discord.File(r'wetter.png'))
             logging('Wetter gepostet für ' + message.author.name + ': ' + place)
         except:
             await message.channel.send(
@@ -436,17 +511,27 @@ async def git_gud(message):
 async def wishlist(message):
     try:
         if message.content.startswith('wishlist'):
-            wunsch = message.content[9:]
-            if not wunsch:
-                await message.channel.send(
-                    'Leere Wünsche: Name meiner Autobiographie.')
-                logging('Wishlist: Leerer Wunsch von ' + message.author.name)
+            userdict[str(message.author)] = time.time()
+            wishtext = message.content[9:]
+            if len(wishtext) < 250:
+                user_id = message.author.id
+                ts = datetime.now().strftime("%d-%b-%Y | %H:%M:%S")
+                if not wishtext:
+                    await message.channel.send(
+                        'Leere Wünsche: Name meiner Autobiographie.')
+                    logging('Wishlist: Leerer Wunsch von ' + message.author.name)
+                else:
+                    sql = "INSERT INTO wishlist (user_id, wishtext, ts) VALUES (?, ?, ?)"
+                    val = (user_id, wishtext, ts)
+                    cursor.execute(sql, val)
+                    connection.commit()
+
+                    await message.add_reaction('\N{THUMBS UP SIGN}')
+                    logging('Wishlist: neuer Wunsch + Reaktion')
             else:
-                wunsch = wunsch + ' \n'
-                with open('wishes.txt', 'a') as file:
-                    file.write(wunsch)
-                await message.add_reaction('\N{THUMBS UP SIGN}')
-                logging('Wishlist: neuer Wunsch + Reaktion')
+                await message.channel.send(
+                    'Wunsch zu lang, maximal 250 Chars.')
+                logging('Wishlist: Wunsch zu lang von ' + message.author.name)
     except:
         await message.channel.send(
             'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wishlist()')
@@ -456,24 +541,77 @@ async def wishlist(message):
 async def show_wishlist(message):
     try:
         if message.content == 'showlist':
-            with open('wishes.txt') as f:
-                wishes = f.readlines()
-                if not wishes:
-                    await message.channel.send(
-                        'Ihr seid wunschlos glücklich :3')
-                    logging('Wishlist: Leer für ' + message.author.name)
-                else:
-                    await message.channel.send(
-                        'Folgendes wünscht ihr euch:')
-                    all_wishes = ''
-                    for wish in wishes:
-                        all_wishes = all_wishes + wish + '\n'
-                    await message.channel.send(all_wishes)
-                    logging('Wishlist: Liste gepostet für ' + message.author.name)
+            userdict[str(message.author)] = time.time()
+            cursor.execute("SELECT * FROM wishlist")
+            wishes = cursor.fetchall()
+            if not wishes:
+                await message.channel.send(
+                    'Ihr seid wunschlos glücklich :3')
+                logging('Wishlist: Leer für ' + message.author.name)
+            else:
+                all_wishes = 'Folgendes wünscht ihr euch: \n\n'
+                x = 1
+                for wish in wishes:
+                    all_wishes = all_wishes + 'ID: ' + str(wish[0]) + ': ' + '\n'
+                    all_wishes = all_wishes + '**' + wish[2] + '**' + '\n'
+                    all_wishes = all_wishes + '<@' + str(wish[1]) + '>' + ' (' + wish[
+                        3] + ')' + '\n' + '\n'
+                    x = x + 1
+                    if len(all_wishes) > 1999:
+                        await message.channel.send(all_wishes)
+                        await message.channel.send("Es fehlen Wünsche da Discord Zeichenlimit lol")
+                        logging('Wishlist: Inkomplette Liste gepostet für ' + message.author.name)
+                        break
+                await message.channel.send(all_wishes)
+                logging('Wishlist: Liste gepostet für ' + message.author.name)
     except:
         await message.channel.send(
             'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: show_wishlist()')
         logging('ERROR: Wishlist von ' + message.author.name)
+
+
+async def delete_wish(message):
+    if message.content.startswith('delwish '):
+        userdict[str(message.author)] = time.time()
+        wishtext = message.content.split()
+        if len(wishtext) < 2:
+            await message.channel.send(
+                'Gib eine ID an oder so, Lan')
+            logging('delete_wish: Keine ID von ' + message.author.name)
+        else:
+            try:
+                id = int(wishtext[1])
+                cursor.execute("SELECT * FROM wishlist WHERE id=?", (id,))
+                wish = cursor.fetchall()
+                if not wish:
+                    await message.channel.send(
+                        'Ein Wunsch mit der ID gibts nedde')
+                    logging('delete_wish: Wish beim Löschen nicht gefunden')
+                else:
+                    cursor.execute("DELETE FROM wishlist WHERE id=?", (id,))
+                    connection.commit()
+                    await message.add_reaction('\N{THUMBS UP SIGN}')
+                    logging('delete_wish: Wish gelöscht mit der ID: ' + str(id))
+            except:
+                await message.channel.send(
+                    'Irgendwas stimmt mit der ID nicht, Mois')
+                logging('ERROR: delete_wish: Fehler bei Eingabe der ID')
+
+
+async def benwach(message):
+    try:
+        if message.content == 'benwach':
+            current_hour = datetime.now().hour
+            if 0 <= current_hour < 6:
+                await message.reply("Ben ist wahrscheinlich grad wach :))")
+            elif 6 <= current_hour < 14:
+                await message.reply("Spinnst du? Hast du mal auf die Uhr gekuckt?")
+            elif 14 <= current_hour < 24:
+                await message.reply("Ben ist wahrscheinlich grad wach :))")
+    except:
+        await message.channel.send(
+            'Irgendwas stimmt nicht, Mois')
+        logging('ERROR: benwach: Fehler')
 
 
 ''' def test(message):
