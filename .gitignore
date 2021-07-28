@@ -140,3 +140,7 @@ cython_debug/
 config.py
 log.txt
 reminder-wishlist.db
+
+pyvenv.cfg
+bin/
+lib64
