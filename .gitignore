@@ -137,3 +137,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+config.py
+log.txt
+reminder_wishlist.db
