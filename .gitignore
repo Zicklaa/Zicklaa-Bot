@@ -139,4 +139,4 @@ cython_debug/
 
 config.py
 log.txt
-reminder_wishlist.db
+reminder-wishlist.db
