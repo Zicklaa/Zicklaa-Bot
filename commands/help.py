@@ -11,6 +11,7 @@ class Help(commands.HelpCommand):
         embed.add_field(name='+lyrics', value="Format: +lyrics (full/link) [USERNAME]",
                         inline=False)
         embed.add_field(name='+wetter', value="Format: +wetter [ORTNAME]", inline=False)
+        embed.add_field(name='+asciiwetter', value="Format: +asciiwetter [ORTNAME]", inline=False)
         embed.add_field(name='+wiki', value="Format: +wiki [SUCHBEGRIFF]", inline=False)
         embed.add_field(name='+wishlist', value="Format: +wishlist [WUNSCH]", inline=False)
         embed.add_field(name='+showlist', value="Zeigt die Wunschliste an", inline=False)

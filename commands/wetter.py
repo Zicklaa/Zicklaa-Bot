@@ -1,5 +1,6 @@
 import logging
 import urllib.request
+import requests
 
 import discord
 from discord.ext import commands
@@ -21,9 +22,21 @@ class Wetter(commands.Cog):
             url_png = 'https://de.wttr.in/{}'.format(location) + "_m" + ".png"
             urllib.request.urlretrieve(url_png,
                                        "wetter.png")
-
             await ctx.channel.send(file=discord.File(r'wetter.png'))
             logger.info('Wetter gepostet für ' + ctx.author.name + ': ' + location)
+        except:
+            await ctx.channel.send(
+                'Wetter schmetter, sag ich schon immer.')
+            logger.error('ERROR: Wetter für ' + ctx.author.name)
+
+    @commands.command()
+    async def asciiwetter(self, ctx, location: str):
+        try:
+            url = 'https://wttr.in/{}'.format(location) + "?n&T&2&lang=de"
+            res = requests.get(url)
+            await ctx.channel.send(
+                "```" + res.text.replace("Folgen Sie https://twitter.com/igor_chubin für wttr.in Updates", "") + "```")
+            logger.info('Ascii Wetter gepostet für ' + ctx.author.name + ': ' + location)
         except:
             await ctx.channel.send(
                 'Wetter schmetter, sag ich schon immer.')
