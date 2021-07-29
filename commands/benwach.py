@@ -20,6 +20,7 @@ class BenWach(commands.Cog):
                 await ctx.message.reply("Spinnst du? Hast du mal auf die Uhr gekuckt?")
             elif 14 <= current_hour < 24:
                 await ctx.message.reply("Ben ist wahrscheinlich grad wach :))")
+            logger.info('Benwach gepostet für ' + ctx.author.name)
         except:
             await ctx.channel.send('Irgendwas stimmt nicht, Mois')
             logger.error('benwach: Fehler')

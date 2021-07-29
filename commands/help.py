@@ -1,9 +1,11 @@
 import discord
+import logging
 from discord.ext import commands
 
+logger = logging.getLogger("ZicklaaBot.BenWach")
 
 class Help(commands.HelpCommand):
-    async def send_bot_help(self, mapping):
+    async def send_bot_help(self,ctx, mapping):
         embed = discord.Embed(title='Help', description='Hier wird Ihnen geholfen!', color=0x00ff00)
         embed.add_field(name='+help', value="Öffnet das Hilfefenster", inline=False)
         embed.add_field(name='+lyrics', value="Format: +lyrics (full/link) [USERNAME]",
@@ -24,3 +26,4 @@ class Help(commands.HelpCommand):
         embed.set_author(name='Gott', icon_url='https://cdn.psychologytoday.com/sites'
                                                '/default/files/field_blog_entry_images/God_the_Father.jpg')
         await self.get_destination().send(embed=embed)
+        logger.info('Help gepostet für ' + ctx.author.name)
