@@ -14,22 +14,23 @@ class RemindMe(commands.Cog):
         self.cursor = db.cursor()
 
     @commands.command()
-    async def remindme(self, ctx, delay: str, text: str):
+    async def remindme(self, ctx, delay: str, *text: str):
         message = ctx.message
         unit_to_second = {"s": 1, "m": 60, "h": 60 * 60, "d": 60 * 60 * 24, "w": 60 * 60 * 24 * 7,
                           "mon": 60 * 60 * 24 * 7 * 30}
 
-        split_message = delay.split(" ")
-        if split_message[0].isdigit():
-            digits = split_message[0]
-            unit = split_message[1]
+        if delay.isdigit():
+            digits = delay
+            unit = text[0]
+            reason = " ".join(text[1:])
         else:
-            unit = split_message[0][-1]
-            digits = split_message[0][:-1]
+            unit = delay[-1]
+            digits = delay[:-1]
+            reason = " ".join(text)
 
         reminder_time = round(time.time() + (float(int(digits) * int(unit_to_second[unit]))), 2)
         sql = "INSERT INTO reminders (user_id, reminder_text, reminder_time, channel, message_id) VALUES (?, ?, ?, ?, ?)"
-        val = (ctx.author.id, text, reminder_time, ctx.channel.id, ctx.message.id)
+        val = (ctx.author.id, reason, reminder_time, ctx.channel.id, ctx.message.id)
         self.cursor.execute(sql, val)
         self.db.commit()
         self.cursor.execute("SELECT id FROM reminders WHERE reminder_time=?", (reminder_time,))
@@ -38,7 +39,7 @@ class RemindMe(commands.Cog):
         channel = ctx.channel.id
         await message.add_reaction('\N{THUMBS UP SIGN}')
         logger.info('reminder(): Thumbs Up auf Nachricht reagiert')
-        await self.wait_for_reminder(ctx.author.id, text, reminder_time, message, channel, id)
+        await self.wait_for_reminder(ctx.author.id, reason, reminder_time, message, channel, id)
 
     async def wait_for_reminder(self, user_id, reminder_text, reminder_time1, message, channel, id):
         try:
