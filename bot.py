@@ -12,6 +12,7 @@ import time
 import traceback
 import sys
 
+# test
 
 def create_log_file(path):
     logger = logging.getLogger('ZicklaaBot')
