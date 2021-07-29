@@ -1,21 +1,23 @@
-import logging
-from discord.ext import commands
 import asyncio
+import logging
 import time
 
+from discord.ext import commands
+
 logger = logging.getLogger("ZicklaaBot.RemindMe")
+
 
 class RemindMe(commands.Cog):
     def __init__(self, bot, db):
         self.bot = bot
         self.db = db
         self.cursor = db.cursor()
-    
+
     @commands.command()
-    async def remindme(self,ctx, delay: str, text: str):
+    async def remindme(self, ctx, delay: str, text: str):
         message = ctx.message
         unit_to_second = {"s": 1, "m": 60, "h": 60 * 60, "d": 60 * 60 * 24, "w": 60 * 60 * 24 * 7,
-                        "mon": 60 * 60 * 24 * 7 * 30}
+                          "mon": 60 * 60 * 24 * 7 * 30}
 
         split_message = delay.split(" ")
         if split_message[0].isdigit():
@@ -67,7 +69,8 @@ class RemindMe(commands.Cog):
                 self.db.commit()
                 logger.info('Reminder gelöscht: ' + str(id))
         except:
-            await message.channel.send('Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wait_for_reminder()')
+            await message.channel.send(
+                'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wait_for_reminder()')
             logger.error('wait_for_reminder()')
 
     async def get_reminder_startup(self):
@@ -98,7 +101,7 @@ class RemindMe(commands.Cog):
                 'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: get_reminder_startup()')
             logger.error('get_reminder_startup()')
 
-    async def wait_for_reminder_startup(self,id, reminder_text, reminder_time1, channel_id, message):
+    async def wait_for_reminder_startup(self, id, reminder_text, reminder_time1, channel_id, message):
         try:
             channel = self.bot.get_channel(channel_id)
             if (reminder_time1 - time.time()) < 0:
@@ -119,9 +122,10 @@ class RemindMe(commands.Cog):
                 logger.info('Reminder gelöscht: ' + str(id))
             await self.get_reminder_startup()
         except:
-            await channel.send('Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wait_for_reminder_startup()')
+            await channel.send(
+                'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wait_for_reminder_startup()')
             logger.error('wait_for_reminder_startup() von ' + message.author.name)
 
-            
+
 def setup(bot):
-    bot.add_cog(RemindMe(bot,bot.db))
+    bot.add_cog(RemindMe(bot, bot.db))

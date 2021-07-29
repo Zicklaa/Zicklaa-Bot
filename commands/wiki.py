@@ -1,20 +1,21 @@
-from discord.ext import commands
-from discord.ext.commands.core import command
+import logging
 import urllib.request
+
 import discord
 from bs4 import BeautifulSoup
-import logging
+from discord.ext import commands
 
 logger = logging.getLogger("ZicklaaBot.Wiki")
 
+
 class Wiki(commands.Cog):
-    def __init__(self,bot):
+    def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
     async def wiki(self, ctx, *search_term):
         try:
-            if search_term[0] == 'feet': 
+            if search_term[0] == 'feet':
                 await self.wikifeet(ctx)
                 pass
             wiki1 = " ".join(search_term)
@@ -44,9 +45,9 @@ class Wiki(commands.Cog):
             for bild in image_tag:
                 bild_url = 'https:' + bild.get('src')
                 if bild_url == 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Disambig-dark.svg/25px' \
-                            '-Disambig-dark.svg.png' or bild_url == 'https://upload.wikimedia.org/wikipedia/c' \
-                                                                    'ommons/thumb/f/f3/Photo-request.svg/40px-P' \
-                                                                    'hoto-request.svg.png' or \
+                               '-Disambig-dark.svg.png' or bild_url == 'https://upload.wikimedia.org/wikipedia/c' \
+                                                                       'ommons/thumb/f/f3/Photo-request.svg/40px-P' \
+                                                                       'hoto-request.svg.png' or \
                         bild_url == 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Qsicon_lesenswert.' \
                                     'svg/15px-Qsicon_lesenswert.svg.png' or bild_url == 'https://upload.wikimedia.' \
                                                                                         'org/wikipedia/commons/thumb' \
@@ -72,12 +73,10 @@ class Wiki(commands.Cog):
                 logger.error('Wikiartikel nicht gefunden für ' + ctx.author.name + ': ' + wiki1)
 
     @commands.command()
-    async def wikifeet(self,ctx, *args):
+    async def wikifeet(self, ctx, *args):
         await ctx.channel.send(
             'https://images.squarespace-cdn.com/content/v1/51323aa1e4b0b73e528cb71c/1567786369681-938Z512OX2Z03BDUGU62/Monty-Python-foot-1024x803.jpg')
         logger.info('Wikifeet gepostet für ' + ctx.author.name)
-
-
 
 
 def setup(bot):

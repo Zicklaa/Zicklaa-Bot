@@ -12,47 +12,50 @@ import time
 import traceback
 import sys
 
+
 def create_log_file(path):
     logger = logging.getLogger('ZicklaaBot')
     logger.setLevel(logging.INFO)
 
     handler = TimedRotatingFileHandler(path,
                                        when="midnight",
-                                       interval = 1,
+                                       interval=1,
                                        backupCount=5)
     formatter = logging.Formatter('%(asctime)s::%(name)s::%(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     return logger
 
+
 logger = create_log_file(config.LOG_FILE_NAME)
 
 user_last_command = {}
 
-initial_extensions = ['commands.remindme','commands.choose', 'commands.wiki', 'commands.lyrics', 'commands.wetter',
-     'commands.admin','commands.git','commands.wishlist', 'commands.benwach']
+initial_extensions = ['commands.remindme', 'commands.choose', 'commands.wiki', 'commands.lyrics', 'commands.wetter',
+                      'commands.admin', 'commands.git', 'commands.wishlist', 'commands.benwach']
+
 
 class ZicklaaBot(discord.ext.commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix=config.PREFIX,help_command=help.Help())
+        super().__init__(command_prefix=config.PREFIX, help_command=help.Help())
         self.db = sqlite3.connect('reminder-wishlist.db')
         self.LASTFM_API_KEY = config.API_KEY
         self.LASTFM_API_SECRET = config.API_SECRET
         self.LYRICS_KEY = config.LYRICS_KEY
         self.create_tables()
-        
+
         for extension in initial_extensions:
             try:
                 self.load_extension(extension)
             except Exception as e:
                 print(f'Failed to load extension {extension}.')
-    
+
     async def on_ready(self):
         print("Hallo I bim omnline :^)")
         logger.info('========================Startup============================')
         remindme = self.get_cog('RemindMe')
         await remindme.get_reminder_startup()
-    
+
     def create_tables(self):
         try:
             cursor = self.db.cursor()
@@ -67,6 +70,7 @@ class ZicklaaBot(discord.ext.commands.Bot):
 
 bot = ZicklaaBot()
 
+
 # Cooldown check
 @bot.check
 async def is_on_cooldown(ctx):
@@ -79,27 +83,28 @@ async def is_on_cooldown(ctx):
         return True
     return False
 
+
 @bot.event
 async def on_command_error(ctx, error):
-        if hasattr(ctx.command, 'on_error'):
-            return
-        cog = ctx.cog
-        if cog:
-            if cog._get_overridden_method(cog.cog_command_error) is not None:
-                return
-
-        ignored = (commands.CommandNotFound, )
-        error = getattr(error, 'original', error)
-
-        if isinstance(error, ignored):
+    if hasattr(ctx.command, 'on_error'):
+        return
+    cog = ctx.cog
+    if cog:
+        if cog._get_overridden_method(cog.cog_command_error) is not None:
             return
 
-        if isinstance(error,commands.errors.CheckFailure):
-            logger.error(f"User {str(ctx.author)} triggered: {error}")
-            return
-        else:
-            print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
-            traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+    ignored = (commands.CommandNotFound,)
+    error = getattr(error, 'original', error)
+
+    if isinstance(error, ignored):
+        return
+
+    if isinstance(error, commands.errors.CheckFailure):
+        logger.error(f"User {str(ctx.author)} triggered: {error}")
+        return
+    else:
+        print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
+        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
 
 bot.run(config.CLIENT_RUN)

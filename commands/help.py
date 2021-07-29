@@ -1,5 +1,6 @@
-from discord.ext import commands
 import discord
+from discord.ext import commands
+
 
 class Help(commands.HelpCommand):
     async def send_bot_help(self, mapping):
@@ -21,6 +22,5 @@ class Help(commands.HelpCommand):
                         value='+choose [Option 1] [Option 2] [...]\nBei mehreren Wörtern pro Option bitte jede Option in " " setzen.',
                         inline=False)
         embed.set_author(name='Gott', icon_url='https://cdn.psychologytoday.com/sites'
-                                                '/default/files/field_blog_entry_images/God_the_Father.jpg')
+                                               '/default/files/field_blog_entry_images/God_the_Father.jpg')
         await self.get_destination().send(embed=embed)
-        

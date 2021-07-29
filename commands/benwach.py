@@ -1,15 +1,17 @@
-from discord.ext import commands
 import logging
 from datetime import datetime
 
+from discord.ext import commands
+
 logger = logging.getLogger("ZicklaaBot.BenWach")
+
 
 class BenWach(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
-    async def benwach(self,ctx):
+    async def benwach(self, ctx):
         try:
             current_hour = datetime.now().hour
             if 0 <= current_hour < 6:

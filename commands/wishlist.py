@@ -1,23 +1,25 @@
-from discord.ext import commands
-from datetime import datetime
 import logging
+from datetime import datetime
+
+from discord.ext import commands
 
 logger = logging.getLogger("ZicklaaBot.Wishlist")
 
+
 class Wishlist(commands.Cog):
-    def __init__(self,bot,db):
+    def __init__(self, bot, db):
         self.bot = bot
         self.db = db
         self.cursor = db.cursor()
 
     async def can_delete(ctx):
-        return (ctx.author.id == 288413759117066241 or ctx.author.id == 156136437887008771 or 
+        return (ctx.author.id == 288413759117066241 or ctx.author.id == 156136437887008771 or
                 ctx.author.id == 136103007065473024)
 
     @commands.command()
-    async def wishlist(self,ctx, *wishtext):
+    async def wishlist(self, ctx, *wishtext):
         try:
-            if len(wishtext)<1:
+            if len(wishtext) < 1:
                 await ctx.channel.send('Leere Wünsche: Name meiner Autobiographie.')
                 logger.info('Wishlist: Leerer Wunsch von ' + ctx.author.name)
                 return
@@ -32,7 +34,6 @@ class Wishlist(commands.Cog):
                 self.db.commit()
                 print("hehe")
 
-
                 await ctx.message.add_reaction('\N{THUMBS UP SIGN}')
                 logger.info('Wishlist: neuer Wunsch + Reaktion')
             else:
@@ -44,10 +45,8 @@ class Wishlist(commands.Cog):
                 'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wishlist()')
             logger.error('ERROR: Wishlist von ' + ctx.author.name)
 
-   
-
     @commands.command()
-    async def showlist(self,ctx):
+    async def showlist(self, ctx):
         try:
             self.cursor.execute("SELECT * FROM wishlist")
             wishes = self.cursor.fetchall()
@@ -78,7 +77,7 @@ class Wishlist(commands.Cog):
 
     @commands.command()
     @commands.check(can_delete)
-    async def delwish(self,ctx,id):
+    async def delwish(self, ctx, id):
         try:
             try:
                 intid = int(id)
@@ -102,10 +101,11 @@ class Wishlist(commands.Cog):
             logger.error('delete_wish: Fehler bei Eingabe der ID')
 
     @delwish.error
-    async def delwish_error(self,ctx,error):
+    async def delwish_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.channel.send('Gib eine ID an oder so, Lan')
             logger.error('delete_wish: Keine ID von ' + ctx.author.name)
 
+
 def setup(bot):
-    bot.add_cog(Wishlist(bot,bot.db))
+    bot.add_cog(Wishlist(bot, bot.db))

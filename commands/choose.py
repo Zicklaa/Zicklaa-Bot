@@ -1,17 +1,19 @@
-from discord.ext import commands
-import random
 import logging
+import random
+
+from discord.ext import commands
 
 logger = logging.getLogger("ZicklaaBot.Choose")
+
 
 class Choose(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
-    async def choose(self,ctx,*options):
+    async def choose(self, ctx, *options):
         try:
-            
+
             if len(options) < 1:
                 await ctx.channel.send("Gib Optionen, Moruk")
             else:

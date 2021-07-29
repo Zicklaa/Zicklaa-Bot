@@ -1,10 +1,12 @@
-from discord.ext import commands
 import logging
+
+from discord.ext import commands
 
 logger = logging.getLogger("ZicklaaBot.Admin")
 
+
 class Admin(commands.Cog):
-    def __init__(self,bot):
+    def __init__(self, bot):
         self.bot = bot
 
     async def is_privileged(ctx):
@@ -12,7 +14,7 @@ class Admin(commands.Cog):
 
     @commands.command(hidden=True)
     @commands.check(is_privileged)
-    async def load(self,ctx, extension_name: str):
+    async def load(self, ctx, extension_name: str):
         try:
             self.bot.load_extension(f"commands.{extension_name}")
         except Exception as e:
@@ -23,10 +25,10 @@ class Admin(commands.Cog):
 
     @commands.command(hidden=True)
     @commands.check(is_privileged)
-    async def unload(self,ctx, extension_name: str):
+    async def unload(self, ctx, extension_name: str):
         self.bot.unload_extension(f"commands.{extension_name}")
         await ctx.send("{} unloaded.".format(extension_name))
-    
+
 
 def setup(bot):
     bot.add_cog(Admin(bot))

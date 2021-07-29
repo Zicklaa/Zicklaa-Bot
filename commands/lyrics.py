@@ -1,14 +1,16 @@
-from discord.ext import commands
 import logging
-import pylast
+
 import discord
-from lyricsgenius import Genius
 import lyricsgenius
+import pylast
+from discord.ext import commands
+from lyricsgenius import Genius
 
 logger = logging.getLogger("ZicklaaBot.Lyrics")
 
+
 class Lyrics(commands.Cog):
-    def __init__(self,bot):
+    def __init__(self, bot):
         self.bot = bot
 
     async def is_f2_in_concert(ctx):
@@ -44,7 +46,7 @@ class Lyrics(commands.Cog):
 
                 if user.get_image() is not None:
                     embed.set_author(name=username, icon_url=user.get_image(),
-                                        url='https://www.last.fm/user/' + username)
+                                     url='https://www.last.fm/user/' + username)
                 else:
                     embed.set_author(name=username, url='https://www.last.fm/user/' + username)
 
@@ -54,7 +56,7 @@ class Lyrics(commands.Cog):
                 album = album.replace(str(lied.get_artist()), '').replace(' - ', '')
                 embed.add_field(name='Artist', value=artist, inline=True)
                 footer = 'Album: ' + album + ' | ' + 'Duration: ' \
-                            + str(minutes) + ':' + str(seconds) + ' | ' + 'Plays: ' + str(lied.get_playcount())
+                         + str(minutes) + ':' + str(seconds) + ' | ' + 'Plays: ' + str(lied.get_playcount())
                 embed.set_footer(text=footer)
                 try:
                     genius = lyricsgenius.Genius(self.bot.LYRICS_KEY)
@@ -91,7 +93,7 @@ class Lyrics(commands.Cog):
 
                 if user.get_image() is not None:
                     embed.set_author(name=username, icon_url=user.get_image(),
-                                        url='https://www.last.fm/user/' + username)
+                                     url='https://www.last.fm/user/' + username)
                 else:
                     embed.set_author(name=username, url='https://www.last.fm/user/' + username)
 
@@ -101,7 +103,7 @@ class Lyrics(commands.Cog):
                 album = album.replace(str(lied.get_artist()), '').replace(' - ', '')
                 embed.add_field(name='Artist', value=artist, inline=True)
                 footer = 'Album: ' + album + ' | ' + 'Duration: ' \
-                            + str(minutes) + ':' + str(seconds) + ' | ' + 'Plays: ' + str(lied.get_playcount())
+                         + str(minutes) + ':' + str(seconds) + ' | ' + 'Plays: ' + str(lied.get_playcount())
                 embed.set_footer(text=footer)
                 genius = Genius(self.bot.LYRICS_KEY)
                 song = genius.search_song(title=lied.get_title(), artist=lied.get_artist())
@@ -113,16 +115,12 @@ class Lyrics(commands.Cog):
             except:
                 await ctx.channel.send('Dieser User hört gerade nix.')
                 logger.error('Lyrics: Link: User hört nichts von ' + ctx.author.name)
+
     @lyrics.error
-    async def lyrics_error(self,ctx,error):
+    async def lyrics_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.channel.send('Format: "+lyrics (full/link) [USERNAME]"')
-    
 
-
-
-
-        
 
 def setup(bot):
     bot.add_cog(Lyrics(bot))

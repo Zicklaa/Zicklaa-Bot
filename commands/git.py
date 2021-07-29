@@ -1,14 +1,16 @@
-from discord.ext import commands
 import logging
+
+from discord.ext import commands
 
 logger = logging.getLogger("ZicklaaBot.Git")
 
+
 class Git(commands.Cog):
-    def __init__(self,bot):
+    def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
-    async def git(self,ctx):
+    async def git(self, ctx):
         try:
             await ctx.channel.send("https://github.com/Zicklaa/Zicklaa-Bot")
             logger.info('Git Link gepostet für ' + ctx.author.name)
