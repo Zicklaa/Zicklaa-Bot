@@ -144,3 +144,5 @@ reminder-wishlist.db
 pyvenv.cfg
 bin/
 lib64
+.vscode
+wetter.png
