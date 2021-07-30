@@ -1,6 +1,8 @@
 import discord
+import logging
 from discord.ext import commands
 
+logger = logging.getLogger("ZicklaaBot.BenWach")
 
 class Help(commands.HelpCommand):
     async def send_bot_help(self, mapping):
@@ -9,6 +11,7 @@ class Help(commands.HelpCommand):
         embed.add_field(name='+lyrics', value="Format: +lyrics (full/link) [USERNAME]",
                         inline=False)
         embed.add_field(name='+wetter', value="Format: +wetter [ORTNAME]", inline=False)
+        embed.add_field(name='+asciiwetter', value="Format: +asciiwetter [ORTNAME]", inline=False)
         embed.add_field(name='+wiki', value="Format: +wiki [SUCHBEGRIFF]", inline=False)
         embed.add_field(name='+wishlist', value="Format: +wishlist [WUNSCH]", inline=False)
         embed.add_field(name='+showlist', value="Zeigt die Wunschliste an", inline=False)
@@ -16,6 +19,8 @@ class Help(commands.HelpCommand):
         embed.add_field(name='+remindme',
                         value="Format: +remindme <all | [ZAHL][s/m/h/d/mon]> [TEXT]",
                         inline=False)
+        embed.add_field(name='+spongebob', value="+spongebob [TEXT]", inline=False)
+        embed.add_field(name='+randomsponge', value="+randomsponge [TEXT]", inline=False)
         embed.add_field(name='+git', value="Poschded den link zum Github Repository", inline=False)
         embed.add_field(name='+benwach', value="Ben wach?", inline=False)
         embed.add_field(name='+choose',
