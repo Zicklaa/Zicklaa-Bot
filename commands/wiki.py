@@ -61,7 +61,7 @@ class Wiki(commands.Cog):
                     bild_url = 'https:' + bild.get('src')
                     embed.set_thumbnail(url=bild_url)
                     break
-            await ctx.channel.send(embed=embed)
+            await ctx.reply(embed=embed)
             logger.info('Wikiartikel gepostet für ' + ctx.author.name + ': ' + wiki1)
         except:
             if search_term[0] != "feet":
@@ -69,12 +69,12 @@ class Wiki(commands.Cog):
                 wiki2 = "_".join(search_term)
                 wiki22 = wiki2.title()
                 url = 'https://de.wikipedia.org/wiki/' + wiki22
-                await ctx.channel.send('Jibtet nit. Probier doch mal selber: ' + url)
+                await ctx.reply('Jibtet nit. Probier doch mal selber: ' + url)
                 logger.error('Wikiartikel nicht gefunden für ' + ctx.author.name + ': ' + wiki1)
 
     @commands.command()
     async def wikifeet(self, ctx, *args):
-        await ctx.channel.send(
+        await ctx.reply(
             'https://images.squarespace-cdn.com/content/v1/51323aa1e4b0b73e528cb71c/1567786369681-938Z512OX2Z03BDUGU62/Monty-Python-foot-1024x803.jpg')
         logger.info('Wikifeet gepostet für ' + ctx.author.name)
 

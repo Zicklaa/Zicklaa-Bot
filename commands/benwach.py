@@ -15,13 +15,13 @@ class BenWach(commands.Cog):
         try:
             current_hour = datetime.now().hour
             if 0 <= current_hour < 6:
-                await ctx.message.reply("Ben ist wahrscheinlich grad wach :))")
+                await ctx.reply("Ben ist wahrscheinlich grad wach :))")
             elif 6 <= current_hour < 14:
-                await ctx.message.reply("Spinnst du? Hast du mal auf die Uhr gekuckt?")
+                await ctx.reply("Spinnst du? Hast du mal auf die Uhr gekuckt?")
             elif 14 <= current_hour < 24:
-                await ctx.message.reply("Ben ist wahrscheinlich grad wach :))")
+                await ctx.reply("Ben ist wahrscheinlich grad wach :))")
         except:
-            await ctx.channel.send('Irgendwas stimmt nicht, Mois')
+            await ctx.reply('Irgendwas stimmt nicht, Mois')
             logger.error('benwach: Fehler')
 
 

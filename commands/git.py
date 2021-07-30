@@ -12,10 +12,10 @@ class Git(commands.Cog):
     @commands.command()
     async def git(self, ctx):
         try:
-            await ctx.channel.send("https://github.com/Zicklaa/Zicklaa-Bot")
+            await ctx.reply("https://github.com/Zicklaa/Zicklaa-Bot")
             logger.info('Git Link gepostet für ' + ctx.author.name)
         except:
-            await ctx.channel.send(
+            await ctx.reply(
                 'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: git_gud()')
             logger.error('Git von ' + ctx.author.name)
 

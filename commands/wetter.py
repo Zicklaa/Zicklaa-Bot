@@ -22,10 +22,10 @@ class Wetter(commands.Cog):
             url_png = 'https://de.wttr.in/{}'.format(location) + "_m" + ".png"
             urllib.request.urlretrieve(url_png,
                                        "wetter.png")
-            await ctx.channel.send(file=discord.File(r'wetter.png'))
+            await ctx.reply(file=discord.File(r'wetter.png'))
             logger.info('Wetter gepostet für ' + ctx.author.name + ': ' + location)
         except:
-            await ctx.channel.send(
+            await ctx.reply(
                 'Wetter schmetter, sag ich schon immer.')
             logger.error('ERROR: Wetter für ' + ctx.author.name)
 
@@ -34,11 +34,11 @@ class Wetter(commands.Cog):
         try:
             url = 'https://wttr.in/{}'.format(location) + "?n&T&2&lang=de"
             res = requests.get(url)
-            await ctx.channel.send(
+            await ctx.reply(
                 "```" + res.text.replace("Folgen Sie https://twitter.com/igor_chubin für wttr.in Updates", "") + "```")
             logger.info('Ascii Wetter gepostet für ' + ctx.author.name + ': ' + location)
         except:
-            await ctx.channel.send(
+            await ctx.reply(
                 'Wetter schmetter, sag ich schon immer.')
             logger.error('ERROR: Wetter für ' + ctx.author.name)
 
