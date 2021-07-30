@@ -14,7 +14,7 @@ class Help(commands.HelpCommand):
         embed.add_field(name='+showlist', value="Zeigt die Wunschliste an", inline=False)
         embed.add_field(name='+delwish', value="+delwish [ID] (nur für coole Menschen tho)", inline=False)
         embed.add_field(name='+remindme',
-                        value="Format: +remindme [ZAHL][s/m/h/d/mon] [TEXT]",
+                        value="Format: +remindme <all | [ZAHL][s/m/h/d/mon]> [TEXT]",
                         inline=False)
         embed.add_field(name='+git', value="Poschded den link zum Github Repository", inline=False)
         embed.add_field(name='+benwach', value="Ben wach?", inline=False)
