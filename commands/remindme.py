@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import time
+from datetime import datetime
 
 from discord.ext import commands
 
@@ -14,22 +15,25 @@ class RemindMe(commands.Cog):
         self.cursor = db.cursor()
 
     @commands.command()
-    async def remindme(self, ctx, delay: str, text: str):
+    async def remindme(self, ctx, method: str, *text: str):
         message = ctx.message
         unit_to_second = {"s": 1, "m": 60, "h": 60 * 60, "d": 60 * 60 * 24, "w": 60 * 60 * 24 * 7,
                           "mon": 60 * 60 * 24 * 7 * 30}
-
-        split_message = delay.split(" ")
-        if split_message[0].isdigit():
-            digits = split_message[0]
-            unit = split_message[1]
+        if method == 'all':
+            await self.get_all_reminders(ctx)
+            return
+        elif method.isdigit():
+            digits = method
+            unit = text[0]
+            reason = " ".join(text[1:])
         else:
-            unit = split_message[0][-1]
-            digits = split_message[0][:-1]
+            unit = method[-1]
+            digits = method[:-1]
+            reason = " ".join(text)
 
         reminder_time = round(time.time() + (float(int(digits) * int(unit_to_second[unit]))), 2)
         sql = "INSERT INTO reminders (user_id, reminder_text, reminder_time, channel, message_id) VALUES (?, ?, ?, ?, ?)"
-        val = (ctx.author.id, text, reminder_time, ctx.channel.id, ctx.message.id)
+        val = (ctx.author.id, reason, reminder_time, ctx.channel.id, ctx.message.id)
         self.cursor.execute(sql, val)
         self.db.commit()
         self.cursor.execute("SELECT id FROM reminders WHERE reminder_time=?", (reminder_time,))
@@ -38,7 +42,7 @@ class RemindMe(commands.Cog):
         channel = ctx.channel.id
         await message.add_reaction('\N{THUMBS UP SIGN}')
         logger.info('reminder(): Thumbs Up auf Nachricht reagiert')
-        await self.wait_for_reminder(ctx.author.id, text, reminder_time, message, channel, id)
+        await self.wait_for_reminder(ctx.author.id, reason, reminder_time, message, channel, id)
 
     async def wait_for_reminder(self, user_id, reminder_text, reminder_time1, message, channel, id):
         try:
@@ -125,7 +129,18 @@ class RemindMe(commands.Cog):
             await channel.send(
                 'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wait_for_reminder_startup()')
             logger.error('wait_for_reminder_startup() von ' + message.author.name)
-
+    
+    async def get_all_reminders(self,ctx):
+        user_id = ctx.author.id
+        all_reminders = self.cursor.execute("SELECT * FROM reminders where user_id=?",(user_id,)).fetchall()
+        msg_text = "Ich werde dich demnächst wissen lassen:\n".format(user_id)
+        for reminder in all_reminders:
+            remind_dt = datetime.fromtimestamp(reminder[3])
+            remind_date = remind_dt.date().strftime("%d-%b-%Y")
+            remind_time = remind_dt.time().strftime("%H:%M:%S")
+            text = reminder[2]
+            msg_text += "Am **{}** um **{}** werde ich dich wissen lassen dass:\n**{}**\n\n".format(remind_date,remind_time,text)
+        await ctx.message.reply(msg_text,mention_author=True)
 
 def setup(bot):
     bot.add_cog(RemindMe(bot, bot.db))
