@@ -23,6 +23,7 @@ class Help(commands.HelpCommand):
         embed.add_field(name='+randomsponge', value="+randomsponge [TEXT]", inline=False)
         embed.add_field(name='+git', value="Poschded den link zum Github Repository", inline=False)
         embed.add_field(name='+benwach', value="Ben wach?", inline=False)
+        embed.add_field(name='+magic8', value="+magic8 [FRAGE]", inline=False)
         embed.add_field(name='+choose',
                         value='+choose [Option 1] [Option 2] [...]\nBei mehreren Wörtern pro Option bitte jede Option in " " setzen.',
                         inline=False)

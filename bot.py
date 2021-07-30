@@ -33,7 +33,7 @@ logger = create_log_file(config.LOG_FILE_NAME)
 user_last_command = {}
 
 initial_extensions = ['commands.remindme', 'commands.choose', 'commands.wiki', 'commands.lyrics', 'commands.wetter',
-                      'commands.admin', 'commands.git', 'commands.wishlist', 'commands.benwach', 'commands.spongebob']
+                      'commands.admin', 'commands.git', 'commands.wishlist', 'commands.benwach', 'commands.spongebob', 'commands.magic8']
 
 
 class ZicklaaBot(discord.ext.commands.Bot):
