@@ -29,9 +29,8 @@ class Spongebob(commands.Cog):
                     if char != ' ':
                         i = not i
 
-                embed = discord.Embed(title='', color=16705372)
+                embed = discord.Embed(title='', color=16705372, description="**" + spongified_text + "**")
                 embed.set_author(name="Spongebob", icon_url="https://cdn.discordapp.com/emojis/658729208515788810.gif")
-                embed.add_field(name=spongified_text, value="\u200b")
                 embed.set_footer(text="Für " + ctx.author.name)
                 await ctx.channel.send(embed=embed)
                 await ctx.message.delete()
@@ -52,7 +51,7 @@ class Spongebob(commands.Cog):
 
                 spongified_text = ''.join(choice((str.upper, str.lower))(c) for c in text)  # das hier macht random capitalization, sieht schöner aus aber einfach nicht was das Volk will
 
-                embed = discord.Embed(title='', color=16705372)
+                embed = discord.Embed(title='', color=16705372, description="**" + spongified_text + "**")
                 embed.set_author(name="Spongebob", icon_url="https://cdn.discordapp.com/emojis/658729208515788810.gif")
                 embed.add_field(name=spongified_text, value="\u200b")
                 embed.set_footer(text="Für " + ctx.author.name)

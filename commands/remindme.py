@@ -132,14 +132,14 @@ class RemindMe(commands.Cog):
     
     async def get_all_reminders(self,ctx):
         user_id = ctx.author.id
-        all_reminders = self.cursor.execute("SELECT * FROM reminders where user_id=?",(user_id,)).fetchall()
+        all_reminders = self.cursor.execute("SELECT * FROM reminders WHERE user_id=? ORDER BY reminder_time ASC",(user_id,)).fetchall()
         msg_text = "Ich werde dich demnächst wissen lassen:\n".format(user_id)
         for reminder in all_reminders:
             remind_dt = datetime.fromtimestamp(reminder[3])
             remind_date = remind_dt.date().strftime("%d-%b-%Y")
             remind_time = remind_dt.time().strftime("%H:%M:%S")
             text = reminder[2]
-            msg_text += "Am **{}** um **{}** werde ich dich wissen lassen dass:\n**{}**\n\n".format(remind_date,remind_time,text)
+            msg_text += "Am **{}** um **{}** werde ich dich wissen lassen, dass:\n**{}**\n\n".format(remind_date,remind_time,text)
         await ctx.message.reply(msg_text,mention_author=True)
 
 def setup(bot):
