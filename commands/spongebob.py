@@ -18,7 +18,6 @@ class Spongebob(commands.Cog):
                 'Bruder gib doch ein Text an was soll das? Verschwendest hier meine CPU Zeit')
             else:
                 text = " ".join(text)
-                # spongified_text = ''.join(choice((str.upper, str.lower))(c) for c in text)  # dashier macht random capitalization, sieht schöner aus aber einfach nicht was das volk will
             
                 spongified_text = ""
                 i = True  # capitalize
@@ -34,12 +33,37 @@ class Spongebob(commands.Cog):
                 embed.set_author(name="Spongebob", icon_url="https://cdn.discordapp.com/emojis/658729208515788810.gif")
                 embed.add_field(name=spongified_text, value="\u200b")
                 embed.set_footer(text="Für " + ctx.author.name)
-                await ctx.reply(embed=embed)
+                await ctx.channel.send(embed=embed)
+                await ctx.message.delete()
                 logger.info('Spongebob gepostet für ' + ctx.author.name)
         except:
             await ctx.channel.send(
                 'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: spongebob()')
             logger.error('Spongebob von ' + ctx.author.name)
+
+    @commands.command()
+    async def randomsponge(self, ctx, *text):
+        try:
+            if not text:
+                await ctx.reply(
+                'Bruder gib doch ein Text an was soll das? Verschwendest hier meine CPU Zeit')
+            else:
+                text = " ".join(text)
+
+                spongified_text = ''.join(choice((str.upper, str.lower))(c) for c in text)  # das hier macht random capitalization, sieht schöner aus aber einfach nicht was das Volk will
+
+                embed = discord.Embed(title='', color=16705372)
+                embed.set_author(name="Spongebob", icon_url="https://cdn.discordapp.com/emojis/658729208515788810.gif")
+                embed.add_field(name=spongified_text, value="\u200b")
+                embed.set_footer(text="Für " + ctx.author.name)
+                await ctx.channel.send(embed=embed)
+                await ctx.message.delete()
+                logger.info('Spongebob gepostet für ' + ctx.author.name)
+        except:
+            await ctx.channel.send(
+                'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: spongebob()')
+            logger.error('Spongebob von ' + ctx.author.name)
+
 
 
 def setup(bot):

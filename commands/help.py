@@ -19,6 +19,8 @@ class Help(commands.HelpCommand):
         embed.add_field(name='+remindme',
                         value="Format: +remindme [ZAHL][s/m/h/d/mon] [TEXT]",
                         inline=False)
+        embed.add_field(name='+spongebob', value="+spongebob [TEXT]", inline=False)
+        embed.add_field(name='+randomsponge', value="+randomsponge [TEXT]", inline=False)
         embed.add_field(name='+git', value="Poschded den link zum Github Repository", inline=False)
         embed.add_field(name='+benwach', value="Ben wach?", inline=False)
         embed.add_field(name='+choose',
