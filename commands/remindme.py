@@ -72,10 +72,10 @@ class RemindMe(commands.Cog):
                 self.cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
                 self.db.commit()
                 logger.info('Reminder gelöscht: ' + str(id))
-        except:
+        except Exception as e:
             await message.channel.send(
                 'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wait_for_reminder()')
-            logger.error('wait_for_reminder()')
+            logger.error(f'Reminder from: {message.author.name}: {e}')
 
     async def get_reminder_startup(self):
         try:
@@ -100,10 +100,10 @@ class RemindMe(commands.Cog):
                     logger.info('Reminder gelöscht')
                     await self.get_reminder_startup()
                 await self.wait_for_reminder_startup(id, reminder_text, reminder_time1, channel_id, message)
-        except:
+        except Exception as e:
             await message.channel.send(
                 'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: get_reminder_startup()')
-            logger.error('get_reminder_startup()')
+            logger.error(e)
 
     async def wait_for_reminder_startup(self, id, reminder_text, reminder_time1, channel_id, message):
         try:
@@ -125,10 +125,10 @@ class RemindMe(commands.Cog):
                 self.db.commit()
                 logger.info('Reminder gelöscht: ' + str(id))
             await self.get_reminder_startup()
-        except:
+        except Exception as e:
             await channel.send(
                 'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wait_for_reminder_startup()')
-            logger.error('wait_for_reminder_startup() von ' + message.author.name)
+            logger.error(f'Reminder from {message.author.name}: {e}')
     
     async def get_all_reminders(self,ctx):
         user_id = ctx.author.id

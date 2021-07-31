@@ -17,15 +17,15 @@ class Lyrics(commands.Cog):
         return ctx.channel.id == 608746970340786282
 
     @commands.command()
-    @commands.check(is_f2_in_concert)
+    #@commands.check(is_f2_in_concert)
     async def lyrics(self, ctx, method: str, username: str):
         async with ctx.channel.typing():
             try:
                 network = pylast.LastFMNetwork(api_key=self.bot.LASTFM_API_KEY, api_secret=self.bot.LASTFM_API_SECRET)
                 user = network.get_user(username)
-            except:
+            except Exception as e:
                 await ctx.channel.send('User nit gefunden.')
-                logger.error('Lyrics: User nicht gefunden für ' + ctx.author.name)
+                logger.error(f'Request from {ctx.author.name}: {e}')
                 return
             if method == 'full':
                 try:
@@ -65,11 +65,10 @@ class Lyrics(commands.Cog):
                         while gesamter_text != "":
                             embed.add_field(name='Fortsetzung', value=(gesamter_text[0:1020]), inline=False)
                             gesamter_text = gesamter_text[1020:]
-                    except:
+                    except Exception as e:
                         await ctx.channel.send(
                             'Irgendwas is schiefgelaufen lol. Vielleicht ist der Songtext länger als Discord zulässt?')
-                        logger.error('ERROR: Lyrics Full von ' + ctx.author.name)
-
+                        logger.error(f'Request from {ctx.author.name}: {e}')
                     await ctx.channel.send(embed=embed)
                     logger.info('Lyrics: Full gepostet für ' + ctx.author.name)
                 except:
@@ -112,9 +111,9 @@ class Lyrics(commands.Cog):
 
                     await ctx.channel.send(embed=embed)
                     logger.info('Lyrics: Link gepostet für ' + ctx.author.name)
-                except:
+                except Exception as e:
                     await ctx.channel.send('Dieser User hört gerade nix.')
-                    logger.error('Lyrics: Link: User hört nichts von ' + ctx.author.name)
+                    logger.error(f'Request from {ctx.author.name}: {e}')
 
     @lyrics.error
     async def lyrics_error(self, ctx, error):

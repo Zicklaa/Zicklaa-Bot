@@ -41,10 +41,10 @@ class Wishlist(commands.Cog):
                     await ctx.channel.send(
                         'Wunsch zu lang, maximal 250 Chars.')
                     logger.info('Wishlist: Wunsch zu lang von ' + ctx.author.name)
-            except:
+            except Exception as e:
                 await ctx.channel.send(
                     'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wishlist()')
-                logger.error('ERROR: Wishlist von ' + ctx.author.name)
+                logger.error(ctx.author.name +': ' + e)
 
     @commands.command()
     async def showlist(self, ctx):
@@ -71,11 +71,10 @@ class Wishlist(commands.Cog):
                         break
                 await ctx.channel.send(all_wishes)
                 logger.info('Wishlist: Liste gepostet für ' + ctx.author.name)
-        except:
+        except Exception as e:
             await ctx.channel.send(
-                'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: show_wishlist()')
-            logger.error('Wishlist von ' + ctx.author.name)
-
+                'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: showlist()')
+            logger.error('showlist: ' + ctx.author.name +': ' + e)
     @commands.command()
     @commands.check(can_delete)
     async def delwish(self, ctx, id):
@@ -96,10 +95,10 @@ class Wishlist(commands.Cog):
                 self.db.commit()
                 await ctx.message.add_reaction('\N{THUMBS UP SIGN}')
                 logger.info('delete_wish: Wish gelöscht mit der ID: ' + id)
-        except:
+        except Exception as e:
             await ctx.channel.send(
                 'Irgendwas stimmt mit der ID nicht, Mois')
-            logger.error('delete_wish: Fehler bei Eingabe der ID')
+            logger.error('delete_wish: Fehler bei Eingabe der ID: ' + e)
 
     @delwish.error
     async def delwish_error(self, ctx, error):

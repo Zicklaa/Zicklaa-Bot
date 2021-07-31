@@ -25,10 +25,10 @@ class Wetter(commands.Cog):
                                         "wetter.png")
                 await ctx.reply(file=discord.File(r'wetter.png'))
                 logger.info('Wetter gepostet für ' + ctx.author.name + ': ' + location)
-            except:
+            except Exception as e:
                 await ctx.reply(
                     'Wetter schmetter, sag ich schon immer.')
-                logger.error('ERROR: Wetter für ' + ctx.author.name)
+                logger.error(f'Request from {ctx.author.name}: {e}')
 
     @commands.command()
     async def asciiwetter(self, ctx, location: str):
@@ -39,10 +39,10 @@ class Wetter(commands.Cog):
                 await ctx.reply(
                     "```" + res.text.replace("Folgen Sie https://twitter.com/igor_chubin für wttr.in Updates", "") + "```")
                 logger.info('Ascii Wetter gepostet für ' + ctx.author.name + ': ' + location)
-            except:
+            except Exception as e:
                 await ctx.reply(
                     'Wetter schmetter, sag ich schon immer.')
-                logger.error('ERROR: Wetter für ' + ctx.author.name)
+                logger.error(f'Request from {ctx.author.name}: {e}')
 
 
 def setup(bot):

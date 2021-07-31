@@ -21,9 +21,9 @@ class BenWach(commands.Cog):
                     await ctx.reply("Spinnst du? Hast du mal auf die Uhr gekuckt?")
                 elif 14 <= current_hour < 24:
                     await ctx.reply("Ben ist wahrscheinlich grad wach :))")
-            except:
+            except Exception as e:
                 await ctx.reply('Irgendwas stimmt nicht, Mois')
-                logger.error('benwach: Fehler')
+                logger.error(e)
 
 
 def setup(bot):

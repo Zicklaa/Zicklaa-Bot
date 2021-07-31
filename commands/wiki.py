@@ -64,14 +64,14 @@ class Wiki(commands.Cog):
                         break
                 await ctx.reply(embed=embed)
                 logger.info('Wikiartikel gepostet für ' + ctx.author.name + ': ' + wiki1)
-            except:
+            except Exception as e:
                 if search_term[0] != "feet":
                     wiki1 = " ".join(search_term)
                     wiki2 = "_".join(search_term)
                     wiki22 = wiki2.title()
                     url = 'https://de.wikipedia.org/wiki/' + wiki22
                     await ctx.reply('Jibtet nit. Probier doch mal selber: ' + url)
-                    logger.error('Wikiartikel nicht gefunden für ' + ctx.author.name + ': ' + wiki1)
+                    logger.error(f'Request from {ctx.author.name}: {e}')
 
     @commands.command()
     async def wikifeet(self, ctx, *args):

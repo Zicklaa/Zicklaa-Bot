@@ -36,10 +36,10 @@ class Spongebob(commands.Cog):
                     await ctx.channel.send(embed=embed)
                     await ctx.message.delete()
                     logger.info('Spongebob gepostet für ' + ctx.author.name)
-            except:
+            except Exception as e:
                 await ctx.channel.send(
                     'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: spongebob()')
-                logger.error('Spongebob von ' + ctx.author.name)
+                logger.error(f'Request from {ctx.author.name}: {e}')
 
     @commands.command()
     async def randomsponge(self, ctx, *text):
@@ -60,10 +60,10 @@ class Spongebob(commands.Cog):
                     await ctx.channel.send(embed=embed)
                     await ctx.message.delete()
                     logger.info('Spongebob gepostet für ' + ctx.author.name)
-            except:
+            except Exception as e:
                 await ctx.channel.send(
                     'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: spongebob()')
-                logger.error('Spongebob von ' + ctx.author.name)
+                logger.error(f'Request from {ctx.author.name}: {e}')
 
 
 

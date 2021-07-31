@@ -25,9 +25,9 @@ class Magic8(commands.Cog):
                     await ctx.reply("Wie soll ich dir etwas beantworten wenn du nichtmal ne Frage stellst, du Monger?")
                     logger.info("magic8(): Keine Frage gestellt von: " + ctx.author.name)
 
-            except:
+            except Exception as e:
                 await ctx.reply("Klappt nit lol 🤷")
-                logger.error('magic8()')
+                logger.error(f'Request from {ctx.author.name}: {e}')
 
 
 def setup(bot):
