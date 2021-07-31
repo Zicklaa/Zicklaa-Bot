@@ -110,7 +110,7 @@ class RemindMe(commands.Cog):
             channel = self.bot.get_channel(channel_id)
             if (reminder_time1 - time.time()) < 0:
                 await message.reply(
-                    "Ich werde dich wissen lassen:\n **{}**".format(reminder_text), mention_author=True)
+                    "Ich werde dich wissen lassen:\n**{}**".format(reminder_text), mention_author=True)
                 logger.info('Auf Reminder geantortet: ' + str(id))
                 self.cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
                 self.db.commit()
@@ -119,7 +119,7 @@ class RemindMe(commands.Cog):
                 logger.info('Nächster Reminder geladen: ' + str(id))
                 await asyncio.sleep(reminder_time1 - time.time())
                 await message.reply(
-                    "Ich werde dich wissen lassen:\n **{}**".format(reminder_text), mention_author=True)
+                    "Ich werde dich wissen lassen:\n**{}**".format(reminder_text), mention_author=True)
                 logger.info('Auf Reminder geantortet: ' + str(id))
                 self.cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
                 self.db.commit()
