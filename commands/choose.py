@@ -12,30 +12,30 @@ class Choose(commands.Cog):
 
     @commands.command()
     async def choose(self, ctx, *options):
-        try:
-
-            if len(options) < 1:
-                await ctx.reply("Gib Optionen, Moruk")
-            else:
-                cleared_list = []
-                for item in options:
-                    if item == " " or item == "":
-                        pass
-                    else:
-                        cleared_list.append(item)
-                if len(cleared_list) < 2:
-                    await ctx.reply("Gib mehr als 1 Optionen, Moruk")
-                    logger.error("choose(): Zu wenig Optionen gegeben")
+        async with ctx.channel.typing():
+            try:
+                if len(options) < 1:
+                    await ctx.reply("Gib Optionen, Moruk")
                 else:
-                    choice = random.choice(cleared_list)
-                    await ctx.reply(
-                        "Oh magische Miesmuschel! Wie lautet deine Antwort? \n" + "**" + choice + "**")
-                    logger.info("choose(): Antwort gepostet für: " + ctx.author.name)
+                    cleared_list = []
+                    for item in options:
+                        if item == " " or item == "":
+                            pass
+                        else:
+                            cleared_list.append(item)
+                    if len(cleared_list) < 2:
+                        await ctx.reply("Gib mehr als 1 Optionen, Moruk")
+                        logger.error("choose(): Zu wenig Optionen gegeben")
+                    else:
+                        choice = random.choice(cleared_list)
+                        await ctx.reply(
+                            "Oh magische Miesmuschel! Wie lautet deine Antwort? \n" + "**" + choice + "**")
+                        logger.info("choose(): Antwort gepostet für: " + ctx.author.name)
 
-        except:
-            await ctx.reply("Klappt nit lol 🤷")
-            logger.error('choose()')
-        pass
+            except:
+                await ctx.reply("Klappt nit lol 🤷")
+                logger.error('choose()')
+            pass
 
 
 def setup(bot):
