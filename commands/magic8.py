@@ -15,19 +15,18 @@ class Magic8(commands.Cog):
 
     @commands.command()
     async def magic8(self, ctx, *frage):
-        async with ctx.channel.typing():
-            try:
-                if frage:
-                    choice = random.choice(magic8_list)
-                    await ctx.reply(choice)
-                    logger.info("magic8(): Choice gepostet für: " + ctx.author.name)
-                else:
-                    await ctx.reply("Wie soll ich dir etwas beantworten wenn du nichtmal ne Frage stellst, du Monger?")
-                    logger.info("magic8(): Keine Frage gestellt von: " + ctx.author.name)
+        try:
+            if frage:
+                choice = random.choice(magic8_list)
+                await ctx.reply(choice)
+                logger.info("magic8(): Choice gepostet für: " + ctx.author.name)
+            else:
+                await ctx.reply("Wie soll ich dir etwas beantworten wenn du nichtmal ne Frage stellst, du Monger?")
+                logger.info("magic8(): Keine Frage gestellt von: " + ctx.author.name)
 
-            except Exception as e:
-                await ctx.reply("Klappt nit lol 🤷")
-                logger.error(f'Request from {ctx.author.name}: {e}')
+        except Exception as e:
+            await ctx.reply("Klappt nit lol 🤷")
+            logger.error(f'Request from {ctx.author.name}: {e}')
 
 
 def setup(bot):

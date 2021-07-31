@@ -11,14 +11,13 @@ class Git(commands.Cog):
 
     @commands.command()
     async def git(self, ctx):
-        async with ctx.channel.typing():
-            try:
-                await ctx.reply("https://github.com/Zicklaa/Zicklaa-Bot")
-                logger.info('Git Link gepostet für ' + ctx.author.name)
-            except Exception as e:
-                await ctx.reply(
-                    'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: git_gud()')
-                logger.error(f'Request from {ctx.author.name}: {e}')
+        try:
+            await ctx.reply("https://github.com/Zicklaa/Zicklaa-Bot")
+            logger.info('Git Link gepostet für ' + ctx.author.name)
+        except Exception as e:
+            await ctx.reply(
+                'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: git_gud()')
+            logger.error(f'Request from {ctx.author.name}: {e}')
 
 
 def setup(bot):

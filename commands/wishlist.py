@@ -18,33 +18,32 @@ class Wishlist(commands.Cog):
 
     @commands.command()
     async def wishlist(self, ctx, *wishtext):
-        async with ctx.channel.typing():
-            try:
-                if len(wishtext) < 1:
-                    await ctx.channel.send('Leere Wünsche: Name meiner Autobiographie.')
-                    logger.info('Wishlist: Leerer Wunsch von ' + ctx.author.name)
-                    return
+        try:
+            if len(wishtext) < 1:
+                await ctx.channel.send('Leere Wünsche: Name meiner Autobiographie.')
+                logger.info('Wishlist: Leerer Wunsch von ' + ctx.author.name)
+                return
 
-                wishtext_join = " ".join(wishtext)
-                if len(wishtext_join) < 250:
-                    user_id = ctx.author.id
-                    ts = datetime.now().strftime("%d-%b-%Y | %H:%M:%S")
-                    sql = "INSERT INTO wishlist (user_id, wishtext, ts) VALUES (?, ?, ?)"
-                    val = (user_id, wishtext_join, ts)
-                    self.cursor.execute(sql, val)
-                    self.db.commit()
-                    print("hehe")
+            wishtext_join = " ".join(wishtext)
+            if len(wishtext_join) < 250:
+                user_id = ctx.author.id
+                ts = datetime.now().strftime("%d-%b-%Y | %H:%M:%S")
+                sql = "INSERT INTO wishlist (user_id, wishtext, ts) VALUES (?, ?, ?)"
+                val = (user_id, wishtext_join, ts)
+                self.cursor.execute(sql, val)
+                self.db.commit()
+                print("hehe")
 
-                    await ctx.message.add_reaction('\N{THUMBS UP SIGN}')
-                    logger.info('Wishlist: neuer Wunsch + Reaktion')
-                else:
-                    await ctx.channel.send(
-                        'Wunsch zu lang, maximal 250 Chars.')
-                    logger.info('Wishlist: Wunsch zu lang von ' + ctx.author.name)
-            except Exception as e:
+                await ctx.message.add_reaction('\N{THUMBS UP SIGN}')
+                logger.info('Wishlist: neuer Wunsch + Reaktion')
+            else:
                 await ctx.channel.send(
-                    'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wishlist()')
-                logger.error(ctx.author.name +': ' + e)
+                    'Wunsch zu lang, maximal 250 Chars.')
+                logger.info('Wishlist: Wunsch zu lang von ' + ctx.author.name)
+        except Exception as e:
+            await ctx.channel.send(
+                'Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wishlist()')
+            logger.error(ctx.author.name +': ' + e)
 
     @commands.command()
     async def showlist(self, ctx):
