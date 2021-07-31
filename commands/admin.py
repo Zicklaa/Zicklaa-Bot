@@ -10,7 +10,8 @@ class Admin(commands.Cog):
         self.bot = bot
 
     async def is_privileged(ctx):
-        return ctx.author.guild_permissions.administrator or ctx.author.id == 136103007065473024
+        return (ctx.author.guild_permissions.administrator or ctx.author.id == 136103007065473024
+        or ctx.author.id == 288413759117066241 or ctx.author.id == 156136437887008771)
 
     @commands.command(hidden=True)
     @commands.check(is_privileged)
