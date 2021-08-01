@@ -50,6 +50,7 @@ class Help(commands.HelpCommand):
             inline=False,
         )
         embed.add_field(name="+ltb", value="Postet (L)us(T)ige (B)ildchen", inline=False)
+        embed.add_field(name="+obm ODER +oow", value="Postet ein  Random Meme aus hot von r/OkBrudiMongo oder dem Ösi Pendant", inline=False)
         embed.set_author(
             name="Gott",
             icon_url="https://cdn.psychologytoday.com/sites"
