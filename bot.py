@@ -72,6 +72,12 @@ class ZicklaaBot(discord.ext.commands.Bot):
             creation1 = """CREATE TABLE IF NOT EXISTS
             reminders(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, reminder_text TEXT, reminder_time INTEGER, channel INTEGER, message_id INTEGER)"""
             cursor.execute(creation1)
+            reminder_columns = [
+                x[1] for x in cursor.execute("PRAGMA table_info(reminders)").fetchall()
+            ]
+            if not "parent_id" in reminder_columns:
+                alter1 = """ALTER TABLE reminders ADD COLUMN parent_id INTEGER"""
+                cursor.execute(alter1)
             creation2 = """CREATE TABLE IF NOT EXISTS wishlist(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, wishtext TEXT, ts TEXT)"""
             cursor.execute(creation2)
         except:
