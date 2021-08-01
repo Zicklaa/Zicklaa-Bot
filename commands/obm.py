@@ -44,6 +44,21 @@ class Okbrudimongo(commands.Cog):
                 await ctx.reply("Klappt nit lol 🤷")
                 logger.error(f"OOW ERROR von {ctx.author.name}: {e}")
 
+    @commands.command()
+    async def obr(self, ctx):
+        try:
+            reddit = praw.Reddit(
+            client_id=self.bot.CLIENT_ID,
+            client_secret=self.bot.CLIENT_SECRET,
+            user_agent="by u/zicklaa"
+            )
+            submissions = [submission for submission in reddit.subreddit("okbuddyretard").hot(limit=limit)]
+            await ctx.reply(submissions[random.randint(0, limit)].url)
+            logger.info("Redditlink gepostet für: " + ctx.author.name)
+        except Exception as e:
+                await ctx.reply("Klappt nit lol 🤷")
+                logger.error(f"OBR ERROR von {ctx.author.name}: {e}")
+
 
 def setup(bot):
     bot.add_cog(Okbrudimongo(bot))
