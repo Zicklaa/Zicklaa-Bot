@@ -21,7 +21,7 @@ class BenWach(commands.Cog):
             elif 14 <= current_hour < 24:
                 await ctx.reply("Ben ist wahrscheinlich grad wach :))")
         except Exception as e:
-            await ctx.reply('Irgendwas stimmt nicht, Mois')
+            await ctx.reply("Irgendwas stimmt nicht, Mois")
             logger.error(e)
 
 

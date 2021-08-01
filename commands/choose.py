@@ -24,11 +24,17 @@ class Choose(commands.Cog):
                         cleared_list.append(item)
                 if len(cleared_list) < 2:
                     await ctx.reply("Gib mehr als 1 Optionen, Moruk")
-                    logger.error(f"Request from {ctx.author.name}. Zu wenig Optionen gegeben.")
+                    logger.error(
+                        f"Request from {ctx.author.name}. Zu wenig Optionen gegeben."
+                    )
                 else:
                     choice = random.choice(cleared_list)
                     await ctx.reply(
-                        "Oh magische Miesmuschel! Wie lautet deine Antwort? \n" + "**" + choice + "**")
+                        "Oh magische Miesmuschel! Wie lautet deine Antwort? \n"
+                        + "**"
+                        + choice
+                        + "**"
+                    )
                     logger.info("Antwort gepostet für: " + ctx.author.name)
 
         except Exception as e:

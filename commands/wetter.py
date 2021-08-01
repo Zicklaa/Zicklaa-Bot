@@ -16,33 +16,38 @@ class Wetter(commands.Cog):
     async def wetter(self, ctx, location: str):
         async with ctx.channel.typing():
             try:
-                '''url = 'https://wttr.in/{}'.format(place) + "?n&T&2&lang=de"
+                """url = 'https://wttr.in/{}'.format(place) + "?n&T&2&lang=de"
                 res = requests.get(url)
                 await message.channel.send(
-                    "```" + res.text.replace("Folgen Sie https://twitter.com/igor_chubin für wttr.in Updates", "") + "```")'''
-                url_png = 'https://de.wttr.in/{}'.format(location) + "_m" + ".png"
-                urllib.request.urlretrieve(url_png,
-                                        "wetter.png")
-                await ctx.reply(file=discord.File(r'wetter.png'))
-                logger.info('Wetter gepostet für ' + ctx.author.name + ': ' + location)
+                    "```" + res.text.replace("Folgen Sie https://twitter.com/igor_chubin für wttr.in Updates", "") + "```")"""
+                url_png = "https://de.wttr.in/{}".format(location) + "_m" + ".png"
+                urllib.request.urlretrieve(url_png, "wetter.png")
+                await ctx.reply(file=discord.File(r"wetter.png"))
+                logger.info("Wetter gepostet für " + ctx.author.name + ": " + location)
             except Exception as e:
-                await ctx.reply(
-                    'Wetter schmetter, sag ich schon immer.')
-                logger.error(f'Request from {ctx.author.name}: {e}')
+                await ctx.reply("Wetter schmetter, sag ich schon immer.")
+                logger.error(f"Request from {ctx.author.name}: {e}")
 
     @commands.command()
     async def asciiwetter(self, ctx, location: str):
         async with ctx.channel.typing():
             try:
-                url = 'https://wttr.in/{}'.format(location) + "?n&T&2&lang=de"
+                url = "https://wttr.in/{}".format(location) + "?n&T&2&lang=de"
                 res = requests.get(url)
                 await ctx.reply(
-                    "```" + res.text.replace("Folgen Sie https://twitter.com/igor_chubin für wttr.in Updates", "") + "```")
-                logger.info('Ascii Wetter gepostet für ' + ctx.author.name + ': ' + location)
+                    "```"
+                    + res.text.replace(
+                        "Folgen Sie https://twitter.com/igor_chubin für wttr.in Updates",
+                        "",
+                    )
+                    + "```"
+                )
+                logger.info(
+                    "Ascii Wetter gepostet für " + ctx.author.name + ": " + location
+                )
             except Exception as e:
-                await ctx.reply(
-                    'Wetter schmetter, sag ich schon immer.')
-                logger.error(f'Request from {ctx.author.name}: {e}')
+                await ctx.reply("Wetter schmetter, sag ich schon immer.")
+                logger.error(f"Request from {ctx.author.name}: {e}")
 
 
 def setup(bot):

@@ -12,17 +12,15 @@ import time
 import traceback
 import sys
 
-# test
 
 def create_log_file(path):
-    logger = logging.getLogger('ZicklaaBot')
+    logger = logging.getLogger("ZicklaaBot")
     logger.setLevel(logging.INFO)
 
-    handler = TimedRotatingFileHandler(path,
-                                       when="midnight",
-                                       interval=1,
-                                       backupCount=5)
-    formatter = logging.Formatter('%(asctime)s::%(name)s::%(funcName)s::%(levelname)s - %(message)s')
+    handler = TimedRotatingFileHandler(path, when="midnight", interval=1, backupCount=5)
+    formatter = logging.Formatter(
+        "%(asctime)s::%(name)s::%(funcName)s::%(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     return logger
@@ -32,14 +30,25 @@ logger = create_log_file(config.LOG_FILE_NAME)
 
 user_last_command = {}
 
-initial_extensions = ['commands.remindme', 'commands.choose', 'commands.wiki', 'commands.lyrics', 'commands.wetter',
-                      'commands.admin', 'commands.git', 'commands.wishlist', 'commands.benwach', 'commands.spongebob', 'commands.magic8']
+initial_extensions = [
+    "commands.remindme",
+    "commands.choose",
+    "commands.wiki",
+    "commands.lyrics",
+    "commands.wetter",
+    "commands.admin",
+    "commands.git",
+    "commands.wishlist",
+    "commands.benwach",
+    "commands.spongebob",
+    "commands.magic8",
+]
 
 
 class ZicklaaBot(discord.ext.commands.Bot):
     def __init__(self):
         super().__init__(command_prefix=config.PREFIX, help_command=help.Help())
-        self.db = sqlite3.connect('reminder-wishlist.db')
+        self.db = sqlite3.connect("reminder-wishlist.db")
         self.LASTFM_API_KEY = config.API_KEY
         self.LASTFM_API_SECRET = config.API_SECRET
         self.LYRICS_KEY = config.LYRICS_KEY
@@ -49,12 +58,12 @@ class ZicklaaBot(discord.ext.commands.Bot):
             try:
                 self.load_extension(extension)
             except Exception as e:
-                print(f'Failed to load extension {extension}.')
+                print(f"Failed to load extension {extension}: {e}")
 
     async def on_ready(self):
         print("Hallo I bim omnline :^)")
-        logger.info('========================Startup============================')
-        remindme = self.get_cog('RemindMe')
+        logger.info("========================Startup============================")
+        remindme = self.get_cog("RemindMe")
         await remindme.get_reminder_startup()
 
     def create_tables(self):
@@ -87,7 +96,7 @@ async def is_on_cooldown(ctx):
 
 @bot.event
 async def on_command_error(ctx, error):
-    if hasattr(ctx.command, 'on_error'):
+    if hasattr(ctx.command, "on_error"):
         return
     cog = ctx.cog
     if cog:
@@ -95,7 +104,7 @@ async def on_command_error(ctx, error):
             return
 
     ignored = (commands.CommandNotFound,)
-    error = getattr(error, 'original', error)
+    error = getattr(error, "original", error)
 
     if isinstance(error, ignored):
         return
@@ -104,8 +113,10 @@ async def on_command_error(ctx, error):
         logger.error(f"User {str(ctx.author)} triggered: {error}")
         return
     else:
-        print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
-        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+        print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
+        traceback.print_exception(
+            type(error), error, error.__traceback__, file=sys.stderr
+        )
 
 
 bot.run(config.CLIENT_RUN)
