@@ -49,6 +49,7 @@ class Help(commands.HelpCommand):
             value='+choose [Option 1] [Option 2] [...]\nBei mehreren Wörtern pro Option bitte jede Option in " " setzen.',
             inline=False,
         )
+        embed.add_field(name="+ltb", value="Postet (L)us(T)ige (B)ildchen", inline=False)
         embed.set_author(
             name="Gott",
             icon_url="https://cdn.psychologytoday.com/sites"

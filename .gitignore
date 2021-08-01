@@ -147,3 +147,7 @@ lib64
 .vscode
 wetter.png
 ZicklaaBotLog.log*
+*png
+*jpg
+*.jpeg
+

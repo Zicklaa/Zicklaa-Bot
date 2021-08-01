@@ -42,6 +42,7 @@ initial_extensions = [
     "commands.benwach",
     "commands.spongebob",
     "commands.magic8",
+    "commands.lustigebildchen",
 ]
 
 
