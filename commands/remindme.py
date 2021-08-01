@@ -185,10 +185,10 @@ class RemindMe(commands.Cog):
 
     async def send_reminder(self, reminder: Reminder):
         try:
-            if not self.check_reminder_exists(reminder):
+            if not await self.check_reminder_exists(reminder):
+                self.delete_reminder(reminder)
                 return
             channel = self.bot.get_channel(reminder.channel_id)
-
             if reminder.message_id > 0:
                 message = await channel.fetch_message(reminder.message_id)
                 await message.reply(
@@ -203,18 +203,31 @@ class RemindMe(commands.Cog):
                     )
                 )
                 logger.info("Auf Reminder geantortet: " + str(reminder._id))
-            self.cursor.execute("DELETE FROM reminders WHERE id=?", (reminder._id,))
-            self.db.commit()
-            logger.info("Reminder gelöscht: " + str(reminder._id))
         except Exception as e:
             logger.error(f"Error while sending reminder: {e}")
+        finally:
+            self.delete_reminder(reminder)
 
-    def check_reminder_exists(self, reminder: Reminder):
+    async def check_reminder_exists(self, reminder: Reminder):
         res = self.cursor.execute(
             "SELECT * FROM reminders where id=?", (reminder._id,)
-        ).fetchall()
+        ).fetchone()
         if not res:
             return False
+        if res[6] is not None:
+            parent_reminder_record = self.cursor.execute(
+                "SELECT * FROM reminders where id=?", (res[6],)
+            ).fetchone()
+            if not parent_reminder_record:
+                return False
+            try:
+                parent_reminder = reminder_from_record(parent_reminder_record)
+                await self.bot.get_channel(parent_reminder.channel_id).fetch_message(
+                    parent_reminder.message_id
+                )
+                return True
+            except:
+                return False
         return True
 
     def is_reminder_message(self, message_id, author_id, emoji, user_id):
@@ -230,6 +243,11 @@ class RemindMe(commands.Cog):
         ):
             return False
         return True
+
+    def delete_reminder(self, reminder: Reminder):
+        self.cursor.execute("DELETE FROM reminders WHERE id=?", (reminder._id,))
+        self.db.commit()
+        logger.info("Reminder gelöscht: " + str(reminder._id))
 
 
 def setup(bot):
