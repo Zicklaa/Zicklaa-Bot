@@ -6,6 +6,7 @@ from discord.ext import commands
 
 logger = logging.getLogger("ZicklaaBot.Choose")
 
+dir = "/home/pi/Zicklaa-Bot/LustigeBildchen/"
 
 class LustigeBildchen(commands.Cog):
     def __init__(self, bot):
@@ -14,14 +15,14 @@ class LustigeBildchen(commands.Cog):
     @commands.command()
     async def ltb(self, ctx):
         try:
-            ltb = random.choice(os.listdir("/home/pi/Zicklaa-Bot/LustigeBildchen/"))
-            await ctx.channel.send(file=discord.File("/home/pi/Zicklaa-Bot/LustigeBildchen/" + ltb))
+            ltb = random.choice(os.listdir(dir))
+            await ctx.channel.send(file=discord.File(dir + ltb))
             await ctx.message.delete()
             logger.info("Lustiges Bildchen gepostet für: " + ctx.author.name)
 
         except Exception as e:
             await ctx.reply("Klappt nit lol 🤷")
-            logger.error(e)
+            logger.error(f"Lustiges Bilchen ERROR von {ctx.author.name}: {e}")
         pass
 
 
