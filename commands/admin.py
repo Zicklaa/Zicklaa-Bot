@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from discord.ext import commands
@@ -34,6 +35,19 @@ class Admin(commands.Cog):
     async def unload(self, ctx, extension_name: str):
         self.bot.unload_extension(f"commands.{extension_name}")
         await ctx.send("{} unloaded.".format(extension_name))
+
+    @commands.command(hidden=True)
+    @commands.check(is_privileged)
+    async def reload(self, ctx, extension_name: str):
+        self.bot.unload_extension(f"commands.{extension_name}")
+        await asyncio.sleep(2)
+        try:
+            self.bot.load_extension(f"commands.{extension_name}")
+        except Exception as e:
+            await ctx.send("```\n{}: {}\n```".format(type(e).__name__, str(e)))
+            logger.error("{}: {}".format(type(e).__name__, str(e)))
+            return
+        await ctx.send("{} reloaded.".format(extension_name))
 
 
 def setup(bot):
