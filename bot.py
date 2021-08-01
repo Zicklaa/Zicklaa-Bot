@@ -1,5 +1,6 @@
 import discord
 from discord.ext.commands.errors import CheckFailure
+from praw.config import Config
 import config
 import discord
 from discord.ext import commands
@@ -43,6 +44,7 @@ initial_extensions = [
     "commands.spongebob",
     "commands.magic8",
     "commands.lustigebildchen",
+    "commands.obm",
 ]
 
 
@@ -53,6 +55,8 @@ class ZicklaaBot(discord.ext.commands.Bot):
         self.LASTFM_API_KEY = config.API_KEY
         self.LASTFM_API_SECRET = config.API_SECRET
         self.LYRICS_KEY = config.LYRICS_KEY
+        self.CLIENT_ID = config.CLIENT_ID
+        self.CLIENT_SECRET = config.CLIENT_SECRET
         self.create_tables()
 
         for extension in initial_extensions:
