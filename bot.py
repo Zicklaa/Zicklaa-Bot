@@ -45,12 +45,14 @@ initial_extensions = [
     "commands.magic8",
     "commands.lustigebildchen",
     "commands.obm",
+    "commands.fav",
+    "commands.help",
 ]
 
 
 class ZicklaaBot(discord.ext.commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix=config.PREFIX, help_command=help.Help())
+        super().__init__(command_prefix=config.PREFIX, help_command=None)
         self.db = sqlite3.connect("reminder-wishlist.db")
         self.LASTFM_API_KEY = config.API_KEY
         self.LASTFM_API_SECRET = config.API_SECRET
@@ -85,6 +87,8 @@ class ZicklaaBot(discord.ext.commands.Bot):
                 cursor.execute(alter1)
             creation2 = """CREATE TABLE IF NOT EXISTS wishlist(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, wishtext TEXT, ts TEXT)"""
             cursor.execute(creation2)
+            creation3 = """CREATE TABLE IF NOT EXISTS favs(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, message_id INTEGER, name TEXT, channel_id INTEGER)"""
+            cursor.execute(creation3)
         except:
             pass
 

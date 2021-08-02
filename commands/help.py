@@ -2,17 +2,24 @@ import discord
 import logging
 from discord.ext import commands
 
-logger = logging.getLogger("ZicklaaBot.BenWach")
+logger = logging.getLogger("ZicklaaBot.Help")
 
 
-class Help(commands.HelpCommand):
-    async def send_bot_help(self, mapping):
+class Help(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command()
+    async def help(self, ctx):
         embed = discord.Embed(
             title="Help", description="Hier wird Ihnen geholfen!", color=0x00FF00
         )
         embed.add_field(name="+help", value="Öffnet das Hilfefenster", inline=False)
         embed.add_field(
             name="+lyrics", value="Format: +lyrics (full/link) [USERNAME]", inline=False
+        )
+        embed.add_field(
+            name="+fav", value="Faven mit Fus Emote\nFormat: +fav [FAV NAME]", inline=False
         )
         embed.add_field(name="+wetter", value="Format: +wetter [ORTNAME]", inline=False)
         embed.add_field(
@@ -56,4 +63,9 @@ class Help(commands.HelpCommand):
             icon_url="https://cdn.psychologytoday.com/sites"
             "/default/files/field_blog_entry_images/God_the_Father.jpg",
         )
-        await self.get_destination().send(embed=embed)
+        dm_channel = await ctx.author.create_dm()
+        await dm_channel.send(embed=embed)
+        #await self.get_destination().send(embed=embed)
+
+def setup(bot):
+    bot.add_cog(Help(bot))

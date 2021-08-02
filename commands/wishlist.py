@@ -36,7 +36,6 @@ class Wishlist(commands.Cog):
                 val = (user_id, wishtext_join, ts)
                 self.cursor.execute(sql, val)
                 self.db.commit()
-                print("hehe")
 
                 await ctx.message.add_reaction("\N{THUMBS UP SIGN}")
                 logger.info("Wishlist: neuer Wunsch + Reaktion")
