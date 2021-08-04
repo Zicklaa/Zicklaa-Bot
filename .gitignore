@@ -145,6 +145,7 @@ pyvenv.cfg
 bin/
 lib64
 .vscode
+hivemind.txt
 wetter.png
 ZicklaaBotLog.log*
 *png

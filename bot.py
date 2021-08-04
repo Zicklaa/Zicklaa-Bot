@@ -47,6 +47,7 @@ initial_extensions = [
     "commands.obm",
     "commands.fav",
     "commands.help",
+    # "commands.hivemind",
 ]
 
 

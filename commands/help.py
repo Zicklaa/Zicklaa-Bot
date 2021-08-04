@@ -21,6 +21,9 @@ class Help(commands.Cog):
         embed.add_field(
             name="+fav", value="Faven mit Fus Emote\nFormat: +fav [FAV NAME]", inline=False
         )
+        embed.add_field(
+            name="+hivemind", value="Was würde der Benserver dazu sagen?", inline=False
+        )
         embed.add_field(name="+wetter", value="Format: +wetter [ORTNAME]", inline=False)
         embed.add_field(
             name="+asciiwetter", value="Format: +asciiwetter [ORTNAME]", inline=False
