@@ -15,6 +15,15 @@ with open('hivemind.json') as json_file:
 json_model = markovify.Text.from_json(hivemind_json)
 print("hivemind.json loaded")
 
+'''with open('hivemind.txt','r',encoding='utf-8') as f:
+    text = f.read()
+text_model = markovify.NewlineText(text, state_size=3, well_formed=True)
+text_model = text_model.compile()
+model_json = text_model.to_json()
+with open('hivemind.json', 'w') as f:
+    json.dump(model_json, f)
+print("compiled")'''
+
 class Hivemind(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
