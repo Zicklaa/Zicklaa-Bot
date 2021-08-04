@@ -4,16 +4,16 @@ import discord
 from discord import message
 import markovify
 import re
+import json
 
 from discord.ext import commands
 
 logger = logging.getLogger("ZicklaaBot.Hivemind")
 
-with open('hivemind.txt','r',encoding='utf-8') as f:
-    text = f.read()
-text_model = markovify.NewlineText(text, state_size=3)
-text_model = text_model.compile()
-print("compiled")
+with open('hivemind.json') as json_file:
+    hivemind_json = json.load(json_file)
+json_model = markovify.Text.from_json(hivemind_json)
+print("hivemind.json loaded")
 
 class Hivemind(commands.Cog):
     def __init__(self, bot):
@@ -23,7 +23,7 @@ class Hivemind(commands.Cog):
     async def hivemind(self, ctx):
         try:
             while True:
-                satz = text_model.make_short_sentence(140)
+                satz = json_model.make_short_sentence(140)
                 if satz:
                     await ctx.reply(satz)
                     break

@@ -4,7 +4,7 @@ import discord
 
 from discord.ext import commands
 
-logger = logging.getLogger("ZicklaaBot.Choose")
+logger = logging.getLogger("ZicklaaBot.LustigeBildchen")
 
 dir = "/home/pi/Zicklaa-Bot/LustigeBildchen/"
 

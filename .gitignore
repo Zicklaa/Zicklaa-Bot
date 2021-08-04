@@ -146,6 +146,7 @@ bin/
 lib64
 .vscode
 hivemind.txt
+hivemind.json
 wetter.png
 ZicklaaBotLog.log*
 *png
