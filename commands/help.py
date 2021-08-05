@@ -22,7 +22,7 @@ class Help(commands.Cog):
             name="+fav", value="Faven mit Fus Emote\nFormat: +fav [FAV NAME]", inline=False
         )
         embed.add_field(
-            name="+hivemind", value="Was würde der Benserver dazu sagen?", inline=False
+            name="+hm", value="Was würde der Benserver dazu sagen?", inline=False
         )
         embed.add_field(name="+wetter", value="Format: +wetter [ORTNAME]", inline=False)
         embed.add_field(

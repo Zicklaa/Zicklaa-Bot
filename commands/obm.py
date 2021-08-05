@@ -21,8 +21,12 @@ class Okbrudimongo(commands.Cog):
             client_secret=self.bot.CLIENT_SECRET,
             user_agent="by u/zicklaa"
             )
-            submissions = [submission for submission in reddit.subreddit("okbrudimongo").hot(limit=limit)]
-            await ctx.reply(submissions[random.randint(0, limit)].url)
+            random_submission = reddit.subreddit('okbrudimongo').random()
+            print(random_submission)
+            print(random_submission.url)
+            await ctx.reply(random_submission.url)
+            '''submissions = [submission for submission in reddit.subreddit("okbrudimongo").hot(limit=limit)]
+            await ctx.reply(submissions[random.randint(0, limit)].url)'''
             logger.info("Redditlink gepostet für: " + ctx.author.name)
 
         except Exception as e:
@@ -37,8 +41,10 @@ class Okbrudimongo(commands.Cog):
             client_secret=self.bot.CLIENT_SECRET,
             user_agent="by u/zicklaa"
             )
-            submissions = [submission for submission in reddit.subreddit("okoidawappler").hot(limit=limit)]
-            await ctx.reply(submissions[random.randint(0, limit)].url)
+            random_submission = reddit.subreddit('okoidawappler').random()
+            await ctx.reply(random_submission.url)
+            '''submissions = [submission for submission in reddit.subreddit("okoidawappler").hot(limit=limit)]
+            await ctx.reply(submissions[random.randint(0, limit)].url)'''
             logger.info("Redditlink gepostet für: " + ctx.author.name)
         except Exception as e:
                 await ctx.reply("Klappt nit lol 🤷")

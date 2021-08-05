@@ -29,10 +29,11 @@ class Hivemind(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def hivemind(self, ctx):
+    async def hm(self, ctx):
         try:
             while True:
-                satz = json_model.make_short_sentence(140)
+                # satz = json_model.make_short_sentence(140)
+                satz = json_model.make_sentence(max_overlap_ratio = .67,)
                 if satz:
                     await ctx.reply(satz)
                     break

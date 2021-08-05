@@ -39,7 +39,7 @@ class Fav(commands.Cog):
                     self.cursor.execute(sql, val)
                     self.db.commit()
                     await response.add_reaction("\N{THUMBS UP SIGN}")
-                    logger.info("Neuer Fav angelegt für für: " + response.author.name)
+                    logger.info("Neuer Fav angelegt für: " + response.author.name)
                 else:
                     await response.reply("Zu lang. Bidde unter 250chars")
                     response = await self.bot.wait_for('message', check=message_check(channel=dm_channel))
@@ -55,7 +55,7 @@ class Fav(commands.Cog):
                         self.cursor.execute(sql, val)
                         self.db.commit()
                         await response.add_reaction("\N{THUMBS UP SIGN}")
-                        logger.info("Neuer Fav angelegt für für: " + response.author.name)
+                        logger.info("Neuer Fav angelegt für: " + response.author.name)
                     else:
                         await response.reply("Dummkopf")
             except Exception as e:
