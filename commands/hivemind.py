@@ -47,10 +47,13 @@ class Hivemind(commands.Cog):
     async def scrap(self, ctx):
         try:
             print("scrapping")
-            messages = await ctx.channel.history(limit=5000).flatten()
-            f = open("hivemind.txt", "a")
+            messages = await ctx.channel.history(limit=100000).flatten()
+            f = open("hivemind_new.txt", "a")
             for message in messages:
-                f.write(message.content + "\n")
+                if message.content == '' or message.content.startswith('<') or message.content.startswith('https') or message.content.startswith('+') or message.content.startswith('$'):
+                    print('passed')
+                else:
+                    f.write(message.content + "\n")
             f.close()
             print("done")
             #logger.info("Hivemind Scrap für: " + ctx.author.name)
