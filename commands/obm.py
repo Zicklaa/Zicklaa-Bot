@@ -22,8 +22,6 @@ class Okbrudimongo(commands.Cog):
             user_agent="by u/zicklaa"
             )
             random_submission = reddit.subreddit('okbrudimongo').random()
-            print(random_submission)
-            print(random_submission.url)
             await ctx.reply(random_submission.url)
             '''submissions = [submission for submission in reddit.subreddit("okbrudimongo").hot(limit=limit)]
             await ctx.reply(submissions[random.randint(0, limit)].url)'''

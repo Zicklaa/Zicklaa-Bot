@@ -104,7 +104,7 @@ async def is_on_cooldown(ctx):
     if str(ctx.author) not in user_last_command:
         user_last_command[str(ctx.author)] = 10
     elapsed = time.time() - user_last_command[str(ctx.author)]
-    if elapsed > 5:
+    if elapsed > 2:
         user_last_command[str(ctx.author)] = time.time()
         return True
     return False
