@@ -87,35 +87,12 @@ class Fav(commands.Cog):
 
     @commands.command()
     async def fav(self, ctx, *name):
-        # try:
-        name = " ".join(name)
-        if name:
-            fav = self.cursor.execute(
-                "SELECT * FROM favs WHERE name=? AND user_id=?", (name, ctx.author.id,)
-            ).fetchone()
-            if fav:
-                try:
-                    channel = self.bot.get_channel(fav[4])
-                    fav_message = await channel.fetch_message(fav[2])
-                    embed = discord.Embed(title="", description=fav_message.content, color=0x00ff00)
-                    current_time = (fav_message.created_at + datetime.timedelta(hours=2)).strftime("%d.%m.%Y, %H:%M:%S")
-                    if fav_message.attachments:
-                        embed.set_image(url=str(fav_message.attachments[0].url))
-                    embed.set_author(name=fav_message.author.name, icon_url=fav_message.author.avatar_url)
-                    embed.set_footer(text=str(fav[0]) + ' | ' + current_time + ' | #' +
-                                     fav_message.channel.name + " | by: " + ctx.author.name + " | Name: " + fav[3])
-                    await ctx.channel.send(embed=embed)
-                    await ctx.message.delete()
-                except Exception as e:
-                    await ctx.message.reply("Klappt nit lol 🤷")
-                    logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
-            else:
-                await ctx.message.add_reaction("\N{NO ENTRY SIGN}")
-                await ctx.message.add_reaction("\N{LEFT-POINTING MAGNIFYING GLASS}")
-        else:
-            try:
+        try:
+            name = " ".join(name)
+            if name:
+                name = '%' + name + '%'
                 fav = self.cursor.execute(
-                    "SELECT * FROM favs WHERE user_id=? ORDER BY RANDOM()", (ctx.author.id,)
+                    "SELECT * FROM favs WHERE user_id=? AND name LIKE ? ORDER BY RANDOM()", (ctx.author.id, name,)
                 ).fetchone()
                 if fav:
                     try:
@@ -134,9 +111,37 @@ class Fav(commands.Cog):
                     except Exception as e:
                         await ctx.message.reply("Klappt nit lol 🤷")
                         logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
-            except Exception as e:
-                await ctx.message.reply("Klappt nit lol 🤷")
-                logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
+                else:
+                    await ctx.message.add_reaction("\N{NO ENTRY SIGN}")
+                    await ctx.message.add_reaction("\N{LEFT-POINTING MAGNIFYING GLASS}")
+            else:
+                try:
+                    fav = self.cursor.execute(
+                        "SELECT * FROM favs WHERE user_id=? ORDER BY RANDOM()", (ctx.author.id,)
+                    ).fetchone()
+                    if fav:
+                        try:
+                            channel = self.bot.get_channel(fav[4])
+                            fav_message = await channel.fetch_message(fav[2])
+                            embed = discord.Embed(title="", description=fav_message.content, color=0x00ff00)
+                            current_time = (fav_message.created_at + datetime.timedelta(hours=2)
+                                            ).strftime("%d.%m.%Y, %H:%M:%S")
+                            if fav_message.attachments:
+                                embed.set_image(url=str(fav_message.attachments[0].url))
+                            embed.set_author(name=fav_message.author.name, icon_url=fav_message.author.avatar_url)
+                            embed.set_footer(text=str(fav[0]) + ' | ' + current_time + ' | #' +
+                                             fav_message.channel.name + " | by: " + ctx.author.name + " | Name: " + fav[3])
+                            await ctx.channel.send(embed=embed)
+                            await ctx.message.delete()
+                        except Exception as e:
+                            await ctx.message.reply("Klappt nit lol 🤷")
+                            logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
+                except Exception as e:
+                    await ctx.message.reply("Klappt nit lol 🤷")
+                    logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
+        except Exception as e:
+            await ctx.message.reply("Klappt nit lol 🤷")
+            logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
 
     @commands.command()
     async def allfavs(self, ctx):
