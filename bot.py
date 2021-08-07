@@ -48,6 +48,7 @@ initial_extensions = [
     "commands.fav",
     "commands.help",
     "commands.hivemind",
+    "commands.kindermörder",
 ]
 
 

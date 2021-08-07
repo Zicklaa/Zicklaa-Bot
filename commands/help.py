@@ -60,6 +60,7 @@ class Help(commands.Cog):
             inline=False,
         )
         embed.add_field(name="+ltb", value="Postet (L)us(T)ige (B)ildchen", inline=False)
+        embed.add_field(name="+kindermörder", value="RAUL CRUISEHAUSEN KINDERMÖRDER", inline=False)
         embed.add_field(name="+obm | +oow | +obr",
                         value="Postet ein  Random Meme aus hot von r/OkBrudiMongo oder dem Ösi/US Pendant", inline=False)
         embed.set_author(
