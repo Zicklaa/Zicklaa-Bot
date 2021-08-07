@@ -1,5 +1,6 @@
 import logging
-import os, random
+import os
+import random
 import discord
 from discord import message
 import markovify
@@ -24,6 +25,7 @@ with open('hivemind.json', 'w') as f:
     json.dump(model_json, f)
 print("compiled")'''
 
+
 class Hivemind(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -33,7 +35,7 @@ class Hivemind(commands.Cog):
         try:
             while True:
                 # satz = json_model.make_short_sentence(140)
-                satz = json_model.make_sentence(max_overlap_ratio = .67,)
+                satz = json_model.make_sentence(max_overlap_ratio=.67,)
                 if satz:
                     await ctx.reply(satz)
                     break

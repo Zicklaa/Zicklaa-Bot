@@ -60,7 +60,8 @@ class Help(commands.Cog):
             inline=False,
         )
         embed.add_field(name="+ltb", value="Postet (L)us(T)ige (B)ildchen", inline=False)
-        embed.add_field(name="+obm | +oow | +obr", value="Postet ein  Random Meme aus hot von r/OkBrudiMongo oder dem Ösi/US Pendant", inline=False)
+        embed.add_field(name="+obm | +oow | +obr",
+                        value="Postet ein  Random Meme aus hot von r/OkBrudiMongo oder dem Ösi/US Pendant", inline=False)
         embed.set_author(
             name="Gott",
             icon_url="https://cdn.psychologytoday.com/sites"
@@ -68,7 +69,8 @@ class Help(commands.Cog):
         )
         dm_channel = await ctx.author.create_dm()
         await dm_channel.send(embed=embed)
-        #await self.get_destination().send(embed=embed)
+        # await self.get_destination().send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Help(bot))
