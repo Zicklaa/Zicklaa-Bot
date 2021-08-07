@@ -42,6 +42,7 @@ class Help(commands.Cog):
             "/default/files/field_blog_entry_images/God_the_Father.jpg",
         )
         dm_channel = await ctx.author.create_dm()
+        await ctx.message.delete()
         await dm_channel.send(embed=embed)
         # await self.get_destination().send(embed=embed)
 
