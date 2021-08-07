@@ -166,8 +166,8 @@ class RemindMe(commands.Cog):
                         remind_date, remind_time, text
                     )
                 await ctx.message.reply(msg_text, mention_author=True)
-            except Exception as e:
-                logger.error("Remindme Fehler get_all_reminders(): " + e)
+        except Exception as e:
+            logger.error("Remindme Fehler get_all_reminders(): " + e)
 
     def insert_reminder(self, reminder: Reminder):
         try:

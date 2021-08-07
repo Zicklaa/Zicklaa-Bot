@@ -3,7 +3,7 @@ import discord
 from random import choice
 from discord.ext import commands
 
-logger = logging.getLogger("ZicklaaBot.Git")
+logger = logging.getLogger("ZicklaaBot.Spongebob")
 
 
 class Spongebob(commands.Cog):
