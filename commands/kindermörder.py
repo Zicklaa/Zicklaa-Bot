@@ -23,7 +23,7 @@ class Kindermörder(commands.Cog):
             logger.error(f"Kindermörder from {ctx.author.name}: {e}")
 
     @commands.command()
-    async def kühlschrank(self, ctx):
+    async def raul(self, ctx):
         try:
             file = discord.File("raul2.gif")
             await ctx.channel.send(file=file)

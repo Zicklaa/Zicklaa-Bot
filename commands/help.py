@@ -23,7 +23,7 @@ class Help(commands.Cog):
         embed.add_field(name="+git", value="Poschded den link zum Github Repository", inline=False)
         embed.add_field(name="+help", value="Öffnet das Hilfefenster", inline=False)
         embed.add_field(name="+hm", value="Was würde der Benserver dazu sagen?", inline=False)
-        embed.add_field(name="+kindermörder", value="RAUL CRUISEHAUSEN KINDERMÖRDER", inline=False)
+        embed.add_field(name="+kindermörder | +raul", value="RAUL CRUISEHAUSEN KINDERMÖRDER", inline=False)
         embed.add_field(name="+ltb", value="Postet (L)us(T)ige (B)ildchen", inline=False)
         embed.add_field(name="+lyrics", value="Format: +lyrics (full/link) [USERNAME]", inline=False)
         embed.add_field(name="+magic8", value="+magic8 [FRAGE]", inline=False)
