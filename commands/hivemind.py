@@ -11,7 +11,7 @@ from discord.ext import commands
 
 logger = logging.getLogger("ZicklaaBot.Hivemind")
 
-with open('hivemind.json') as json_file:
+with open('/home/zicklaa/Zicklaa-Bot/hivemind.json') as json_file:
     hivemind_json = json.load(json_file)
 json_model = markovify.Text.from_json(hivemind_json)
 print("hivemind.json loaded")

@@ -12,7 +12,7 @@ class Kindermörder(commands.Cog):
     @commands.command()
     async def kindermörder(self, ctx):
         try:
-            file = discord.File("raul.gif")
+            file = discord.File("/home/zicklaa/Zicklaa-Bot/raul.gif")
             await ctx.channel.send(file=file, content="RAUL CRUISEHAUSEN KINDERMÖRDER")
             await ctx.message.delete()
             logger.info("Kindermörder gepostet für " + ctx.author.name)
@@ -25,8 +25,7 @@ class Kindermörder(commands.Cog):
     @commands.command()
     async def raul(self, ctx):
         try:
-            file = discord.File("raul2.gif")
-            await ctx.channel.send(file=file)
+            await ctx.channel.send("https://cdn.discordapp.com/attachments/122739462210846721/873703041889607720/raul2.gif")
             await ctx.message.delete()
             logger.info("Kindermörder gepostet für " + ctx.author.name)
         except Exception as e:
