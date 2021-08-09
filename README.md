@@ -7,4 +7,4 @@ Was wenn Bot aber Zicklaa?
 
 Die Antwort könnte euch verunsichern!
 
-:))
+:)))
