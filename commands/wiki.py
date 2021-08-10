@@ -78,7 +78,8 @@ class Wiki(commands.Cog):
                     embed.set_thumbnail(url=bild_url)
                     break
             await ctx.reply(embed=embed)
-            logger.info("Wikiartikel gepostet für " + ctx.author.name + ": " + wiki1)
+            logger.info("Wikiartikel gepostet für " +
+                        ctx.author.name + ": " + wiki1)
         except Exception as e:
             if search_term[0] != "feet":
                 wiki1 = " ".join(search_term)

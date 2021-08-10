@@ -38,7 +38,8 @@ class RemindMe(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
-        message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(payload)
+        message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(
+            payload)
         channel = self.bot.get_channel(channel_id)
         message = await channel.fetch_message(message_id)
         author_id = message.author.id
@@ -62,7 +63,8 @@ class RemindMe(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload: RawReactionActionEvent):
-        message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(payload)
+        message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(
+            payload)
         channel = self.bot.get_channel(channel_id)
         message = await channel.fetch_message(message_id)
         author_id = message.author.id
@@ -111,7 +113,8 @@ class RemindMe(commands.Cog):
                 reason = " ".join(text)
 
             reminder_time = round(
-                time.time() + (float(int(digits) * int(unit_to_second[unit]))), 2
+                time.time() + (float(int(digits) *
+                                     int(unit_to_second[unit]))), 2
             )
             reminder = Reminder(
                 message.id, ctx.channel.id, ctx.author.id, reason, reminder_time
@@ -136,7 +139,8 @@ class RemindMe(commands.Cog):
 
     async def get_reminder_startup(self):
         try:
-            self.cursor.execute("SELECT * FROM reminders ORDER BY reminder_time ASC")
+            self.cursor.execute(
+                "SELECT * FROM reminders ORDER BY reminder_time ASC")
             results = self.cursor.fetchall()
             for record in results:
                 reminder = reminder_from_record(record)
@@ -184,7 +188,8 @@ class RemindMe(commands.Cog):
             self.db.commit()
             self.cursor.execute(
                 "SELECT id FROM reminders WHERE user_id=? AND reminder_text=? AND reminder_time=? AND message_id=?",
-                (reminder.user_id, reminder.text, reminder.time, reminder.message_id),
+                (reminder.user_id, reminder.text,
+                 reminder.time, reminder.message_id),
             )
             id = self.cursor.fetchall()[0][0]
             logger.info("Neuer Reminder in die DB gepusht: " + str(id))
@@ -202,7 +207,8 @@ class RemindMe(commands.Cog):
             if reminder.message_id > 0:
                 message = await channel.fetch_message(reminder.message_id)
                 await message.reply(
-                    "Ich werde dich wissen lassen:\n**{}**".format(reminder.text),
+                    "Ich werde dich wissen lassen:\n**{}**".format(
+                        reminder.text),
                     mention_author=True,
                 )
                 logger.info("Auf Reminder geantortet: " + str(reminder._id))
@@ -232,7 +238,8 @@ class RemindMe(commands.Cog):
                 if not parent_reminder_record:
                     return False
                 try:
-                    parent_reminder = reminder_from_record(parent_reminder_record)
+                    parent_reminder = reminder_from_record(
+                        parent_reminder_record)
                     await self.bot.get_channel(parent_reminder.channel_id).fetch_message(
                         parent_reminder.message_id
                     )
@@ -262,7 +269,8 @@ class RemindMe(commands.Cog):
 
     def delete_reminder(self, reminder: Reminder):
         try:
-            self.cursor.execute("DELETE FROM reminders WHERE id=?", (reminder._id,))
+            self.cursor.execute(
+                "DELETE FROM reminders WHERE id=?", (reminder._id,))
             self.db.commit()
             logger.info("Reminder gelöscht: " + str(reminder._id))
         except Exception as e:

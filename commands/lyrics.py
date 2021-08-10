@@ -47,11 +47,14 @@ class Lyrics(commands.Cog):
                     songurl = (
                         artisturl
                         + "/_/"
-                        + str(lied.get_name()).replace(" ", "+").replace("/", "%2F")
+                        + str(lied.get_name()).replace(" ",
+                                                       "+").replace("/", "%2F")
                     )
-                    name = str("[" + str(lied.get_name()) + "](" + str(songurl) + ")")
+                    name = str("[" + str(lied.get_name()) +
+                               "](" + str(songurl) + ")")
                     artist = str(
-                        "[" + str(lied.get_artist()) + "](" + str(artisturl) + ")"
+                        "[" + str(lied.get_artist()) +
+                        "](" + str(artisturl) + ")"
                     )
 
                     embed = discord.Embed(title="", color=1917791)
@@ -70,7 +73,8 @@ class Lyrics(commands.Cog):
                     embed.set_thumbnail(url=str(lied.get_cover_image()))
                     embed.add_field(name="Titel", value=name)
                     album = str(lied.get_album())
-                    album = album.replace(str(lied.get_artist()), "").replace(" - ", "")
+                    album = album.replace(
+                        str(lied.get_artist()), "").replace(" - ", "")
                     embed.add_field(name="Artist", value=artist, inline=True)
                     footer = (
                         "Album: "
@@ -109,7 +113,8 @@ class Lyrics(commands.Cog):
                     logger.info("Lyrics: Full gepostet für " + ctx.author.name)
                 except:
                     await ctx.channel.send("Dieser User hört gerade nix.")
-                    logger.info("Lyrics: Full: User hört nichts für " + ctx.author.name)
+                    logger.info(
+                        "Lyrics: Full: User hört nichts für " + ctx.author.name)
             elif method == "link":
                 try:
                     lied = user.get_now_playing()
@@ -126,11 +131,14 @@ class Lyrics(commands.Cog):
                     songurl = (
                         artisturl
                         + "/_/"
-                        + str(lied.get_name()).replace(" ", "+").replace("/", "%2F")
+                        + str(lied.get_name()).replace(" ",
+                                                       "+").replace("/", "%2F")
                     )
-                    name = str("[" + str(lied.get_name()) + "](" + str(songurl) + ")")
+                    name = str("[" + str(lied.get_name()) +
+                               "](" + str(songurl) + ")")
                     artist = str(
-                        "[" + str(lied.get_artist()) + "](" + str(artisturl) + ")"
+                        "[" + str(lied.get_artist()) +
+                        "](" + str(artisturl) + ")"
                     )
                     embed = discord.Embed(title="", color=1917791)
 
@@ -148,7 +156,8 @@ class Lyrics(commands.Cog):
                     embed.set_thumbnail(url=str(lied.get_cover_image()))
                     embed.add_field(name="Titel", value=name)
                     album = str(lied.get_album())
-                    album = album.replace(str(lied.get_artist()), "").replace(" - ", "")
+                    album = album.replace(
+                        str(lied.get_artist()), "").replace(" - ", "")
                     embed.add_field(name="Artist", value=artist, inline=True)
                     footer = (
                         "Album: "
@@ -169,7 +178,8 @@ class Lyrics(commands.Cog):
                     )
                     embed.add_field(
                         name="Link",
-                        value=str("[" + str(lied) + "](" + str(song.url) + ")"),
+                        value=str(
+                            "[" + str(lied) + "](" + str(song.url) + ")"),
                         inline=False,
                     )
 

@@ -18,7 +18,8 @@ class Fav(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
-        message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(payload)
+        message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(
+            payload)
         if str(emoji) == "🗑️":
             try:
                 if user_id != 571051961256902671:
@@ -62,7 +63,8 @@ class Fav(commands.Cog):
                     self.cursor.execute(sql, val)
                     self.db.commit()
                     await response.add_reaction("\N{THUMBS UP SIGN}")
-                    logger.info("Neuer Fav angelegt für: " + response.author.name)
+                    logger.info("Neuer Fav angelegt für: " +
+                                response.author.name)
                 else:
                     await response.reply("Zu lang. Bidde unter 250chars")
                     response = await self.bot.wait_for('message', check=message_check(channel=dm_channel))
@@ -78,12 +80,14 @@ class Fav(commands.Cog):
                         self.cursor.execute(sql, val)
                         self.db.commit()
                         await response.add_reaction("\N{THUMBS UP SIGN}")
-                        logger.info("Neuer Fav angelegt für: " + response.author.name)
+                        logger.info("Neuer Fav angelegt für: " +
+                                    response.author.name)
                     else:
                         await response.reply("Dummkopf")
             except Exception as e:
                 await response.reply("Klappt nit lol 🤷")
-                logger.error(f"Lustiges Bilchen ERROR von {response.author.name}: {e}")
+                logger.error(
+                    f"Lustiges Bilchen ERROR von {response.author.name}: {e}")
 
     @commands.command()
     async def fav(self, ctx, *name):
@@ -98,12 +102,15 @@ class Fav(commands.Cog):
                     try:
                         channel = self.bot.get_channel(fav[4])
                         fav_message = await channel.fetch_message(fav[2])
-                        embed = discord.Embed(title="", description=fav_message.content, color=0x00ff00)
+                        embed = discord.Embed(
+                            title="", description=fav_message.content, color=0x00ff00)
                         current_time = (fav_message.created_at + datetime.timedelta(hours=2)
                                         ).strftime("%d.%m.%Y, %H:%M:%S")
                         if fav_message.attachments:
-                            embed.set_image(url=str(fav_message.attachments[0].url))
-                        embed.set_author(name=fav_message.author.name, icon_url=fav_message.author.avatar_url)
+                            embed.set_image(
+                                url=str(fav_message.attachments[0].url))
+                        embed.set_author(
+                            name=fav_message.author.name, icon_url=fav_message.author.avatar_url)
                         embed.set_footer(text=str(fav[0]) + ' | ' + current_time + ' | #' +
                                          fav_message.channel.name + " | by: " + ctx.author.name + " | Name: " + fav[3])
                         await ctx.channel.send(embed=embed)
@@ -123,19 +130,23 @@ class Fav(commands.Cog):
                         try:
                             channel = self.bot.get_channel(fav[4])
                             fav_message = await channel.fetch_message(fav[2])
-                            embed = discord.Embed(title="", description=fav_message.content, color=0x00ff00)
+                            embed = discord.Embed(
+                                title="", description=fav_message.content, color=0x00ff00)
                             current_time = (fav_message.created_at + datetime.timedelta(hours=2)
                                             ).strftime("%d.%m.%Y, %H:%M:%S")
                             if fav_message.attachments:
-                                embed.set_image(url=str(fav_message.attachments[0].url))
-                            embed.set_author(name=fav_message.author.name, icon_url=fav_message.author.avatar_url)
+                                embed.set_image(
+                                    url=str(fav_message.attachments[0].url))
+                            embed.set_author(
+                                name=fav_message.author.name, icon_url=fav_message.author.avatar_url)
                             embed.set_footer(text=str(fav[0]) + ' | ' + current_time + ' | #' +
                                              fav_message.channel.name + " | by: " + ctx.author.name + " | Name: " + fav[3])
                             await ctx.channel.send(embed=embed)
                             await ctx.message.delete()
                         except Exception as e:
                             await ctx.message.reply("Klappt nit lol 🤷")
-                            logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
+                            logger.error(
+                                f"Fav ERROR von {ctx.author.name}: {e}")
                 except Exception as e:
                     await ctx.message.reply("Klappt nit lol 🤷")
                     logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
@@ -146,7 +157,8 @@ class Fav(commands.Cog):
     @commands.command()
     async def allfavs(self, ctx):
         try:
-            all_favs = self.cursor.execute("SELECT * FROM favs WHERE user_id=?", (ctx.author.id,))
+            all_favs = self.cursor.execute(
+                "SELECT * FROM favs WHERE user_id=?", (ctx.author.id,))
             if all_favs:
                 try:
                     dm_channel = await ctx.author.create_dm()
@@ -154,12 +166,15 @@ class Fav(commands.Cog):
                     for fav in all_favs:
                         channel = self.bot.get_channel(fav[4])
                         fav_message = await channel.fetch_message(fav[2])
-                        embed = discord.Embed(title="", description=fav_message.content, color=0x00ff00)
+                        embed = discord.Embed(
+                            title="", description=fav_message.content, color=0x00ff00)
                         current_time = (fav_message.created_at + datetime.timedelta(hours=2)
                                         ).strftime("%d.%m.%Y, %H:%M:%S")
                         if fav_message.attachments:
-                            embed.set_image(url=str(fav_message.attachments[0].url))
-                        embed.set_author(name=fav_message.author.name, icon_url=fav_message.author.avatar_url)
+                            embed.set_image(
+                                url=str(fav_message.attachments[0].url))
+                        embed.set_author(
+                            name=fav_message.author.name, icon_url=fav_message.author.avatar_url)
                         embed.set_footer(text=str(fav[0]) + ' | ' + current_time + ' | #' +
                                          fav_message.channel.name + " | by: " + ctx.author.name + " | Name: " + fav[3])
                         await dm_channel.send(embed=embed)

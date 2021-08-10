@@ -24,73 +24,70 @@ class Wishlist(commands.Cog):
     async def wishlist(self, ctx, *wishtext):
         try:
             if len(wishtext) < 1:
-                await ctx.channel.send("Leere Wünsche: Name meiner Autobiographie.")
-                logger.info("Wishlist: Leerer Wunsch von " + ctx.author.name)
-                return
-
-            wishtext_join = " ".join(wishtext)
-            if len(wishtext_join) < 250:
-                user_id = ctx.author.id
-                ts = datetime.now().strftime("%d-%b-%Y | %H:%M:%S")
-                sql = "INSERT INTO wishlist (user_id, wishtext, ts) VALUES (?, ?, ?)"
-                val = (user_id, wishtext_join, ts)
-                self.cursor.execute(sql, val)
-                self.db.commit()
-
-                await ctx.message.add_reaction("\N{THUMBS UP SIGN}")
-                logger.info("Wishlist: neuer Wunsch + Reaktion")
+                try:
+                    self.cursor.execute("SELECT * FROM wishlist")
+                    wishes = self.cursor.fetchall()
+                    if not wishes:
+                        await ctx.channel.send("Ihr seid wunschlos glücklich :3")
+                        logger.info("Wishlist: Leer für " + ctx.author.name)
+                    else:
+                        all_wishes = "Folgendes wünscht ihr euch: \n\n"
+                        x = 1
+                        for wish in wishes:
+                            all_wishes = all_wishes + "ID: " + \
+                                str(wish[0]) + ": " + "\n"
+                            all_wishes = all_wishes + \
+                                "**" + wish[2] + "**" + "\n"
+                            all_wishes = (
+                                all_wishes
+                                + "<@"
+                                + str(wish[1])
+                                + ">"
+                                + " ("
+                                + wish[3]
+                                + ")"
+                                + "\n"
+                                + "\n"
+                            )
+                            x = x + 1
+                            if len(all_wishes) > 1999:
+                                await ctx.channel.send(all_wishes)
+                                await ctx.channel.send(
+                                    "Es fehlen Wünsche da Discord Zeichenlimit lol"
+                                )
+                                logger.info(
+                                    "Wishlist: Inkomplette Liste gepostet für "
+                                    + ctx.author.name
+                                )
+                                break
+                        await ctx.channel.send(all_wishes)
+                        logger.info(
+                            "Wishlist: Liste gepostet für " + ctx.author.name)
+                except Exception as e:
+                    await ctx.channel.send(
+                        "Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: showlist()"
+                    )
+                    logger.error("showlist: " + ctx.author.name + ": " + e)
             else:
-                await ctx.channel.send("Wunsch zu lang, maximal 250 Chars.")
-                logger.info("Wishlist: Wunsch zu lang von " + ctx.author.name)
+                wishtext_join = " ".join(wishtext)
+                if len(wishtext_join) < 250:
+                    user_id = ctx.author.id
+                    ts = datetime.now().strftime("%d-%b-%Y | %H:%M:%S")
+                    sql = "INSERT INTO wishlist (user_id, wishtext, ts) VALUES (?, ?, ?)"
+                    val = (user_id, wishtext_join, ts)
+                    self.cursor.execute(sql, val)
+                    self.db.commit()
+                    await ctx.message.add_reaction("\N{THUMBS UP SIGN}")
+                    logger.info("Wishlist: neuer Wunsch + Reaktion")
+                else:
+                    await ctx.channel.send("Wunsch zu lang, maximal 250 Chars.")
+                    logger.info("Wishlist: Wunsch zu lang von " +
+                                ctx.author.name)
         except Exception as e:
             await ctx.channel.send(
                 "Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wishlist()"
             )
             logger.error(ctx.author.name + ": " + e)
-
-    @commands.command()
-    async def showlist(self, ctx):
-        try:
-            self.cursor.execute("SELECT * FROM wishlist")
-            wishes = self.cursor.fetchall()
-            if not wishes:
-                await ctx.channel.send("Ihr seid wunschlos glücklich :3")
-                logger.info("Wishlist: Leer für " + ctx.author.name)
-            else:
-                all_wishes = "Folgendes wünscht ihr euch: \n\n"
-                x = 1
-                for wish in wishes:
-                    all_wishes = all_wishes + "ID: " + str(wish[0]) + ": " + "\n"
-                    all_wishes = all_wishes + "**" + wish[2] + "**" + "\n"
-                    all_wishes = (
-                        all_wishes
-                        + "<@"
-                        + str(wish[1])
-                        + ">"
-                        + " ("
-                        + wish[3]
-                        + ")"
-                        + "\n"
-                        + "\n"
-                    )
-                    x = x + 1
-                    if len(all_wishes) > 1999:
-                        await ctx.channel.send(all_wishes)
-                        await ctx.channel.send(
-                            "Es fehlen Wünsche da Discord Zeichenlimit lol"
-                        )
-                        logger.info(
-                            "Wishlist: Inkomplette Liste gepostet für "
-                            + ctx.author.name
-                        )
-                        break
-                await ctx.channel.send(all_wishes)
-                logger.info("Wishlist: Liste gepostet für " + ctx.author.name)
-        except Exception as e:
-            await ctx.channel.send(
-                "Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: showlist()"
-            )
-            logger.error("showlist: " + ctx.author.name + ": " + e)
 
     @commands.command()
     @commands.check(can_delete)
@@ -107,7 +104,8 @@ class Wishlist(commands.Cog):
                 await ctx.channel.send("Ein Wunsch mit der ID gibts nedde")
                 logger.info("delete_wish: Wish beim Löschen nicht gefunden")
             else:
-                self.cursor.execute("DELETE FROM wishlist WHERE id=?", (intid,))
+                self.cursor.execute(
+                    "DELETE FROM wishlist WHERE id=?", (intid,))
                 self.db.commit()
                 await ctx.message.add_reaction("\N{THUMBS UP SIGN}")
                 logger.info("delete_wish: Wish gelöscht mit der ID: " + id)

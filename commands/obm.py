@@ -58,7 +58,8 @@ class Okbrudimongo(commands.Cog):
                 client_secret=self.bot.CLIENT_SECRET,
                 user_agent="by u/zicklaa"
             )
-            submissions = [submission for submission in reddit.subreddit("okbuddyretard").hot(limit=limit)]
+            submissions = [submission for submission in reddit.subreddit(
+                "okbuddyretard").hot(limit=limit)]
             await ctx.reply(submissions[random.randint(0, limit)].url)
             logger.info("Redditlink gepostet für: " + ctx.author.name)
         except Exception as e:
