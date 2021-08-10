@@ -28,7 +28,7 @@ def create_log_file(path):
     return logger
 
 
-logger = create_log_file(config.LOG_FILE_NAME)
+logger = create_log_file('ZicklaaBotLog.log')
 
 user_last_command = {}
 
