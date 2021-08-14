@@ -35,6 +35,7 @@ magic8_list = [
     "Geht dich nen scheißdreck an, Mois.",
     "H̶͕̦̬̮̖̼̠͈̗͈̤̥̣̣̋̂̐̆̈́̊͋́͠͝i̵̢̥̻̹͉̰̟̤͔̰̾͛ͅn̴̹͈̬̝̦͇̤͍͒̅ͅť̷̨̙̣̘̗͙̞͔̳͗̆͂̑e̸̢̫̝̭̗̰̙̲̟̼̝̺͇̥͜͝r̷̛̭̣͔͚̳͑̿̈́̄͋̂̊̾͗̉̾̿͜͝͝ ̸̨̬̖̦͉͍̯̜͕͔̪̭̜͚̒d̷̟̼̯̺͔̯̱̞̊̐̆̽̑̎̚͜ĭ̵̡͙̓̏͗̈̒͐͋̐̄͝ͅr̶̭̱̫͍͙͙̻̩͓̱̍̿̾́̓̈̆̔͂̂͒̏̽͝.",
     "Nur wenn KOSCHDELOS is.",
+    "Teile dieser Antwort könnte die User verunsichern",
 ]
 
 

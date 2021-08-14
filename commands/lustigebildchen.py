@@ -7,7 +7,7 @@ from discord.ext import commands
 
 logger = logging.getLogger("ZicklaaBot.LustigeBildchen")
 
-dir = "/home/pi/Zicklaa-Bot/LustigeBildchen/"
+dir = "/home/zicklaa/Zicklaa-Bot/LustigeBildchen/"
 
 
 class LustigeBildchen(commands.Cog):
