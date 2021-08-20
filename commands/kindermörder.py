@@ -12,7 +12,7 @@ class Kindermörder(commands.Cog):
     @commands.command()
     async def kindermörder(self, ctx):
         try:
-            file = discord.File("/home/zicklaa/Zicklaa-Bot/raul.gif")
+            file = discord.File("/home/zicklaa/Zicklaa-Bot/static/raul.gif")
             await ctx.channel.send(file=file, content="RAUL CRUISEHAUSEN KINDERMÖRDER")
             await ctx.message.delete()
             logger.info("Kindermörder gepostet für " + ctx.author.name)

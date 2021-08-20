@@ -11,12 +11,12 @@ from discord.ext import commands
 
 logger = logging.getLogger("ZicklaaBot.Hivemind")
 
-with open('/home/zicklaa/Zicklaa-Bot/hivemind.json') as json_file:
+with open('/home/zicklaa/Zicklaa-Bot/static/hivemind.json') as json_file:
     hivemind_json = json.load(json_file)
 json_model = markovify.Text.from_json(hivemind_json)
 print("hivemind.json loaded")
 
-'''with open('hivemind.txt','r',encoding='utf-8') as f:
+'''with open('/home/zicklaa/Zicklaa-Bot/static/hivemind.txt','r',encoding='utf-8') as f:
     text = f.read()
 text_model = markovify.NewlineText(text, state_size=3, well_formed=True)
 text_model = text_model.compile()
@@ -51,7 +51,7 @@ class Hivemind(commands.Cog):
         try:
             print("scrapping")
             messages = await ctx.channel.history(limit=100000).flatten()
-            f = open("hivemind_new.txt", "a")
+            f = open("/home/zicklaa/Zicklaa-Bot/static/hivemind_new.txt", "a")
             for message in messages:
                 if message.content == '' or message.content.startswith('<') or message.content.startswith('https') or message.content.startswith('+') or message.content.startswith('$'):
                     print('passed')

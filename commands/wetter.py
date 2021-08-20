@@ -23,8 +23,8 @@ class Wetter(commands.Cog):
                 url_png = "https://de.wttr.in/{}".format(
                     location) + "_m" + ".png"
                 urllib.request.urlretrieve(
-                    url_png, "/home/zicklaa/Zicklaa-Bot/wetter.png")
-                await ctx.reply(file=discord.File(r"/home/zicklaa/Zicklaa-Bot/wetter.png"))
+                    url_png, "/home/zicklaa/Zicklaa-Bot/static/wetter.png")
+                await ctx.reply(file=discord.File(r"/home/zicklaa/Zicklaa-Bot/static/wetter.png"))
                 logger.info("Wetter gepostet für " +
                             ctx.author.name + ": " + location)
             except Exception as e:
