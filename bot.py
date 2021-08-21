@@ -50,6 +50,7 @@ initial_extensions = [
     "commands.help",
     "commands.hivemind",
     "commands.kindermörder",
+    "commands.trumpquote",
 ]
 
 
