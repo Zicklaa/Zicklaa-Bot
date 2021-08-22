@@ -14,6 +14,7 @@ magic8_list = [
     "So wie ich des seh, scho, Ja.",
     "Denk scho, Ja.",
     "Ja.",
+    "Mein Fisch hat Analkrebs",
     "Ich hab Dieter um rat gefragt, er sagt Ja.",
     "Merkur ist rückläufig, also Ja.",
     "Digga, bin hier grad Ballsdeep in etwas, frag später.",
