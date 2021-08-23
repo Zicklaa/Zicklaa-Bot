@@ -14,8 +14,7 @@ class Rezept(commands.Cog):
     async def rezept(self, ctx):
         try:
 
-            # 860154286141997056
-            rezepte_channel = await self.bot.fetch_channel(245280466201083904)
+            rezepte_channel = await self.bot.fetch_channel(860154286141997056)
             rezepte_pins = await rezepte_channel.pins()
             rezept = random.choice(rezepte_pins)
             message_link = "https://discord.com/channels/{}/{}/{}".format(
