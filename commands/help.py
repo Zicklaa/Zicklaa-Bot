@@ -36,6 +36,8 @@ class Help(commands.Cog):
                         value="Postet ein  Random Meme aus hot von r/OkBrudiMongo oder dem Ösi/US Pendant", inline=False)
         embed.add_field(
             name="+remindme", value="Format: +remindme <all | [ZAHL][s/m/h/d/mon]> [TEXT]", inline=False)
+        embed.add_field(
+            name="+rezept", value="Random Rezept aus #durst-auf-wurst", inline=False)
         embed.add_field(name="+spongebob",
                         value="+spongebob/randomsponge [TEXT]", inline=False)
         embed.add_field(
