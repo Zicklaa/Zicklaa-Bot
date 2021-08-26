@@ -14,8 +14,7 @@ class Help(commands.Cog):
         embed = discord.Embed(
             title="Help", description="Hier wird Ihnen geholfen!", color=0x00FF00
         )
-        embed.add_field(name="+benwach", value="Ben wach?", inline=False)
-
+        # embed.add_field(name="+benwach", value="Ben wach?", inline=False)
         embed.add_field(
             name="+choose", value='+choose [Option 1] [Option 2] [...]\nBei mehreren Wörtern pro Option bitte jede Option in " " setzen.', inline=False)
         embed.add_field(
@@ -39,7 +38,6 @@ class Help(commands.Cog):
             name="+remindme", value="Format: +remindme <all | [ZAHL][s/m/h/d/mon]> [TEXT]", inline=False)
         embed.add_field(name="+spongebob",
                         value="+spongebob/randomsponge [TEXT]", inline=False)
-
         embed.add_field(
             name="+wetter", value="Format: +wetter/asciiwetter [ORTNAME]", inline=False)
         embed.add_field(
