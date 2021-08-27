@@ -18,7 +18,8 @@ def create_log_file(path):
     logger = logging.getLogger("ZicklaaBot")
     logger.setLevel(logging.INFO)
 
-    handler = TimedRotatingFileHandler(path, when="midnight", interval=1, backupCount=5)
+    handler = TimedRotatingFileHandler(
+        path, when="midnight", interval=1, backupCount=5)
     formatter = logging.Formatter(
         "%(asctime)s::%(name)s::%(funcName)s::%(levelname)s - %(message)s"
     )
@@ -57,7 +58,8 @@ initial_extensions = [
 class ZicklaaBot(discord.ext.commands.Bot):
     def __init__(self):
         super().__init__(command_prefix=config.PREFIX, help_command=None)
-        self.db = sqlite3.connect("/home/zicklaa/Zicklaa-Bot/reminder-wishlist.db")
+        self.db = sqlite3.connect(
+            "/home/zicklaa/Zicklaa-Bot/reminder-wishlist.db")
         self.LASTFM_API_KEY = config.API_KEY
         self.LASTFM_API_SECRET = config.API_SECRET
         self.LYRICS_KEY = config.LYRICS_KEY
@@ -73,7 +75,8 @@ class ZicklaaBot(discord.ext.commands.Bot):
 
     async def on_ready(self):
         print("Hallo I bim omnline :^)")
-        logger.info("========================Startup============================")
+        logger.info(
+            "========================Startup============================")
         remindme = self.get_cog("RemindMe")
         await remindme.get_reminder_startup()
 
@@ -132,7 +135,8 @@ async def on_command_error(ctx, error):
         logger.error(f"User {str(ctx.author)} triggered: {error}")
         return
     else:
-        print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
+        print("Ignoring exception in command {}:".format(
+            ctx.command), file=sys.stderr)
         traceback.print_exception(
             type(error), error, error.__traceback__, file=sys.stderr
         )
