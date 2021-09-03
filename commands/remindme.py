@@ -151,8 +151,7 @@ class RemindMe(commands.Cog):
                 self.cursor.execute(
                     "SELECT * FROM reminders ORDER BY reminder_time ASC LIMIT 1")
                 results = self.cursor.fetchall()
-                for record in results:
-                    reminder = reminder_from_record(record)
+                reminder = reminder_from_record(results[0])
                 if (reminder.time - time.time()) < 0:
                     await self.send_reminder(reminder)
                 else:
