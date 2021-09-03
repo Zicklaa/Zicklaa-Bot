@@ -175,7 +175,6 @@ class RemindMe(commands.Cog):
                 msg_text = "Ich werde dich demnächst wissen lassen:\n"
                 for reminder in all_reminders:
                     remind_dt = datetime.fromtimestamp(reminder[3])
-                    print(remind_dt)
                     remind_date = remind_dt.date().strftime("%d-%b-%Y")
                     remind_time = remind_dt.time().strftime("%H:%M:%S")
                     text = reminder[2]
