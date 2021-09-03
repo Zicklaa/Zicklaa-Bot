@@ -18,6 +18,8 @@ class Help(commands.Cog):
         embed.add_field(
             name="+choose", value='+choose [Option 1] [Option 2] [...]\nBei mehreren Wörtern pro Option bitte jede Option in " " setzen.', inline=False)
         embed.add_field(
+            name="+datum", value='Welchen Tag haben wir heute?', inline=False)
+        embed.add_field(
             name="+fav", value="Faven mit 🦶, Löschen mit 🗑️\nFormat: +fav [FAV NAME] | +allfavs", inline=False)
         embed.add_field(
             name="+git", value="Poschded den link zum Github Repository", inline=False)
