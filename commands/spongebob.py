@@ -11,7 +11,7 @@ class Spongebob(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def spongebob(self, ctx, *text):
+    async def sponge(self, ctx, *text):
         try:
             if not text:
                 await ctx.reply(

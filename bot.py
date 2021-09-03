@@ -78,7 +78,7 @@ class ZicklaaBot(discord.ext.commands.Bot):
         logger.info(
             "========================Startup============================")
         remindme = self.get_cog("RemindMe")
-        await remindme.get_reminder_startup()
+        await remindme.check_reminder()
 
     def create_tables(self):
         try:

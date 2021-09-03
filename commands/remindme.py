@@ -38,55 +38,63 @@ class RemindMe(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
-        message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(
-            payload)
-        channel = self.bot.get_channel(channel_id)
-        message = await channel.fetch_message(message_id)
-        author_id = message.author.id
+        try:
+            message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(
+                payload)
+            channel = self.bot.get_channel(channel_id)
+            message = await channel.fetch_message(message_id)
+            author_id = message.author.id
 
-        if not self.is_reminder_message(message_id, author_id, emoji, user_id):
-            return
+            if not self.is_reminder_message(message_id, author_id, emoji, user_id):
+                return
 
-        reminder = reminder_from_record(
-            self.cursor.execute(
-                "SELECT * FROM reminders WHERE message_id=?", (message.id,)
-            ).fetchone()
-        )
-        if reminder.user_id is user_id:
+            reminder = reminder_from_record(
+                self.cursor.execute(
+                    "SELECT * FROM reminders WHERE message_id=?", (message.id,)
+                ).fetchone()
+            )
+            if reminder.user_id is user_id:
+                return
+            reminder._parent_id = reminder._id
+            reminder._id = None
+            reminder.message_id = -1
+            reminder.user_id = user_id
+            new_reminder = self.insert_reminder(reminder)
             return
-        reminder._parent_id = reminder._id
-        reminder._id = None
-        reminder.message_id = -1
-        reminder.user_id = user_id
-        new_reminder = self.insert_reminder(reminder)
-        await self.wait_for_reminder(new_reminder)
+        except Exception as e:
+            logger.error("Remindme Fehler: " + e)
 
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload: RawReactionActionEvent):
-        message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(
-            payload)
-        channel = self.bot.get_channel(channel_id)
-        message = await channel.fetch_message(message_id)
-        author_id = message.author.id
+        try:
+            message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(
+                payload)
+            channel = self.bot.get_channel(channel_id)
+            message = await channel.fetch_message(message_id)
+            author_id = message.author.id
 
-        if not self.is_reminder_message(message_id, author_id, emoji, user_id):
-            return
-        parent_reminder = reminder_from_record(
+            if not self.is_reminder_message(message_id, author_id, emoji, user_id):
+                return
+            parent_reminder = reminder_from_record(
+                self.cursor.execute(
+                    "SELECT * FROM reminders WHERE message_id=?", (message.id,)
+                ).fetchone()
+            )
+            if parent_reminder.user_id is user_id:
+                return
             self.cursor.execute(
-                "SELECT * FROM reminders WHERE message_id=?", (message.id,)
-            ).fetchone()
-        )
-        if parent_reminder.user_id is user_id:
-            return
-        self.cursor.execute(
-            "DELETE FROM reminders WHERE parent_id=? AND user_id=?",
-            (parent_reminder._id, user_id),
-        )
-        self.db.commit()
+                "DELETE FROM reminders WHERE parent_id=? AND user_id=?",
+                (parent_reminder._id, user_id),
+            )
+            self.db.commit()
+        except Exception as e:
+            logger.error("Remindme Fehler: " + e)
 
     def parse_raw_reaction_event(self, payload: RawReactionActionEvent):
-
-        return payload.message_id, payload.channel_id, payload.emoji, payload.user_id
+        try:
+            return payload.message_id, payload.channel_id, payload.emoji, payload.user_id
+        except Exception as e:
+            logger.error("Remindme Fehler: " + e)
 
     @commands.command()
     async def remindme(self, ctx, method: str, *text: str):
@@ -121,12 +129,12 @@ class RemindMe(commands.Cog):
             )
             reminder = self.insert_reminder(reminder)
             await message.add_reaction("\N{THUMBS UP SIGN}")
-            await self.wait_for_reminder(reminder)
+            return
         except Exception as e:
             await ctx.message.reply("Klappt nit lol 🤷")
             logger.error("Remindme Fehler wahrsch falsches Zeitformat?: " + e)
 
-    async def wait_for_reminder(self, reminder: Reminder):
+    '''async def wait_for_reminder(self, reminder: Reminder):
         try:
             if (reminder.time - time.time()) < 0:
                 await self.send_reminder(reminder)
@@ -135,16 +143,20 @@ class RemindMe(commands.Cog):
                 await asyncio.sleep(reminder.time - time.time())
                 await self.send_reminder(reminder)
         except Exception as e:
-            logger.error(e)
+            logger.error(e)'''
 
-    async def get_reminder_startup(self):
+    async def check_reminder(self):
         try:
-            self.cursor.execute(
-                "SELECT * FROM reminders ORDER BY reminder_time ASC")
-            results = self.cursor.fetchall()
-            for record in results:
-                reminder = reminder_from_record(record)
-                await self.wait_for_reminder(reminder)
+            while True:
+                self.cursor.execute(
+                    "SELECT * FROM reminders ORDER BY reminder_time ASC LIMIT 1")
+                results = self.cursor.fetchall()
+                for record in results:
+                    reminder = reminder_from_record(record)
+                if (reminder.time - time.time()) < 0:
+                    await self.send_reminder(reminder)
+                else:
+                    await asyncio.sleep(5)
         except Exception as e:
             logger.error(e)
 
@@ -163,6 +175,7 @@ class RemindMe(commands.Cog):
                 msg_text = "Ich werde dich demnächst wissen lassen:\n"
                 for reminder in all_reminders:
                     remind_dt = datetime.fromtimestamp(reminder[3])
+                    print(remind_dt)
                     remind_date = remind_dt.date().strftime("%d-%b-%Y")
                     remind_time = remind_dt.time().strftime("%H:%M:%S")
                     text = reminder[2]
