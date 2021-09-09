@@ -41,7 +41,6 @@ initial_extensions = [
     "commands.admin",
     "commands.git",
     "commands.wishlist",
-    # "commands.benwach",
     "commands.datum",
     "commands.spongebob",
     "commands.magic8",
