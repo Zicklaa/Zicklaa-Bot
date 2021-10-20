@@ -24,10 +24,24 @@ class Okbrudimongo(commands.Cog):
                 user_agent="by u/zicklaa"
             )
             random_submission = reddit.subreddit('okbrudimongo').random()
-            await ctx.reply(random_submission.url)
-            '''submissions = [submission for submission in reddit.subreddit("okbrudimongo").hot(limit=limit)]
-            await ctx.reply(submissions[random.randint(0, limit)].url)'''
-            logger.info("Redditlink gepostet für: " + ctx.author.name)
+            if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif"):
+                await ctx.channel.send(random_submission.url)
+                if 'imgur' in random_submission.url:
+                    await ctx.channel.send('imgur 🤮')
+                await ctx.message.delete()
+                '''submissions = [submission for submission in reddit.subreddit("okbrudimongo").hot(limit=limit)]
+                await ctx.reply(submissions[random.randint(0, limit)].url)'''
+                logger.info("Redditlink gepostet für: " + ctx.author.name)
+            else:
+                random_submission = reddit.subreddit('okbrudimongo').random()
+                if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif"):
+                    await ctx.channel.send(random_submission.url)
+                    if 'imgur' in random_submission.url:
+                        await ctx.channel.send('imgur 🤮')
+                    await ctx.message.delete()
+                    '''submissions = [submission for submission in reddit.subreddit("okbrudimongo").hot(limit=limit)]
+                    await ctx.reply(submissions[random.randint(0, limit)].url)'''
+                    logger.info("Redditlink gepostet für: " + ctx.author.name)
 
         except Exception as e:
             await ctx.reply("Klappt nit lol 🤷")
@@ -42,10 +56,24 @@ class Okbrudimongo(commands.Cog):
                 user_agent="by u/zicklaa"
             )
             random_submission = reddit.subreddit('okoidawappler').random()
-            await ctx.reply(random_submission.url)
-            '''submissions = [submission for submission in reddit.subreddit("okoidawappler").hot(limit=limit)]
-            await ctx.reply(submissions[random.randint(0, limit)].url)'''
-            logger.info("Redditlink gepostet für: " + ctx.author.name)
+            if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif"):
+                await ctx.channel.send(random_submission.url)
+                if 'imgur' in random_submission.url:
+                    await ctx.channel.send('imgur 🤮')
+                await ctx.message.delete()
+                '''submissions = [submission for submission in reddit.subreddit("okbrudimongo").hot(limit=limit)]
+                await ctx.reply(submissions[random.randint(0, limit)].url)'''
+                logger.info("Redditlink gepostet für: " + ctx.author.name)
+            else:
+                random_submission = reddit.subreddit('okoidawappler').random()
+                if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif"):
+                    await ctx.channel.send(random_submission.url)
+                    if 'imgur' in random_submission.url:
+                        await ctx.channel.send('imgur 🤮')
+                    await ctx.message.delete()
+                    '''submissions = [submission for submission in reddit.subreddit("okbrudimongo").hot(limit=limit)]
+                    await ctx.reply(submissions[random.randint(0, limit)].url)'''
+                    logger.info("Redditlink gepostet für: " + ctx.author.name)
         except Exception as e:
             await ctx.reply("Klappt nit lol 🤷")
             logger.error(f"OOW ERROR von {ctx.author.name}: {e}")
