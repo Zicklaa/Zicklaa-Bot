@@ -36,7 +36,7 @@ class RemindMe(commands.Cog):
         self.db = db
         self.cursor = db.cursor()
 
-    @commands.Cog.listener()
+    '''@commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
         try:
             message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(
@@ -94,52 +94,52 @@ class RemindMe(commands.Cog):
         try:
             return payload.message_id, payload.channel_id, payload.emoji, payload.user_id
         except Exception as e:
-            logger.error("Remindme Fehler: " + e)
+            logger.error("Remindme Fehler: " + e)'''
 
     @commands.command()
     async def remindme(self, ctx, method: str, *text: str):
-        # try:
-        message = ctx.message
-        unit_to_second = {
-            "s": 1,
-            "m": 60,
-            "h": 60 * 60,
-            "d": 60 * 60 * 24,
-            "w": 60 * 60 * 24 * 7,
-            "mon": 60 * 60 * 24 * 7 * 30,
-        }
-        if method == "all":
-            await self.get_all_reminders(ctx)
-            return
-        elif method.isdigit():
-            digits = method
-            unit = text[0]
-            reason = " ".join(text[1:])
-        else:
-            if "mon" in method:
-                unit = "mon"
-                digits = method[:-3]
+        try:
+            message = ctx.message
+            unit_to_second = {
+                "s": 1,
+                "m": 60,
+                "h": 60 * 60,
+                "d": 60 * 60 * 24,
+                "w": 60 * 60 * 24 * 7,
+                "mon": 60 * 60 * 24 * 7 * 30,
+            }
+            if method == "all":
+                await self.get_all_reminders(ctx)
+                return
+            elif method.isdigit():
+                digits = method
+                unit = text[0]
+                reason = " ".join(text[1:])
             else:
-                unit = method[-1]
-                digits = method[:-1]
+                if "mon" in method:
+                    unit = "mon"
+                    digits = method[:-3]
+                else:
+                    unit = method[-1]
+                    digits = method[:-1]
+                print(digits)
+                print(unit)
+                reason = " ".join(text)
             print(digits)
             print(unit)
-            reason = " ".join(text)
-        print(digits)
-        print(unit)
-        reminder_time = round(
-            time.time() + (float(int(digits) *
-                                 int(unit_to_second[unit]))), 2
-        )
-        reminder = Reminder(
-            message.id, ctx.channel.id, ctx.author.id, reason, reminder_time
-        )
-        reminder = self.insert_reminder(reminder)
-        await message.add_reaction("\N{THUMBS UP SIGN}")
-        return
-        '''except Exception as e:
+            reminder_time = round(
+                time.time() + (float(int(digits) *
+                                    int(unit_to_second[unit]))), 2
+            )
+            reminder = Reminder(
+                message.id, ctx.channel.id, ctx.author.id, reason, reminder_time
+            )
+            reminder = self.insert_reminder(reminder)
+            await message.add_reaction("\N{THUMBS UP SIGN}")
+            return
+        except Exception as e:
             await ctx.message.reply("Klappt nit lol 🤷")
-            logger.error("Remindme Fehler wahrsch falsches Zeitformat?: " + e)'''
+            logger.error("Remindme Fehler wahrsch falsches Zeitformat?: " + e)
 
     '''async def wait_for_reminder(self, reminder: Reminder):
         try:
