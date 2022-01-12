@@ -46,6 +46,23 @@ class Hivemind(commands.Cog):
             await ctx.reply("Klappt nit lol 🤷")
             logger.error(f"Hivemind ERROR von {ctx.author.name}: {e}")
 
+    @commands.command()
+    async def hmm(self, ctx):
+        try:
+            for _ in range(5):
+                while True:
+                    # satz = json_model.make_short_sentence(140)
+                    satz = json_model.make_sentence(max_overlap_ratio=.67,)
+                    if satz:
+                        await ctx.reply(satz)
+                        break
+
+            logger.info("Hivemind für: " + ctx.author.name)
+
+        except Exception as e:
+            await ctx.reply("Klappt nit lol 🤷")
+            logger.error(f"Hivemind ERROR von {ctx.author.name}: {e}")
+
     '''@commands.command()
     async def scrap(self, ctx):
         try:

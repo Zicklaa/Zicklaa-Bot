@@ -122,11 +122,7 @@ class RemindMe(commands.Cog):
                 else:
                     unit = method[-1]
                     digits = method[:-1]
-                print(digits)
-                print(unit)
                 reason = " ".join(text)
-            print(digits)
-            print(unit)
             reminder_time = round(
                 time.time() + (float(int(digits) *
                                     int(unit_to_second[unit]))), 2

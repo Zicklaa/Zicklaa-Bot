@@ -19,7 +19,6 @@ class Drake(commands.Cog):
     @commands.command()
     async def drake(self, ctx, *sentences):
         #try:
-        print(sentences)
         if len(sentences) == 2:
             img = Image.open(dir + "drake.jpg")
             draw = ImageDraw.Draw(img)

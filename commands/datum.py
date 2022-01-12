@@ -14,7 +14,6 @@ class Datum(commands.Cog):
     @commands.command()
     async def datum(self, ctx):
         try:
-            print(datetime.datetime.now().strftime("%H:%M:%S"))
             heute = datetime.date.today().strftime("**%d. %B %Y**.")
             tag = datetime.date.today().strftime("**%A**")
             await ctx.reply("Heute ist " + tag + ", der " + heute)
