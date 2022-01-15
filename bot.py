@@ -52,6 +52,7 @@ initial_extensions = [
     "commands.kindermörder",
     "commands.trumpquote",
     "commands.rezept",
+    "commands.chefkoch",
 ]
 
 
