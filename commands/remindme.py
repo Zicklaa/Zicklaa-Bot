@@ -125,7 +125,7 @@ class RemindMe(commands.Cog):
                 reason = " ".join(text)
             reminder_time = round(
                 time.time() + (float(int(digits) *
-                                    int(unit_to_second[unit]))), 2
+                                     int(unit_to_second[unit]))), 2
             )
             reminder = Reminder(
                 message.id, ctx.channel.id, ctx.author.id, reason, reminder_time

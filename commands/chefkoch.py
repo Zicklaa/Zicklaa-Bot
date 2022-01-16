@@ -16,10 +16,12 @@ class Chefkoch(commands.Cog):
         try:
             if len(options) > 1:
                 await ctx.reply("Bitte erstmal nur eine Zutat.")
-                logger.info(f"Request from {ctx.author.name}. Chefkoch zu viele Zutaten.")
+                logger.info(
+                    f"Request from {ctx.author.name}. Chefkoch zu viele Zutaten.")
             elif len(options) == 0:
                 await ctx.reply("Gib halt wenigstens ne Zutat.")
-                logger.info(f"Request from {ctx.author.name}. Chefkoch keine Zutaten.")
+                logger.info(
+                    f"Request from {ctx.author.name}. Chefkoch keine Zutaten.")
             else:
                 option = options[0]
                 if option == "ROTD" or option == "rotd":
@@ -31,15 +33,14 @@ class Chefkoch(commands.Cog):
                     length = len(recipe)
                     random_number = random.randint(0, length)
                     id = recipe[random_number].id
-                #print(Recipe(recipe[0]).data_dump())
+                # print(Recipe(recipe[0]).data_dump())
                 adresse = "https://www.chefkoch.de/rezepte/" + id
-                await ctx.reply(adresse + "\n" +"SCHMEEECKT :DDD")
+                await ctx.reply(adresse + "\n" + "SCHMEEECKT :DDD")
                 logger.info("Chefkoch für: " + ctx.author.name)
 
         except Exception as e:
             await ctx.reply("Klappt nit lol 🤷")
             logger.error(f"Request from {ctx.author.name}. Chefkoch.")
-
 
 
 def setup(bot):
