@@ -36,6 +36,7 @@ class Help(commands.Cog):
         embed.add_field(
             name="+lyrics", value="Format: +lyrics (full/link) [USERNAME]", inline=False)
         embed.add_field(name="+magic8", value="+magic8 [FRAGE]", inline=False)
+        embed.add_field(name="+mdc/mdd", value="+mdc für die aktuell heißesten Dealz und +mdd für 3 heißesten ~~Singles~~ Dealz des Tages.", inline=False)
         embed.add_field(name="+obm | +oow | +obr",
                         value="Postet ein  Random Meme aus hot von r/OkBrudiMongo oder dem Ösi/US Pendant", inline=False)
         embed.add_field(
