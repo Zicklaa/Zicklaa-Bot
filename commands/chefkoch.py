@@ -33,7 +33,6 @@ class Chefkoch(commands.Cog):
                     length = len(recipe)
                     random_number = random.randint(0, length)
                     id = recipe[random_number].id
-                # print(Recipe(recipe[0]).data_dump())
                 adresse = "https://www.chefkoch.de/rezepte/" + id
                 await ctx.reply(adresse + "\n" + "SCHMEEECKT :DDD")
                 logger.info("Chefkoch für: " + ctx.author.name)
