@@ -27,7 +27,7 @@ class Chefkoch(commands.Cog):
                     id = recipe.id
                 else:
                     suche = Search(option)
-                    recipe = suche.recipes(limit=50)
+                    recipe = suche.recipes(limit=10)
                     length = len(recipe)
                     random_number = random.randint(0, length)
                     id = recipe[random_number].id
