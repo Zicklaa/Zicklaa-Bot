@@ -18,7 +18,7 @@ class Help(commands.Cog):
         embed.add_field(
             name="+choose", value='+choose [Option 1] [Option 2] [...]\nBei mehreren Wörtern pro Option bitte jede Option in " " setzen.', inline=False)
         embed.add_field(
-            name="+ck", value='+ck [Zutat] ODER +ck [ROTD]/[rotd] für das Rezept des Tages!', inline=False)
+            name="+ck", value='+ck [Zutat] ODER +ck [rotd] für das Rezept des Tages!', inline=False)
         embed.add_field(
             name="+datum", value='Welchen Tag haben wir heute?', inline=False)
         embed.add_field(
