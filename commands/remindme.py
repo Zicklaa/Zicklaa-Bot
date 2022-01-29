@@ -36,66 +36,6 @@ class RemindMe(commands.Cog):
         self.db = db
         self.cursor = db.cursor()
 
-    '''@commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
-        try:
-            message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(
-                payload)
-            channel = self.bot.get_channel(channel_id)
-            message = await channel.fetch_message(message_id)
-            author_id = message.author.id
-
-            if not self.is_reminder_message(message_id, author_id, emoji, user_id):
-                return
-
-            reminder = reminder_from_record(
-                self.cursor.execute(
-                    "SELECT * FROM reminders WHERE message_id=?", (message.id,)
-                ).fetchone()
-            )
-            if reminder.user_id is user_id:
-                return
-            reminder._parent_id = reminder._id
-            reminder._id = None
-            reminder.message_id = -1
-            reminder.user_id = user_id
-            new_reminder = self.insert_reminder(reminder)
-            return
-        except Exception as e:
-            logger.error("Remindme Fehler: " + e)
-
-    @commands.Cog.listener()
-    async def on_raw_reaction_remove(self, payload: RawReactionActionEvent):
-        try:
-            message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(
-                payload)
-            channel = self.bot.get_channel(channel_id)
-            message = await channel.fetch_message(message_id)
-            author_id = message.author.id
-
-            if not self.is_reminder_message(message_id, author_id, emoji, user_id):
-                return
-            parent_reminder = reminder_from_record(
-                self.cursor.execute(
-                    "SELECT * FROM reminders WHERE message_id=?", (message.id,)
-                ).fetchone()
-            )
-            if parent_reminder.user_id is user_id:
-                return
-            self.cursor.execute(
-                "DELETE FROM reminders WHERE parent_id=? AND user_id=?",
-                (parent_reminder._id, user_id),
-            )
-            self.db.commit()
-        except Exception as e:
-            logger.error("Remindme Fehler: " + e)
-
-    def parse_raw_reaction_event(self, payload: RawReactionActionEvent):
-        try:
-            return payload.message_id, payload.channel_id, payload.emoji, payload.user_id
-        except Exception as e:
-            logger.error("Remindme Fehler: " + e)'''
-
     @commands.command()
     async def remindme(self, ctx, method: str, *text: str):
         try:
