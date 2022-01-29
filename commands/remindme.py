@@ -77,6 +77,47 @@ class RemindMe(commands.Cog):
             await ctx.message.reply("Klappt nit lol 🤷")
             logger.error("Remindme Fehler wahrsch falsches Zeitformat?: " + e)
 
+    @commands.command()
+    async def rm(self, ctx, method: str, *text: str):
+        try:
+            message = ctx.message
+            unit_to_second = {
+                "s": 1,
+                "m": 60,
+                "h": 60 * 60,
+                "d": 60 * 60 * 24,
+                "w": 60 * 60 * 24 * 7,
+                "mon": 60 * 60 * 24 * 7 * 30,
+            }
+            if method == "all":
+                await self.get_all_reminders(ctx)
+                return
+            elif method.isdigit():
+                digits = method
+                unit = text[0]
+                reason = " ".join(text[1:])
+            else:
+                if "mon" in method:
+                    unit = "mon"
+                    digits = method[:-3]
+                else:
+                    unit = method[-1]
+                    digits = method[:-1]
+                reason = " ".join(text)
+            reminder_time = round(
+                time.time() + (float(int(digits) *
+                                     int(unit_to_second[unit]))), 2
+            )
+            reminder = Reminder(
+                message.id, ctx.channel.id, ctx.author.id, reason, reminder_time
+            )
+            reminder = self.insert_reminder(reminder)
+            await message.add_reaction("\N{THUMBS UP SIGN}")
+            return
+        except Exception as e:
+            await ctx.message.reply("Klappt nit lol 🤷")
+            logger.error("Remindme Fehler wahrsch falsches Zeitformat?: " + e)
+
     '''async def wait_for_reminder(self, reminder: Reminder):
         try:
             if (reminder.time - time.time()) < 0:
@@ -161,11 +202,14 @@ class RemindMe(commands.Cog):
             channel = self.bot.get_channel(reminder.channel_id)
             if reminder.message_id > 0:
                 message = await channel.fetch_message(reminder.message_id)
-                await message.reply(
-                    "Ich werde dich wissen lassen:\n**{}**".format(
-                        reminder.text),
-                    mention_author=True,
-                )
+                if reminder.text == "":
+                    await message.reply(
+                        "Ich werde dich wissen lassen:\n**Kein Grund angegeben lol**",
+                        mention_author=True)
+                else:
+                    await message.reply(
+                        "Ich werde dich wissen lassen:\n**{}**".format(
+                            reminder.text), mention_author=True)
                 logger.info("Auf Reminder geantortet: " + str(reminder._id))
             else:
                 await channel.send(
