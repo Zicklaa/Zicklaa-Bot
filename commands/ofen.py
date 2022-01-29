@@ -33,7 +33,6 @@ class Ofen(commands.Cog):
     @commands.command()
     async def ofen(self, ctx):
         try:
-            print(ctx.author.id)
             message = ctx.message
             if int(ctx.author.id) == int(134574105109331968):
                 reason = "BEI GOTT MARIAM, dein Essen verbrennt!"
