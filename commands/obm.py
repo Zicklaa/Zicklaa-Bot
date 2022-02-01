@@ -8,8 +8,11 @@ import praw
 
 logger = logging.getLogger("ZicklaaBot.Okbrudimongo")
 
-limit = 25
+limit = 50
 
+
+async def is_hallo_anna(ctx):
+    return ctx.channel.id == 528742785935998979
 
 class Okbrudimongo(commands.Cog):
     def __init__(self, bot):
@@ -79,6 +82,43 @@ class Okbrudimongo(commands.Cog):
             logger.error(f"OOW ERROR von {ctx.author.name}: {e}")
 
     @commands.command()
+    @commands.check(is_hallo_anna)
+    async def ali(self, ctx):
+        try:
+            reddit = praw.Reddit(
+                client_id=self.bot.CLIENT_ID,
+                client_secret=self.bot.CLIENT_SECRET,
+                user_agent="by u/zicklaa"
+            )
+            submissions = [submission for submission in reddit.subreddit(
+                "kpopfap").hot(limit=limit)]
+            url = submissions[random.randint(0, limit)].url
+            print(url)
+            if "gallery" in url:
+                submissions = [submission for submission in reddit.subreddit(
+                    "kpopfap").hot(limit=limit)]
+                url = submissions[random.randint(0, limit)].url
+                if "gallery" in url:
+                    submissions = [submission for submission in reddit.subreddit(
+                        "kpopfap").hot(limit=limit)]
+                    url = submissions[random.randint(0, limit)].url
+                    if "gallery" in url:
+                        submissions = [submission for submission in reddit.subreddit(
+                            "kpopfap").hot(limit=limit)]
+                        url = submissions[random.randint(0, limit)].url
+                        await ctx.reply("Nur Galleries ey smh")
+                    else:
+                        await ctx.reply(url)
+                else:
+                    await ctx.reply(url)
+            else:
+                await ctx.reply(url)
+            logger.info("Redditlink gepostet für: " + ctx.author.name)
+        except Exception as e:
+            await ctx.reply("Klappt nit lol 🤷")
+            logger.error(f"OBR ERROR von {ctx.author.name}: {e}")
+
+    @commands.command()
     async def obr(self, ctx):
         try:
             reddit = praw.Reddit(
@@ -88,7 +128,8 @@ class Okbrudimongo(commands.Cog):
             )
             submissions = [submission for submission in reddit.subreddit(
                 "okbuddyretard").hot(limit=limit)]
-            await ctx.reply(submissions[random.randint(0, limit)].url)
+            url = submissions[random.randint(0, limit)].url
+            await ctx.reply(url)
             logger.info("Redditlink gepostet für: " + ctx.author.name)
         except Exception as e:
             await ctx.reply("Klappt nit lol 🤷")
