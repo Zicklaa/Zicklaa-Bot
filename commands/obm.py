@@ -93,7 +93,6 @@ class Okbrudimongo(commands.Cog):
             submissions = [submission for submission in reddit.subreddit(
                 "kpopfap").hot(limit=limit)]
             url = submissions[random.randint(0, limit)].url
-            print(url)
             if "gallery" in url:
                 submissions = [submission for submission in reddit.subreddit(
                     "kpopfap").hot(limit=limit)]
