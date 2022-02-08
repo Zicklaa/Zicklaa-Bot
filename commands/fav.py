@@ -9,6 +9,9 @@ from discord.raw_models import RawReactionActionEvent
 
 logger = logging.getLogger("ZicklaaBot.Fav")
 
+zeitumstellung = 1
+# 1 = winterzeit
+# 2 = sommerzeit
 
 class Fav(commands.Cog):
     def __init__(self, bot, db):
@@ -104,7 +107,7 @@ class Fav(commands.Cog):
                         fav_message = await channel.fetch_message(fav[2])
                         embed = discord.Embed(
                             title="", description=fav_message.content, color=0x00ff00)
-                        current_time = (fav_message.created_at + datetime.timedelta(hours=1)
+                        current_time = (fav_message.created_at + datetime.timedelta(hours=zeitumstellung)
                                         ).strftime("%d.%m.%Y, %H:%M:%S")
                         if fav_message.attachments:
                             embed.set_image(
@@ -132,7 +135,7 @@ class Fav(commands.Cog):
                             fav_message = await channel.fetch_message(fav[2])
                             embed = discord.Embed(
                                 title="", description=fav_message.content, color=0x00ff00)
-                            current_time = (fav_message.created_at + datetime.timedelta(hours=1)
+                            current_time = (fav_message.created_at + datetime.timedelta(hours=zeitumstellung)
                                             ).strftime("%d.%m.%Y, %H:%M:%S")
                             if fav_message.attachments:
                                 embed.set_image(
@@ -168,7 +171,7 @@ class Fav(commands.Cog):
                         fav_message = await channel.fetch_message(fav[2])
                         embed = discord.Embed(
                             title="", description=fav_message.content, color=0x00ff00)
-                        current_time = (fav_message.created_at + datetime.timedelta(hours=1)
+                        current_time = (fav_message.created_at + datetime.timedelta(hours=zeitumstellung)
                                         ).strftime("%d.%m.%Y, %H:%M:%S")
                         if fav_message.attachments:
                             embed.set_image(
