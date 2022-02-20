@@ -2,14 +2,12 @@ import logging
 import random
 import discord
 import datetime
+from dateutil import tz
+import pytz
 
 from discord.ext import commands
 
 logger = logging.getLogger("ZicklaaBot.Quote")
-
-zeitumstellung = 1
-# 1 = winterzeit
-# 2 = sommerzeit
 
 
 class Quote(commands.Cog):
@@ -30,7 +28,7 @@ class Quote(commands.Cog):
                     message = await channel.fetch_message(msg_id)
                     embed = discord.Embed(
                         title="", description=message.content, color=0x00ff00)
-                    current_time = (message.created_at + datetime.timedelta(hours=zeitumstellung)
+                    current_time = (pytz.utc.localize(message.created_at).astimezone(tz.tzlocal())
                                     ).strftime("%d.%m.%Y, %H:%M:%S")
                     if message.attachments:
                         embed.set_image(
