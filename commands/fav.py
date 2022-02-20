@@ -13,6 +13,7 @@ zeitumstellung = 1
 # 1 = winterzeit
 # 2 = sommerzeit
 
+
 class Fav(commands.Cog):
     def __init__(self, bot, db):
         self.bot = bot
@@ -113,7 +114,7 @@ class Fav(commands.Cog):
                             embed.set_image(
                                 url=str(fav_message.attachments[0].url))
                         embed.set_author(
-                            name=fav_message.author.name, icon_url=fav_message.author.avatar_url)
+                            name=fav_message.author.name, icon_url=fav_message.author.avatar_url, url=fav_message.jump_url)
                         embed.set_footer(text=str(fav[0]) + ' | ' + current_time + ' | #' +
                                          fav_message.channel.name + " | by: " + ctx.author.name + " | Name: " + fav[3])
                         await ctx.channel.send(embed=embed)
@@ -141,7 +142,7 @@ class Fav(commands.Cog):
                                 embed.set_image(
                                     url=str(fav_message.attachments[0].url))
                             embed.set_author(
-                                name=fav_message.author.name, icon_url=fav_message.author.avatar_url)
+                                name=fav_message.author.name, icon_url=fav_message.author.avatar_url, url=fav_message.jump_url)
                             embed.set_footer(text=str(fav[0]) + ' | ' + current_time + ' | #' +
                                              fav_message.channel.name + " | by: " + ctx.author.name + " | Name: " + fav[3])
                             await ctx.channel.send(embed=embed)
@@ -158,6 +159,36 @@ class Fav(commands.Cog):
             logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
 
     @commands.command()
+    async def rfav(self, ctx, *name):
+        try:
+            fav = self.cursor.execute(
+                "SELECT * FROM favs ORDER BY RANDOM()").fetchone()
+            if fav:
+                try:
+                    fav_user = await self.bot.fetch_user(fav[1])
+                    channel = self.bot.get_channel(fav[4])
+                    fav_message = await channel.fetch_message(fav[2])
+                    embed = discord.Embed(
+                        title="", description=fav_message.content, color=0x00ff00)
+                    current_time = (fav_message.created_at + datetime.timedelta(hours=zeitumstellung)
+                                    ).strftime("%d.%m.%Y, %H:%M:%S")
+                    if fav_message.attachments:
+                        embed.set_image(
+                            url=str(fav_message.attachments[0].url))
+                    embed.set_author(
+                        name=fav_message.author.name, icon_url=fav_message.author.avatar_url, url=fav_message.jump_url)
+                    embed.set_footer(text=str(fav[0]) + ' | ' + current_time + ' | #' +
+                                     fav_message.channel.name + " | by: " + fav_user.name + " | Name: " + fav[3] + " | Randomized by: " + ctx.author.name)
+                    await ctx.channel.send(embed=embed)
+                    await ctx.message.delete()
+                except Exception as e:
+                    await ctx.message.reply("Klappt nit lol 🤷 Eventuell existiert der originale Kommentar nichtmehr.")
+                    logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
+        except Exception as e:
+            await ctx.message.reply("Klappt nit lol 🤷")
+            logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
+
+    @commands.command()
     async def allfavs(self, ctx):
         try:
             all_favs = self.cursor.execute(
@@ -167,20 +198,25 @@ class Fav(commands.Cog):
                     dm_channel = await ctx.author.create_dm()
                     await ctx.message.delete()
                     for fav in all_favs:
-                        channel = self.bot.get_channel(fav[4])
-                        fav_message = await channel.fetch_message(fav[2])
-                        embed = discord.Embed(
-                            title="", description=fav_message.content, color=0x00ff00)
-                        current_time = (fav_message.created_at + datetime.timedelta(hours=zeitumstellung)
-                                        ).strftime("%d.%m.%Y, %H:%M:%S")
-                        if fav_message.attachments:
-                            embed.set_image(
-                                url=str(fav_message.attachments[0].url))
-                        embed.set_author(
-                            name=fav_message.author.name, icon_url=fav_message.author.avatar_url)
-                        embed.set_footer(text=str(fav[0]) + ' | ' + current_time + ' | #' +
-                                         fav_message.channel.name + " | by: " + ctx.author.name + " | Name: " + fav[3])
-                        await dm_channel.send(embed=embed)
+                        try:
+                            channel = self.bot.get_channel(fav[4])
+                            fav_message = await channel.fetch_message(fav[2])
+                            embed = discord.Embed(
+                                title="", description=fav_message.content, color=0x00ff00)
+                            current_time = (fav_message.created_at + datetime.timedelta(hours=zeitumstellung)
+                                            ).strftime("%d.%m.%Y, %H:%M:%S")
+                            if fav_message.attachments:
+                                embed.set_image(
+                                    url=str(fav_message.attachments[0].url))
+                            embed.set_author(
+                                name=fav_message.author.name, icon_url=fav_message.author.avatar_url, url=fav_message.jump_url)
+                            embed.set_footer(text=str(fav[0]) + ' | ' + current_time + ' | #' +
+                                             fav_message.channel.name + " | by: " + ctx.author.name + " | Name: " + fav[3])
+                            await dm_channel.send(embed=embed)
+                        except Exception as e:
+                            logger.error(
+                                f"Allfavs ERROR von {ctx.author.name}: {e}")
+
                 except Exception as e:
                     await ctx.message.reply("Klappt nit lol 🤷")
                     logger.error(f"Fav ERROR von {ctx.author.name}: {e}")

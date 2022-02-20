@@ -87,7 +87,7 @@ class Wishlist(commands.Cog):
             await ctx.channel.send(
                 "Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wishlist()"
             )
-            logger.error(ctx.author.name + ": " + e)
+            logger.error(ctx.author.name + ": " + str(e))
 
     @commands.command()
     @commands.check(can_delete)
