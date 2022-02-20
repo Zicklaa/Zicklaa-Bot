@@ -55,6 +55,7 @@ initial_extensions = [
     "commands.chefkoch",
     "commands.mydealz",
     "commands.ofen",
+    "commands.quote",
 ]
 
 
