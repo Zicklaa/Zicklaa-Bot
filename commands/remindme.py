@@ -65,7 +65,7 @@ class RemindMe(commands.Cog):
                 await self.get_all_reminders(ctx)
                 return
             elif is_datetime(method, dateOnly=True):
-                if is_datetime(text[0]):
+                if text and is_datetime(text[0]):
                     absTime = parser.parse(f"{method} {text[0]}")
                 else:
                     absTime = parser.parse(f"{method}") + timedelta(hours=12)
