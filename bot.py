@@ -56,6 +56,7 @@ initial_extensions = [
     "commands.mydealz",
     "commands.ofen",
     "commands.quote",
+    "commands.roll",
 ]
 
 

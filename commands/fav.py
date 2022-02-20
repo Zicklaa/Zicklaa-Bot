@@ -174,8 +174,8 @@ class Fav(commands.Cog):
                             url=str(fav_message.attachments[0].url))
                     embed.set_author(
                         name=fav_message.author.name, icon_url=fav_message.author.avatar_url, url=fav_message.jump_url)
-                    embed.set_footer(text=str(fav[0]) + ' | ' + current_time + ' | #' +
-                                     fav_message.channel.name + " | by: " + fav_user.name + " | Name: " + fav[3] + " | Randomized by: " + ctx.author.name)
+                    embed.set_footer(text=current_time + ' | #' +
+                                     fav_message.channel.name + " | Randomized by: " + ctx.author.name)
                     await ctx.channel.send(embed=embed)
                     await ctx.message.delete()
                 except Exception as e:
