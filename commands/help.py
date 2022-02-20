@@ -40,8 +40,10 @@ class Help(commands.Cog):
             name="+mdc/mdd", value="+mdc für die aktuell heißesten Dealz und +mdd für 3 heißesten ~~Singles~~ Dealz des Tages.", inline=False)
         embed.add_field(
             name="+ofen", value="Mariam only >:(", inline=False)
-        embed.add_field(name="+obm | +oow | +obr | +ali" ,
+        embed.add_field(name="+obm | +oow | +obr | +ali",
                         value="Postet ein  Random Meme aus hot von r/OkBrudiMongo oder dem Ösi/US Pendant", inline=False)
+        embed.add_field(
+            name="+quote", value="Format: +quote [LINK]", inline=False)
         embed.add_field(
             name="+remindme / +rm", value="Format: +remindme/rm <all | [ZAHL][s/m/h/d/mon]> [TEXT]", inline=False)
         embed.add_field(

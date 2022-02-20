@@ -16,13 +16,14 @@ limit = 50
 async def is_hallo_anna(ctx):
     return ctx.channel.id == 528742785935998979
 
+
 class Okbrudimongo(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
     async def obm(self, ctx):
-        #try:
+        # try:
         reddit = praw.Reddit(
             client_id=self.bot.CLIENT_ID,
             client_secret=self.bot.CLIENT_SECRET,
@@ -66,7 +67,9 @@ class Okbrudimongo(commands.Cog):
             )
             random_submission = reddit.subreddit('okoidawappler').random()
             if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif"):
-                await ctx.channel.send("||" + random_submission.url + "||")
+                urllib.request.urlretrieve(
+                    random_submission.url, "/home/zicklaa/Zicklaa-Bot/static/SPOILER_oow.png")
+                await ctx.channel.send(file=discord.File(r"/home/zicklaa/Zicklaa-Bot/static/SPOILER_oow.png"))
                 if 'imgur' in random_submission.url:
                     await ctx.channel.send('imgur 🤮')
                 await ctx.message.delete()
@@ -76,7 +79,9 @@ class Okbrudimongo(commands.Cog):
             else:
                 random_submission = reddit.subreddit('okoidawappler').random()
                 if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif"):
-                    await ctx.channel.send("||" + random_submission.url + "||")
+                    urllib.request.urlretrieve(
+                        random_submission.url, "/home/zicklaa/Zicklaa-Bot/static/SPOILER_oow.png")
+                    await ctx.channel.send(file=discord.File(r"/home/zicklaa/Zicklaa-Bot/static/SPOILER_oow.png"))
                     if 'imgur' in random_submission.url:
                         await ctx.channel.send('imgur 🤮')
                     await ctx.message.delete()
@@ -113,11 +118,11 @@ class Okbrudimongo(commands.Cog):
                         url = submissions[random.randint(0, limit)].url
                         await ctx.reply("Nur Galleries ey smh")
                     else:
-                        await ctx.reply("||" + url + "||")
+                        await ctx.reply(url)
                 else:
-                    await ctx.reply("||" + url + "||")
+                    await ctx.reply(url)
             else:
-                await ctx.reply("||" + url + "||")
+                await ctx.reply(url)
             logger.info("Redditlink gepostet für: " + ctx.author.name)
         except Exception as e:
             await ctx.reply("Klappt nit lol 🤷")
@@ -139,6 +144,7 @@ class Okbrudimongo(commands.Cog):
         except Exception as e:
             await ctx.reply("Klappt nit lol 🤷")
             logger.error(f"OBR ERROR von {ctx.author.name}: {e}")
+
 
 def setup(bot):
     bot.add_cog(Okbrudimongo(bot))
