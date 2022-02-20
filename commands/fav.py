@@ -179,7 +179,7 @@ class Fav(commands.Cog):
                     await ctx.channel.send(embed=embed)
                     await ctx.message.delete()
                 except Exception as e:
-                    await ctx.message.reply("Klappt nit lol 🤷 Eventuell existiert der originale Kommentar nichtmehr.")
+                    await ctx.message.reply("Klappt nit lol 🤷 Eventuell existiert der originale Kommentar nichtmehr. ID: " + str(fav[0]) + " <@288413759117066241>")
                     logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
         except Exception as e:
             await ctx.message.reply("Klappt nit lol 🤷")
