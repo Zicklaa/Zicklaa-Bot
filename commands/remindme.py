@@ -1,8 +1,10 @@
 import asyncio
 import logging
 import time
-from datetime import datetime
+from datetime import datetime,timedelta
+
 from discord import message
+from dateutil import parser,tz
 
 from discord.ext import commands
 import discord
@@ -10,6 +12,16 @@ from discord.raw_models import RawReactionActionEvent
 
 logger = logging.getLogger("ZicklaaBot.RemindMe")
 
+
+def is_datetime(msg, dateOnly=False):
+    try:
+        dt = parser.parse(msg, fuzzy=False, default=datetime(1970,1,1))
+        if dateOnly:
+            if dt.year == 1970:
+                return False
+        return True
+    except ValueError:
+        return False
 
 class Reminder:
     def __init__(
@@ -36,9 +48,10 @@ class RemindMe(commands.Cog):
         self.db = db
         self.cursor = db.cursor()
 
-    @commands.command()
+    @commands.command(aliases=["rm"])
     async def remindme(self, ctx, method: str, *text: str):
         try:
+            absTime = None
             message = ctx.message
             unit_to_second = {
                 "s": 1,
@@ -51,6 +64,13 @@ class RemindMe(commands.Cog):
             if method == "all":
                 await self.get_all_reminders(ctx)
                 return
+            elif is_datetime(method, dateOnly=True):
+                if is_datetime(text[0]):
+                    absTime = parser.parse(f"{method} {text[0]}")
+                else:
+                    absTime = parser.parse(f"{method}") + timedelta(hours=12)
+                reason = " ".join(text[1:])
+                absTime = absTime.replace(tzinfo=tz.tzlocal())
             elif method.isdigit():
                 digits = method
                 unit = text[0]
@@ -63,51 +83,16 @@ class RemindMe(commands.Cog):
                     unit = method[-1]
                     digits = method[:-1]
                 reason = " ".join(text)
-            reminder_time = round(
-                time.time() + (float(int(digits) *
-                                     int(unit_to_second[unit]))), 2
-            )
-            reminder = Reminder(
-                message.id, ctx.channel.id, ctx.author.id, reason, reminder_time
-            )
-            reminder = self.insert_reminder(reminder)
-            await message.add_reaction("\N{THUMBS UP SIGN}")
-            return
-        except Exception as e:
-            await ctx.message.reply("Klappt nit lol 🤷")
-            logger.error("Remindme Fehler wahrsch falsches Zeitformat?: " + e)
-
-    @commands.command()
-    async def rm(self, ctx, method: str, *text: str):
-        try:
-            message = ctx.message
-            unit_to_second = {
-                "s": 1,
-                "m": 60,
-                "h": 60 * 60,
-                "d": 60 * 60 * 24,
-                "w": 60 * 60 * 24 * 7,
-                "mon": 60 * 60 * 24 * 7 * 30,
-            }
-            if method == "all":
-                await self.get_all_reminders(ctx)
-                return
-            elif method.isdigit():
-                digits = method
-                unit = text[0]
-                reason = " ".join(text[1:])
+            if absTime is not None:
+                reminder_time = absTime.timestamp()
+                if reminder_time - datetime.now().timestamp() < 0:
+                    await ctx.message.reply("Ich kann dich nicht in der Vergangenheit erinneren")
+                    return
             else:
-                if "mon" in method:
-                    unit = "mon"
-                    digits = method[:-3]
-                else:
-                    unit = method[-1]
-                    digits = method[:-1]
-                reason = " ".join(text)
-            reminder_time = round(
-                time.time() + (float(int(digits) *
-                                     int(unit_to_second[unit]))), 2
-            )
+                reminder_time = round(
+                    time.time() + (float(int(digits) *
+                                         int(unit_to_second[unit]))), 2
+                )
             reminder = Reminder(
                 message.id, ctx.channel.id, ctx.author.id, reason, reminder_time
             )
@@ -135,10 +120,13 @@ class RemindMe(commands.Cog):
                 self.cursor.execute(
                     "SELECT * FROM reminders ORDER BY reminder_time ASC LIMIT 1")
                 results = self.cursor.fetchall()
-                reminder = reminder_from_record(results[0])
-                if (reminder.time - time.time()) < 0:
-                    await self.send_reminder(reminder)
-                    await asyncio.sleep(1)
+                if results:
+                    reminder = reminder_from_record(results[0])
+                    if (reminder.time - time.time()) < 0:
+                        await self.send_reminder(reminder)
+                        await asyncio.sleep(1)
+                    else:
+                        await asyncio.sleep(5)
                 else:
                     await asyncio.sleep(5)
         except Exception as e:
