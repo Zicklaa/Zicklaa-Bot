@@ -14,6 +14,7 @@ markovify==0.9.3
 multidict==5.1.0
 praw==7.4.0
 prawcore==2.3.0
+python-dateutil==2.8.2
 pylast==4.2.1
 pyowm==3.2.0
 PySocks==1.7.1

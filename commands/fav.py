@@ -3,15 +3,12 @@ import logging
 from collections.abc import Sequence
 import discord
 import datetime
-from pytz import timezone
+import pytz
+from dateutil import tz
 from discord.ext import commands
 from discord.raw_models import RawReactionActionEvent
 
 logger = logging.getLogger("ZicklaaBot.Fav")
-
-zeitumstellung = 1
-# 1 = winterzeit
-# 2 = sommerzeit
 
 
 class Fav(commands.Cog):
@@ -108,7 +105,7 @@ class Fav(commands.Cog):
                         fav_message = await channel.fetch_message(fav[2])
                         embed = discord.Embed(
                             title="", description=fav_message.content, color=0x00ff00)
-                        current_time = (fav_message.created_at + datetime.timedelta(hours=zeitumstellung)
+                        current_time = (pytz.utc.localize(fav_message.created_at).astimezone(tz.tzlocal())
                                         ).strftime("%d.%m.%Y, %H:%M:%S")
                         if fav_message.attachments:
                             embed.set_image(
@@ -136,7 +133,7 @@ class Fav(commands.Cog):
                             fav_message = await channel.fetch_message(fav[2])
                             embed = discord.Embed(
                                 title="", description=fav_message.content, color=0x00ff00)
-                            current_time = (fav_message.created_at + datetime.timedelta(hours=zeitumstellung)
+                            current_time = (pytz.utc.localize(fav_message.created_at).astimezone(tz.tzlocal())
                                             ).strftime("%d.%m.%Y, %H:%M:%S")
                             if fav_message.attachments:
                                 embed.set_image(
@@ -170,7 +167,7 @@ class Fav(commands.Cog):
                     fav_message = await channel.fetch_message(fav[2])
                     embed = discord.Embed(
                         title="", description=fav_message.content, color=0x00ff00)
-                    current_time = (fav_message.created_at + datetime.timedelta(hours=zeitumstellung)
+                    current_time = (pytz.utc.localize(fav_message.created_at).astimezone(tz.tzlocal())
                                     ).strftime("%d.%m.%Y, %H:%M:%S")
                     if fav_message.attachments:
                         embed.set_image(
@@ -203,7 +200,7 @@ class Fav(commands.Cog):
                             fav_message = await channel.fetch_message(fav[2])
                             embed = discord.Embed(
                                 title="", description=fav_message.content, color=0x00ff00)
-                            current_time = (fav_message.created_at + datetime.timedelta(hours=zeitumstellung)
+                            current_time = (pytz.utc.localize(fav_message.created_at).astimezone(tz.tzlocal())
                                             ).strftime("%d.%m.%Y, %H:%M:%S")
                             if fav_message.attachments:
                                 embed.set_image(
