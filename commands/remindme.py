@@ -66,9 +66,9 @@ class RemindMe(commands.Cog):
                 return
             elif is_datetime(method, dateOnly=True):
                 if text and is_datetime(text[0]):
-                    absTime = parser.parse(f"{method} {text[0]}")
+                    absTime = parser.parse(f"{method} {text[0]}", dayfirst=True)
                 else:
-                    absTime = parser.parse(f"{method}") + timedelta(hours=12)
+                    absTime = parser.parse(f"{method}", dayfirst=True) + timedelta(hours=12)
                 reason = " ".join(text[1:])
                 absTime = absTime.replace(tzinfo=tz.tzlocal())
             elif method.isdigit():
