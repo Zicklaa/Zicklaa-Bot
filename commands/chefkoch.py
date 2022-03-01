@@ -21,7 +21,7 @@ class Chefkoch(commands.Cog):
                 for option in options:
                     text = text + option + " "
             text = text.lower()
-            if len(text)>100:
+            if len(text) > 100:
                 await ctx.reply("Zu viel Junge.")
                 logger.info(
                     f"Request from {ctx.author.name}. Chefkoch zu viele Zutaten.")

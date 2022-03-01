@@ -1,10 +1,10 @@
 import asyncio
 import logging
 import time
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 
 from discord import message
-from dateutil import parser,tz
+from dateutil import parser, tz
 
 from discord.ext import commands
 import discord
@@ -15,13 +15,14 @@ logger = logging.getLogger("ZicklaaBot.RemindMe")
 
 def is_datetime(msg, dateOnly=False):
     try:
-        dt = parser.parse(msg, fuzzy=False, default=datetime(1970,1,1))
+        dt = parser.parse(msg, fuzzy=False, default=datetime(1970, 1, 1))
         if dateOnly:
             if dt.year == 1970:
                 return False
         return True
     except ValueError:
         return False
+
 
 class Reminder:
     def __init__(

@@ -1,12 +1,12 @@
+import json
 import logging
 import os
 import random
-import discord
-from discord import message
-import markovify
 import re
-import json
 
+import discord
+import markovify
+from discord import message
 from discord.ext import commands
 
 logger = logging.getLogger("ZicklaaBot.Hivemind")

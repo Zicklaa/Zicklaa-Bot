@@ -1,8 +1,7 @@
 import logging
-
 from collections.abc import Sequence
+
 import discord
-import datetime
 import pytz
 from dateutil import tz
 from discord.ext import commands
@@ -21,6 +20,7 @@ class Fav(commands.Cog):
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
         message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(
             payload)
+
         if str(emoji) == "🗑️":
             try:
                 if user_id != 571051961256902671:
