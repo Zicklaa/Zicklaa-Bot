@@ -56,6 +56,7 @@ initial_extensions = [
     "commands.mydealz",
     "commands.ofen",
     "commands.quote",
+    "commands.roll",
 ]
 
 
@@ -80,7 +81,7 @@ class ZicklaaBot(discord.ext.commands.Bot):
     async def on_ready(self):
         print("Hallo I bim omnline :^)")
         logger.info(
-            "========================Startup============================")
+            "=======================Startup=========================")
         remindme = self.get_cog("RemindMe")
         await remindme.check_reminder()
 
