@@ -23,6 +23,16 @@ def is_datetime(msg, dateOnly=False):
     except ValueError:
         return False
 
+def parse_time(msg):
+    try:
+        dt = datetime.combine(datetime.today(),datetime.strptime(msg, "%H:%M").time())
+        return dt
+    except ValueError:
+        try:
+            dt = datetime.combine(datetime.today(),datetime.strptime(msg, "%-H:%M").time())
+            return dt
+        except ValueError:
+            return None
 
 class Reminder:
     def __init__(
@@ -62,7 +72,11 @@ class RemindMe(commands.Cog):
                 "w": 60 * 60 * 24 * 7,
                 "mon": 60 * 60 * 24 * 7 * 30,
             }
-            if method == "all":
+            remTime = parse_time(method)
+            if remTime is not None:
+                reason = " ".join(text[1:])
+                absTime = remTime.replace(tzinfo=tz.tzlocal())
+            elif method == "all":
                 await self.get_all_reminders(ctx)
                 return
             elif is_datetime(method, dateOnly=True):
