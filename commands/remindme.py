@@ -23,16 +23,18 @@ def is_datetime(msg, dateOnly=False):
     except ValueError:
         return False
 
+
 def parse_time(msg):
     try:
-        dt = datetime.combine(datetime.today(),datetime.strptime(msg, "%H:%M").time())
+        dt = datetime.combine(datetime.today(), datetime.strptime(msg, "%H:%M").time())
         return dt
     except ValueError:
         try:
-            dt = datetime.combine(datetime.today(),datetime.strptime(msg, "%-H:%M").time())
+            dt = datetime.combine(datetime.today(), datetime.strptime(msg, "%-H:%M").time())
             return dt
         except ValueError:
             return None
+
 
 class Reminder:
     def __init__(
@@ -116,7 +118,7 @@ class RemindMe(commands.Cog):
             return
         except Exception as e:
             await ctx.message.reply("Klappt nit lol 🤷")
-            logger.error("Remindme Fehler wahrsch falsches Zeitformat?: " + e)
+            logger.error("Remindme Fehler wahrsch falsches Zeitformat?: " + str(e))
 
     '''async def wait_for_reminder(self, reminder: Reminder):
         try:
@@ -170,7 +172,7 @@ class RemindMe(commands.Cog):
                     )
                 await ctx.message.reply(msg_text, mention_author=True)
         except Exception as e:
-            logger.error("Remindme Fehler get_all_reminders(): " + e)
+            logger.error("Remindme Fehler get_all_reminders(): " + str(e))
 
     def insert_reminder(self, reminder: Reminder):
         try:
@@ -195,7 +197,7 @@ class RemindMe(commands.Cog):
             reminder._id = id
             return reminder
         except Exception as e:
-            logger.error("Remindme Fehler insert_reminder(): " + e)
+            logger.error("Remindme Fehler insert_reminder(): " + str(e))
 
     async def send_reminder(self, reminder: Reminder):
         try:
@@ -250,7 +252,7 @@ class RemindMe(commands.Cog):
                     return False
             return True
         except Exception as e:
-            logger.error("Remindme Fehler check_reminder_exists(): " + e)
+            logger.error("Remindme Fehler check_reminder_exists(): " + str(e))
 
     def is_reminder_message(self, message_id, author_id, emoji, user_id):
         try:
@@ -267,7 +269,7 @@ class RemindMe(commands.Cog):
                 return False
             return True
         except Exception as e:
-            logger.error("Remindme Fehler is_reminder_message(): " + e)
+            logger.error("Remindme Fehler is_reminder_message(): " + str(e))
 
     def delete_reminder(self, reminder: Reminder):
         try:
@@ -276,7 +278,7 @@ class RemindMe(commands.Cog):
             self.db.commit()
             logger.info("Reminder gelöscht: " + str(reminder._id))
         except Exception as e:
-            logger.error("Remindme Fehler delete_reminder(): " + e)
+            logger.error("Remindme Fehler delete_reminder(): " + str(e))
 
 
 def setup(bot):

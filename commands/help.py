@@ -38,17 +38,20 @@ class Help(commands.Cog):
         embed.add_field(name="+magic8", value="+magic8 [FRAGE]", inline=False)
         embed.add_field(
             name="+mdc/mdd", value="+mdc für die aktuell heißesten Dealz und +mdd für 3 heißesten ~~Singles~~ Dealz des Tages.", inline=False)
+        embed.add_field(name="+obm | +oow | +obr | +ali",
+                        value="Postet ein  Random Meme aus hot von r/OkBrudiMongo oder dem Ösi/US Pendant.", inline=False)
         embed.add_field(
             name="+ofen", value="Mariam only >:(", inline=False)
-        embed.add_field(name="+obm | +oow | +obr | +ali",
-                        value="Postet ein  Random Meme aus hot von r/OkBrudiMongo oder dem Ösi/US Pendant", inline=False)
+        embed.add_field(
+            name="+poll", value="Format: +poll [Zeit in Minuten] [Frage] [Option 1] [Option 2] ...", inline=False)
         embed.add_field(
             name="+quote", value="Format: +quote [LINK]", inline=False)
         embed.add_field(
             name="+remindme / +rm", value="Format: +remindme/rm <all | [ZAHL][s/m/h/d/mon]> [TEXT]", inline=False)
         embed.add_field(
-            name="+roll", value="Format: +roll [Zahl der Würfel] [Maximale Augenzahl]", inline=False)
-        embed.add_field(name="+magic8", value="+magic8 [FRAGE]", inline=False)
+            name="+rezept", value="Gibt dir ein random Rezept aus dem Rezeptechannel.", inline=False)
+        embed.add_field(
+            name="+roll", value="+roll [Anzahl der Würfe] [Maximale Augenzahl]", inline=False)
         embed.add_field(name="+sponge",
                         value="+sponge/randomsponge [TEXT]", inline=False)
         embed.add_field(
@@ -66,7 +69,6 @@ class Help(commands.Cog):
         dm_channel = await ctx.author.create_dm()
         await ctx.message.delete()
         await dm_channel.send(embed=embed)
-        # await self.get_destination().send(embed=embed)
 
 
 def setup(bot):

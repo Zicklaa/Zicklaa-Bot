@@ -57,6 +57,7 @@ initial_extensions = [
     "commands.ofen",
     "commands.quote",
     "commands.roll",
+    "commands.poll",
 ]
 
 
