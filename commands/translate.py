@@ -12,7 +12,7 @@ class Translate(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def translate(self, ctx, *text):
+    async def tr(self, ctx, *text):
         async with ctx.channel.typing():
             try:
                 text = " ".join(text)
@@ -22,6 +22,25 @@ class Translate(commands.Cog):
                                 ctx.author.name)
                 else:
                     translated = GoogleTranslator(source='auto', target='de').translate(text)
+
+                    await ctx.reply("**Original: **" + text + "\n" + "\n" + "**Übersetzt: **" + translated)
+                    logger.info("Translate gepostet für " +
+                                ctx.author.name)
+            except Exception as e:
+                await ctx.reply("Kann kein Italienisch :/")
+                logger.error(f"Translate Error from {ctx.author.name}: {e}")
+
+    @commands.command()
+    async def tren(self, ctx, *text):
+        async with ctx.channel.typing():
+            try:
+                text = " ".join(text)
+                if len(text) > 950:
+                    await ctx.reply("Text zu lang lol")
+                    logger.info("Translate zu lang für " +
+                                ctx.author.name)
+                else:
+                    translated = GoogleTranslator(source='auto', target='en').translate(text)
 
                     await ctx.reply("**Original: **" + text + "\n" + "\n" + "**Übersetzt: **" + translated)
                     logger.info("Translate gepostet für " +
