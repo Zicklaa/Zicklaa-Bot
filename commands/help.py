@@ -54,6 +54,8 @@ class Help(commands.Cog):
             name="+roll", value="+roll [Anzahl der Würfe] [Maximale Augenzahl]", inline=False)
         embed.add_field(name="+sponge",
                         value="+sponge/randomsponge [TEXT]", inline=False)
+        embed.add_field(name="+translate",
+                        value="+translate [TEXT]", inline=False)
         embed.add_field(
             name="+wetter", value="Format: +wetter/asciiwetter [ORTNAME]", inline=False)
         embed.add_field(

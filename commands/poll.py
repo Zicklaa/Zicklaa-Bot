@@ -35,7 +35,7 @@ class Poll(commands.Cog):
                             else:
                                 text = text + str(i) + ": " + option + "\n"
                                 i = i + 1
-                        embed = discord.Embed(title="Poll")
+                        embed = discord.Embed(title="Poll", url="https://www.youtube.com/watch?v=dQw4w9WgXcQ")
                         embed.set_thumbnail(url="https://cdn-icons-png.flaticon.com/512/3100/3100212.png")
                         embed.add_field(name=question, value=text, inline=False)
                         embed.timestamp = datetime.datetime.utcnow()

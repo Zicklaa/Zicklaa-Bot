@@ -26,6 +26,14 @@ with open('hivemind_new.json', 'w') as f:
 print("compiled")'''
 
 
+am = discord.AllowedMentions(
+    users=False,         # Whether to ping individual user @mentions
+    everyone=False,      # Whether to ping @everyone or @here mentions
+    roles=False,         # Whether to ping role @mentions
+    replied_user=False,  # Whether to ping on replies to messages
+)
+
+
 class Hivemind(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -37,7 +45,7 @@ class Hivemind(commands.Cog):
                 # satz = json_model.make_short_sentence(140)
                 satz = json_model.make_sentence(max_overlap_ratio=.67,)
                 if satz:
-                    await ctx.reply(satz)
+                    await ctx.reply(satz, allowed_mentions=am)
                     break
 
             logger.info("Hivemind für: " + ctx.author.name)
@@ -55,7 +63,7 @@ class Hivemind(commands.Cog):
                         # satz = json_model.make_short_sentence(140)
                         satz = json_model.make_sentence(max_overlap_ratio=.67,)
                         if satz:
-                            await ctx.reply(satz)
+                            await ctx.reply(satz, allowed_mentions=am)
                             break
 
                 logger.info("Hivemind für: " + ctx.author.name)
