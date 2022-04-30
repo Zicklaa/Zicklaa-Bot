@@ -55,7 +55,7 @@ class Help(commands.Cog):
         embed.add_field(name="+sponge",
                         value="+sponge/randomsponge [TEXT]", inline=False)
         embed.add_field(name="+tr +tren",
-                        value="Übersetzt nacht Deutsch und nach Englisch jeweils.", inline=False)
+                        value="Übersetzt nach Deutsch und nach Englisch jeweils.", inline=False)
         embed.add_field(
             name="+wetter", value="Format: +wetter/asciiwetter [ORTNAME]", inline=False)
         embed.add_field(
