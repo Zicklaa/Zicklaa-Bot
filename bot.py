@@ -59,6 +59,7 @@ initial_extensions = [
     "commands.roll",
     "commands.poll",
     "commands.translate",
+    "commands.girlboss",
 ]
 
 

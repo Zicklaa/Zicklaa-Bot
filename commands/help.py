@@ -26,6 +26,8 @@ class Help(commands.Cog):
         embed.add_field(
             name="+git", value="Poschded den link zum Github Repository", inline=False)
         embed.add_field(
+            name="+girlboss", value="Mariam only >:(", inline=False)
+        embed.add_field(
             name="+help", value="Öffnet das Hilfefenster", inline=False)
         embed.add_field(
             name="+hm", value="Was würde der Benserver dazu sagen?", inline=False)
@@ -61,7 +63,7 @@ class Help(commands.Cog):
         embed.add_field(
             name="+wiki", value="Format: +wiki [SUCHBEGRIFF]", inline=False)
         embed.add_field(
-            name="+wishlist", value="Format: +wishlist [WUNSCH] | +showlist", inline=False)
+            name="+wishlist", value="Format: +wishlist [WUNSCH]", inline=False)
 
         embed.set_author(
             name="Gott",
