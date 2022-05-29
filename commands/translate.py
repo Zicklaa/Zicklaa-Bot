@@ -21,7 +21,8 @@ class Translate(commands.Cog):
                     logger.info("Translate zu lang für " +
                                 ctx.author.name)
                 else:
-                    translated = GoogleTranslator(source='auto', target='de').translate(text)
+                    translated = GoogleTranslator(
+                        source='auto', target='de').translate(text)
 
                     await ctx.reply("**Original: **" + text + "\n" + "\n" + "**Übersetzt: **" + translated)
                     logger.info("Translate gepostet für " +
@@ -40,7 +41,8 @@ class Translate(commands.Cog):
                     logger.info("Translate zu lang für " +
                                 ctx.author.name)
                 else:
-                    translated = GoogleTranslator(source='auto', target='en').translate(text)
+                    translated = GoogleTranslator(
+                        source='auto', target='en').translate(text)
 
                     await ctx.reply("**Original: **" + text + "\n" + "\n" + "**Übersetzt: **" + translated)
                     logger.info("Translate gepostet für " +

@@ -60,6 +60,7 @@ initial_extensions = [
     "commands.poll",
     "commands.translate",
     "commands.girlboss",
+    "commands.star",
 ]
 
 
@@ -104,6 +105,8 @@ class ZicklaaBot(discord.ext.commands.Bot):
             cursor.execute(creation2)
             creation3 = """CREATE TABLE IF NOT EXISTS favs(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, message_id INTEGER, name TEXT, channel_id INTEGER)"""
             cursor.execute(creation3)
+            creation4 = """CREATE TABLE IF NOT EXISTS stars(id INTEGER PRIMARY KEY AUTOINCREMENT, message_id INTEGER)"""
+            cursor.execute(creation4)
         except:
             pass
 

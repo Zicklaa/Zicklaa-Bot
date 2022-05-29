@@ -1,0 +1,109 @@
+import logging
+import discord
+from discord.ext import commands
+from discord.raw_models import RawReactionActionEvent
+from collections.abc import Sequence
+from dateutil import tz
+import pytz
+
+logger = logging.getLogger("ZicklaaBot.Star")
+
+post_channel_id = 528742785935998979
+treshold = 5
+
+
+class Star(commands.Cog):
+    def __init__(self, bot, db):
+        self.bot = bot
+        self.db = db
+        self.cursor = db.cursor()
+
+    def parse_raw_reaction_event(self, payload: RawReactionActionEvent):
+
+        return payload.message_id, payload.channel_id, payload.emoji, payload.user_id
+
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
+        message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(
+            payload)
+
+        if str(emoji) == "⭐":
+            try:
+                cache_msg = discord.utils.get(
+                    self.bot.cached_messages, id=message_id)
+                reactions = cache_msg.reactions
+                star_dict = {}
+                for reaction in reactions:
+                    star_dict.update({reaction.emoji: reaction.count})
+                if int(star_dict['⭐']) == treshold:
+                    try:
+                        self.cursor.row_factory = lambda cursor, row: row[0]
+                        posted_stars = self.cursor.execute(
+                            "SELECT message_id FROM stars").fetchall()
+                    except Exception as e:
+                        logger.error(f"Noch keine geposteten Stars: {e}")
+                    if message_id not in posted_stars:
+                        channel = self.bot.get_channel(post_channel_id)
+                        message = await channel.fetch_message(message_id)
+
+                        embed = discord.Embed(
+                            title="", description=message.content, color=0xFFEA00)
+                        time = (pytz.utc.localize(message.created_at).astimezone(tz.tzlocal())
+                                ).strftime("%d.%m.%Y, %H:%M:%S")
+                        if message.attachments:
+                            embed.set_image(
+                                url=str(message.attachments[0].url))
+                        embed.set_author(
+                            name=message.author.name, icon_url=message.author.avatar_url, url=message.jump_url)
+                        embed.set_footer(
+                            text=time + ' | #' + message.channel.name)
+                        await channel.send(embed=embed)
+                        try:
+                            sql = "INSERT INTO stars (message_id) VALUES (?)"
+                            val = (
+                                int(message_id),
+                            )
+                            self.cursor.execute(sql, val)
+                            self.db.commit()
+                        except Exception as e:
+                            logger.error(f"Star Error beim DB pushen: {e}")
+                        logger.info("Star gepostet")
+            except Exception as e:
+                logger.error(f"Star Error: {e}")
+
+
+def setup(bot):
+    bot.add_cog(Star(bot, bot.db))
+
+
+def make_sequence(seq):
+    if seq is None:
+        return ()
+    if isinstance(seq, Sequence) and not isinstance(seq, str):
+        return seq
+    else:
+        return (seq,)
+
+
+def message_check(channel=None, author=None, content=None, ignore_bot=True, lower=True):
+    try:
+        channel = make_sequence(channel)
+        author = make_sequence(author)
+        content = make_sequence(content)
+        if lower:
+            content = tuple(c.lower() for c in content)
+
+        def check(message):
+            if ignore_bot and message.author.bot:
+                return False
+            if channel and message.channel not in channel:
+                return False
+            if author and message.author not in author:
+                return False
+            actual_content = message.content.lower() if lower else message.content
+            if content and actual_content not in content:
+                return False
+            return True
+        return check
+    except Exception as e:
+        logger.error(e)
