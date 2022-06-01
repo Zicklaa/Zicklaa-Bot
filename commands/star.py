@@ -26,7 +26,7 @@ class Star(commands.Cog):
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
         message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(
             payload)
-        if str(emoji) == "⭐":
+        if str(emoji) == "⭐" and int(channel_id) != post_channel_id:
             try:
                 cache_msg = discord.utils.get(
                     self.bot.cached_messages, id=message_id)
