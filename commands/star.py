@@ -8,8 +8,8 @@ import pytz
 
 logger = logging.getLogger("ZicklaaBot.Star")
 
-post_channel_id = 528742785935998979
-treshold = 5
+post_channel_id = 981543834129428560
+threshold = 5
 
 
 class Star(commands.Cog):
@@ -26,7 +26,6 @@ class Star(commands.Cog):
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
         message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(
             payload)
-
         if str(emoji) == "⭐":
             try:
                 cache_msg = discord.utils.get(
@@ -35,7 +34,7 @@ class Star(commands.Cog):
                 star_dict = {}
                 for reaction in reactions:
                     star_dict.update({reaction.emoji: reaction.count})
-                if int(star_dict['⭐']) == treshold:
+                if int(star_dict['⭐']) >= threshold:
                     try:
                         self.cursor.row_factory = lambda cursor, row: row[0]
                         posted_stars = self.cursor.execute(
@@ -43,9 +42,8 @@ class Star(commands.Cog):
                     except Exception as e:
                         logger.error(f"Noch keine geposteten Stars: {e}")
                     if message_id not in posted_stars:
-                        channel = self.bot.get_channel(post_channel_id)
+                        channel = self.bot.get_channel(channel_id)
                         message = await channel.fetch_message(message_id)
-
                         embed = discord.Embed(
                             title="", description=message.content, color=0xFFEA00)
                         time = (pytz.utc.localize(message.created_at).astimezone(tz.tzlocal())
@@ -57,6 +55,7 @@ class Star(commands.Cog):
                             name=message.author.name, icon_url=message.author.avatar_url, url=message.jump_url)
                         embed.set_footer(
                             text=time + ' | #' + message.channel.name)
+                        channel = self.bot.get_channel(post_channel_id)
                         await channel.send(embed=embed)
                         try:
                             sql = "INSERT INTO stars (message_id) VALUES (?)"
