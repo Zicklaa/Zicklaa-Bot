@@ -9,7 +9,10 @@ import pytz
 logger = logging.getLogger("ZicklaaBot.Star")
 
 post_channel_id = 981543834129428560
+#post_channel_id = 567411189336768532
 threshold = 5
+ext_list = ['3g2', '3gp', 'amv', 'asf', 'avi', 'gifv', 'm4p',
+            'm4v', 'mov', 'mp2', 'mp4', 'mpeg', 'mpg', 'webm']
 
 
 class Star(commands.Cog):
@@ -49,14 +52,21 @@ class Star(commands.Cog):
                         time = (pytz.utc.localize(message.created_at).astimezone(tz.tzlocal())
                                 ).strftime("%d.%m.%Y, %H:%M:%S")
                         if message.attachments:
-                            embed.set_image(
-                                url=str(message.attachments[0].url))
+                            if any(ext in message.attachments[0].url for ext in ext_list):
+                                embed.add_field(
+                                    name="Link zum Video:", value="[Video](" + message.attachments[0].url + ")", inline=True)
+                            else:
+                                embed.set_image(
+                                    url=str(message.attachments[0].url))
+                        embed.add_field(
+                            name="Link zur Nachricht:", value="[Nachricht](" + message.jump_url + ")", inline=True)
                         embed.set_author(
                             name=message.author.name, icon_url=message.author.avatar_url, url=message.jump_url)
                         embed.set_footer(
                             text=time + ' | #' + message.channel.name)
                         channel = self.bot.get_channel(post_channel_id)
-                        await channel.send(embed=embed)
+                        star_message = await channel.send(embed=embed)
+                        await star_message.add_reaction('⭐')
                         try:
                             sql = "INSERT INTO stars (message_id) VALUES (?)"
                             val = (
@@ -66,6 +76,7 @@ class Star(commands.Cog):
                             self.db.commit()
                         except Exception as e:
                             logger.error(f"Star Error beim DB pushen: {e}")
+
                         logger.info("Star gepostet")
             except Exception as e:
                 logger.error(f"Star Error: {e}")
