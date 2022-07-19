@@ -36,7 +36,7 @@ class Discordle(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def discordle(self, ctx):
+    async def dc(self, ctx):
         try:
             kanal = self.bot.get_channel(random.choice(channel_ids))
             random_datum = random_date()
@@ -87,7 +87,7 @@ class Discordle(commands.Cog):
             logger.error("Discordle für: " + ctx.author.name + ": " + e)
 
     @commands.command()
-    async def bildcordle(self, ctx):
+    async def bc(self, ctx):
         try:
             kanal = self.bot.get_channel(random.choice(channel_ids))
             random_datum = random_date()
