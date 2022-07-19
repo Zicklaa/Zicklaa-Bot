@@ -61,12 +61,15 @@ initial_extensions = [
     "commands.translate",
     "commands.girlboss",
     "commands.star",
+    "commands.discordle",
 ]
 
 
 class ZicklaaBot(discord.ext.commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix=config.PREFIX, help_command=None)
+        intents = discord.Intents.default()
+        intents.members = True
+        super().__init__(intents=intents, command_prefix=config.PREFIX, help_command=None)
         self.db = sqlite3.connect(
             "/home/zicklaa/Zicklaa-Bot/reminder-wishlist.db")
         self.LASTFM_API_KEY = config.API_KEY
