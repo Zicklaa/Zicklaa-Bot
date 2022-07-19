@@ -23,9 +23,9 @@ user_list = {255843901452189696: 'Maik#4496', 369579608615682071: 'Windowmarker#
 unerwuenscht = {571051961256902671: 'Der Gelbfus Cowboy#1008', 368105370532577280: 'Zapier#0625',
                 595627591118094347: 'Axel "Omega Prime" Werner#4331', 335930325462941698: 'Weltherrschaftsbot#7241', 356268235697553409: '.fmbot#8173'}
 
-channel_ids = [122739462210846721, 486547650976677899, 608746970340786282, 608746838333587456, 608785121449082898,
-               735911531350458368, 828045747101499462, 614191599433547786, 635242159880273921, 528742785935998979,
-               528742785935998979, 769960530290147378, 675448334089060409, 860154286141997056]
+channel_ids = {122739462210846721: 1449075600, 486547650976677899: 1536072480, 608746970340786282: 1565208000, 608746838333587456: 1565208000, 608785121449082898: 1565215200,
+               735911531350458368: 1595525400, 828045747101499462: 1617490800, 614191599433547786: 1566504000, 635242159880273921: 1571522400, 528742785935998979: 1546131600,
+               769960530290147378: 1603645200, 675448334089060409: 1581109200, 860154286141997056: 1625148000}
 
 ext_list = ['3g2', '3gp', 'amv', 'asf', 'avi', 'gifv', 'm4p',
             'm4v', 'mov', 'mp2', 'mp4', 'mpeg', 'mpg', 'webm', 'mp3']
@@ -38,110 +38,114 @@ class Discordle(commands.Cog):
     @commands.command()
     async def dc(self, ctx):
         try:
-            kanal = self.bot.get_channel(random.choice(channel_ids))
-            random_datum = random_date()
+            kanal_id, kanal_zeit = random.choice(list(channel_ids.items()))
+            kanal = self.bot.get_channel(int(kanal_id))
+            random_datum = random_date(int(kanal_zeit))
             messages = await kanal.history(limit=100, around=random_datum).flatten()
-            while True:
+            for x in range(200):
                 random_message = random.choice(messages)
                 result = len(random_message.content.split())
-                if result > 5 and result < 50:
-                    if random_message.author.id not in unerwuenscht:
-                        if random_message.author.id in user_list:
-
-                            random_users = []
-                            random_users.append(str(random_message.author))
-                            while True:
-                                temp_rand_user = random.choice(
-                                    list(user_list.values()))
-                                if temp_rand_user not in random_users:
-                                    random_users.append(temp_rand_user)
-                                    if len(random_users) == 4:
-                                        break
-                            random.shuffle(random_users)
-                            embed = discord.Embed(
-                                title="Discordle", description="Welcher User hat dieses lyrische Meisterwerk verfasst?", color=0x00ff00)
-                            embed.set_author(
-                                name="Mysteriös", icon_url="https://i.pinimg.com/564x/b5/46/3c/b5463c3591ec63cf076ac48179e3b0db.jpg", url="https://i.pinimg.com/originals/53/c9/a9/53c9a957244f81f276b9845410cfeb5b.jpg")
-                            embed.set_footer(
-                                text="Discordle by: " + ctx.author.name)
-                            embed.add_field(
-                                name="**Runde 1**", value=str(random_message.content), inline=False)
-                            embed.add_field(name="**Runde 2**", value="||" +
-                                            str(random_message.created_at.strftime("%d.%m.%Y, %H:%M")) + "||", inline=False)
-                            embed.add_field(name="**Runde 3**", value="||#" +
-                                            str(random_message.channel).ljust(random.randint(25, 50), '\u2000') + "||", inline=False)
-                            embed.add_field(name="**Runde 4**", value="||" +
-                                            random_users[0] + "\n" + random_users[1] + "\n" + random_users[2] + "\n" + random_users[3] + "||", inline=False)
-                            embed.add_field(name="**Auflösung**", value="||" +
-                                            str(random_message.author).ljust(random.randint(25, 50), '\u2000') + "\n" + "[Link zur Nachricht](" + random_message.jump_url + ")" + "||", inline=False)
-                            new_message = await ctx.channel.send(embed=embed)
-
-                            await new_message.add_reaction("1️⃣")
-                            await new_message.add_reaction("2️⃣")
-                            await new_message.add_reaction("3️⃣")
-                            await new_message.add_reaction("4️⃣")
-                            await new_message.add_reaction("❌")
-                            break
+                if result > 5 and result < 50 and random_message.author.id not in unerwuenscht and random_message.author.id in user_list:
+                    random_users = []
+                    random_users.append(str(random_message.author))
+                    for x in range(100):
+                        temp_rand_user = random.choice(
+                            list(user_list.values()))
+                        if temp_rand_user not in random_users:
+                            random_users.append(temp_rand_user)
+                            if len(random_users) == 4:
+                                break
+                    random.shuffle(random_users)
+                    embed = discord.Embed(
+                        title="Discordle", description="Welcher User hat dieses lyrische Meisterwerk verfasst?", color=0x00ff00)
+                    embed.set_author(
+                        name="Mysteriös", icon_url="https://i.pinimg.com/564x/b5/46/3c/b5463c3591ec63cf076ac48179e3b0db.jpg", url="https://i.pinimg.com/originals/53/c9/a9/53c9a957244f81f276b9845410cfeb5b.jpg")
+                    embed.set_footer(
+                        text="Discordle by: " + ctx.author.name)
+                    embed.add_field(
+                        name="**Runde 1**", value=str(random_message.content), inline=False)
+                    embed.add_field(name="**Runde 2**", value="||" +
+                                    str(random_message.created_at.strftime("%d.%m.%Y, %H:%M")) + "||", inline=False)
+                    embed.add_field(name="**Runde 3**", value="||#" +
+                                    str(random_message.channel).ljust(random.randint(25, 50), '\u2000') + "||", inline=False)
+                    embed.add_field(name="**Runde 4**", value="||" +
+                                    random_users[0] + "\n" + random_users[1] + "\n" + random_users[2] + "\n" + random_users[3] + "||", inline=False)
+                    embed.add_field(name="**Auflösung**", value="||" +
+                                    str(random_message.author).ljust(random.randint(25, 50), '\u2000') + "\n" + "[Link zur Nachricht](" + random_message.jump_url + ")" + "||", inline=False)
+                    break
+            try:
+                new_message = await ctx.channel.send(embed=embed)
+                await ctx.message.delete()
+                await new_message.add_reaction("1️⃣")
+                await new_message.add_reaction("2️⃣")
+                await new_message.add_reaction("3️⃣")
+                await new_message.add_reaction("4️⃣")
+                await new_message.add_reaction("❌")
+            except Exception as e:
+                await ctx.reply("Was ist denn mit Karsten los??")
+                logger.error("Discordle für: " + ctx.author.name)
         except Exception as e:
             await ctx.reply("Was ist denn mit Karsten los??")
-            logger.error("Discordle für: " + ctx.author.name + ": " + e)
+            logger.error("Discordle für: " + ctx.author.name)
 
     @commands.command()
     async def bc(self, ctx):
         try:
-            kanal = self.bot.get_channel(random.choice(channel_ids))
-            random_datum = random_date()
-            messages = await kanal.history(limit=101, around=random_datum).flatten()
-            while True:
+            kanal_id, kanal_zeit = random.choice(list(channel_ids.items()))
+            kanal = self.bot.get_channel(int(kanal_id))
+            random_datum = random_date(int(kanal_zeit))
+            messages = await kanal.history(limit=100, around=random_datum).flatten()
+            for x in range(200):
                 random_message = random.choice(messages)
-                result = len(random_message.content.split())
-                if random_message.attachments:
-                    if random_message.author.id not in unerwuenscht:
-                        if random_message.author.id in user_list:
-                            if not any(ext in random_message.attachments[0].url for ext in ext_list):
-                                random_users = []
-                                random_users.append(str(random_message.author))
-                                while True:
-                                    temp_rand_user = random.choice(
-                                        list(user_list.values()))
-                                    if temp_rand_user not in random_users:
-                                        random_users.append(temp_rand_user)
-                                        if len(random_users) == 4:
-                                            break
-                                random.shuffle(random_users)
-                                embed = discord.Embed(
-                                    title="Bildcordle", description="Welcher User hat dieses optische Meisterwerk verfasst?", color=0x00ff00)
-                                embed.set_author(
-                                    name="Mysteriös", icon_url="https://i.pinimg.com/564x/b5/46/3c/b5463c3591ec63cf076ac48179e3b0db.jpg", url="https://i.pinimg.com/originals/53/c9/a9/53c9a957244f81f276b9845410cfeb5b.jpg")
-                                embed.set_footer(
-                                    text="Discordle by: " + ctx.author.name)
-                                embed.set_image(
-                                    url=str(random_message.attachments[0].url))
-                                embed.add_field(
-                                    name="**Runde 1**", value="Siehe Bild", inline=False)
-                                embed.add_field(name="**Runde 2**", value="||" +
-                                                str(random_message.created_at.strftime("%d.%m.%Y, %H:%M")) + "||", inline=False)
-                                embed.add_field(name="**Runde 3**", value="||#" +
-                                                str(random_message.channel).ljust(random.randint(25, 50), '\u2000') + "||", inline=False)
-                                embed.add_field(name="**Runde 4**", value="||" +
-                                                random_users[0] + "\n" + random_users[1] + "\n" + random_users[2] + "\n" + random_users[3] + "||", inline=False)
-                                embed.add_field(name="**Auflösung**", value="||" +
-                                                str(random_message.author).ljust(random.randint(25, 50), '\u2000') + "\n" + "[Link zur Nachricht](" + random_message.jump_url + ")" + "||", inline=False)
-                                new_message = await ctx.channel.send(embed=embed)
-
-                                await new_message.add_reaction("1️⃣")
-                                await new_message.add_reaction("2️⃣")
-                                await new_message.add_reaction("3️⃣")
-                                await new_message.add_reaction("4️⃣")
-                                await new_message.add_reaction("❌")
-                                break
+                if random_message.attachments and random_message.author.id not in unerwuenscht and random_message.author.id in user_list:
+                    if not any(ext in random_message.attachments[0].url for ext in ext_list):
+                        random_users = []
+                        random_users.append(str(random_message.author))
+                        for x in range(100):
+                            temp_rand_user = random.choice(
+                                list(user_list.values()))
+                            if temp_rand_user not in random_users:
+                                random_users.append(temp_rand_user)
+                                if len(random_users) == 4:
+                                    break
+                        random.shuffle(random_users)
+                        embed = discord.Embed(
+                            title="Bildcordle", description="Welcher User hat dieses optische Meisterwerk verfasst?", color=0x00ff00)
+                        embed.set_author(
+                            name="Mysteriös", icon_url="https://i.pinimg.com/564x/b5/46/3c/b5463c3591ec63cf076ac48179e3b0db.jpg", url="https://i.pinimg.com/originals/53/c9/a9/53c9a957244f81f276b9845410cfeb5b.jpg")
+                        embed.set_footer(
+                            text="Discordle by: " + ctx.author.name)
+                        embed.set_image(
+                            url=str(random_message.attachments[0].url))
+                        embed.add_field(
+                            name="**Runde 1**", value="Siehe Bild", inline=False)
+                        embed.add_field(name="**Runde 2**", value="||" +
+                                        str(random_message.created_at.strftime("%d.%m.%Y, %H:%M")) + "||", inline=False)
+                        embed.add_field(name="**Runde 3**", value="||#" +
+                                        str(random_message.channel).ljust(random.randint(25, 50), '\u2000') + "||", inline=False)
+                        embed.add_field(name="**Runde 4**", value="||" +
+                                        random_users[0] + "\n" + random_users[1] + "\n" + random_users[2] + "\n" + random_users[3] + "||", inline=False)
+                        embed.add_field(name="**Auflösung**", value="||" +
+                                        str(random_message.author).ljust(random.randint(25, 50), '\u2000') + "\n" + "[Link zur Nachricht](" + random_message.jump_url + ")" + "||", inline=False)
+                        break
+            try:
+                new_message = await ctx.channel.send(embed=embed)
+                await ctx.message.delete()
+                await new_message.add_reaction("1️⃣")
+                await new_message.add_reaction("2️⃣")
+                await new_message.add_reaction("3️⃣")
+                await new_message.add_reaction("4️⃣")
+                await new_message.add_reaction("❌")
+            except Exception as e:
+                await ctx.reply("Was ist denn mit Karsten los??")
+                logger.error("Bildcordle für: " + ctx.author.name)
         except Exception as e:
             await ctx.reply("Was ist denn mit Karsten los??")
-            logger.error("Discordle für: " + ctx.author.name + ": " + e)
+            logger.error("Bildcordle für: " + ctx.author.name)
 
 
-def random_date():
-    start = 1514764800
+def random_date(kanal_zeit):
+    start = kanal_zeit
     current = int(time.time())
     random_unixstamp = random.randint(start, current)
     return datetime.fromtimestamp(random_unixstamp)
