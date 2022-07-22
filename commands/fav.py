@@ -1,8 +1,11 @@
+from cgitb import text
 import logging
 from collections.abc import Sequence
+import os
 
 import discord
 import pytz
+from os.path import exists
 from dateutil import tz
 from discord.ext import commands
 from discord.raw_models import RawReactionActionEvent
@@ -194,7 +197,61 @@ class Fav(commands.Cog):
                 try:
                     dm_channel = await ctx.author.create_dm()
                     await ctx.message.delete()
+
+                    await dm_channel.send("Moin 👋 dauert ein paar Minütchen bis ich alle deine Favs zusammenhabe \nMuss ganz arg nachdenken und meinen kleines glattes süßes Gehirn anstrengen 😳")
+
+                    path = "allfavs/" + str(ctx.author.id) + ".txt"
+
+                    try:
+                        os.remove(path)
+                    except OSError:
+                        pass
+
+                    whole_message = ""
+
                     for fav in all_favs:
+                        try:
+                            channel = self.bot.get_channel(fav[4])
+                            fav_message = await channel.fetch_message(fav[2])
+                            current_time = (pytz.utc.localize(fav_message.created_at).astimezone(tz.tzlocal())
+                                            ).strftime("%d.%m.%Y, %H:%M:%S")
+                            author = fav_message.author.name
+                            text = fav_message.content
+                            bottom_text = str(fav[0]) + ' | ' + current_time + ' | #' + \
+                                fav_message.channel.name + " | by: " + \
+                                ctx.author.name + " | Name: " + fav[3]
+                            if fav_message.content:
+                                text = fav_message.content
+                                if fav_message.attachments:
+                                    url = str(
+                                        fav_message.attachments[0].url)
+                                    message = author + "\n" + text + "\n" + url + "\n" + bottom_text + "\n \n"
+                                else:
+                                    message = author + "\n" + text + "\n" + bottom_text + "\n \n"
+                            else:
+                                if fav_message.attachments:
+                                    url = str(
+                                        fav_message.attachments[0].url)
+                                    message = author + "\n" + url + "\n" + bottom_text + "\n \n"
+                                else:
+                                    message = author + "\n" + bottom_text + "\n \n"
+                            whole_message = whole_message + message
+
+                        except Exception as e:
+                            logger.error(
+                                f"Allfavs ERROR von {ctx.author.name}: {e}")
+
+                    with open(path, 'w', encoding="utf-8") as f:
+                        f.write(whole_message)
+
+                    await dm_channel.send(file=discord.File(path))
+
+                    '''try:
+                        os.remove(path)
+                    except OSError:
+                        pass'''
+
+                    '''for fav in all_favs:
                         try:
                             channel = self.bot.get_channel(fav[4])
                             fav_message = await channel.fetch_message(fav[2])
@@ -212,7 +269,7 @@ class Fav(commands.Cog):
                             await dm_channel.send(embed=embed)
                         except Exception as e:
                             logger.error(
-                                f"Allfavs ERROR von {ctx.author.name}: {e}")
+                                f"Allfavs ERROR von {ctx.author.name}: {e}")'''
 
                 except Exception as e:
                     await ctx.message.reply("Klappt nit lol 🤷")
