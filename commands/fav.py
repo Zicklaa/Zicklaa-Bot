@@ -283,6 +283,67 @@ class Fav(commands.Cog):
             await ctx.message.reply("Klappt nit lol 🤷")
             logger.error(f"Allfav ERROR von {ctx.author.name}: {e}")
 
+    @commands.command()
+    async def delfav(self, ctx, id):
+        try:
+            if id and id.isdigit():
+                fav = self.cursor.execute(
+                    "SELECT * FROM favs WHERE id=?", (int(id),)
+                ).fetchone()
+                if fav and fav[1] == ctx.author.id:
+                    deletion = self.cursor.execute(
+                        "DELETE FROM favs WHERE id=?", (int(id),))
+                    if deletion:
+                        self.db.commit()
+                        await ctx.message.add_reaction("✅")
+                    else:
+                        await ctx.message.add_reaction("❌")
+                        await ctx.message.reply("Klappt nit lol 🤷")
+                else:
+                    await ctx.message.reply("Das nich dein Fav du Bembel 😤")
+                    await ctx.message.add_reaction("❌")
+
+            else:
+                await ctx.message.reply("Brauche ne ID du Bembel 😤")
+                await ctx.message.add_reaction("❌")
+        except Exception as e:
+            await ctx.message.add_reaction("❌")
+            await ctx.message.reply("Klappt nit lol 🤷")
+            logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
+
+    @commands.command()
+    async def namefav(self, ctx, id, *name):
+        try:
+            if id and id.isdigit() and name:
+                name = ' '.join(name)
+                if len(name) > 250:
+                    await ctx.message.reply("Name bidde nit länger als 250 Charaktere 😤")
+                    await ctx.message.add_reaction("❌")
+                else:
+                    fav = self.cursor.execute(
+                        "SELECT * FROM favs WHERE id=?", (int(id),)
+                    ).fetchone()
+                    if fav and fav[1] == ctx.author.id:
+                        update = self.cursor.execute(
+                            "UPDATE favs SET name=? WHERE id=?", (name, int(id),))
+                        if update:
+                            self.db.commit()
+                            await ctx.message.add_reaction("✅")
+                        else:
+                            await ctx.message.add_reaction("❌")
+                            await ctx.message.reply("Klappt nit lol 🤷")
+                    else:
+                        await ctx.message.reply("Das nich dein Fav du Bembel 😤")
+                        await ctx.message.add_reaction("❌")
+
+            else:
+                await ctx.message.reply("Brauche ne ID und Namen du Bembel 😤")
+                await ctx.message.add_reaction("❌")
+        except Exception as e:
+            await ctx.message.add_reaction("❌")
+            await ctx.message.reply("Klappt nit lol 🤷")
+            logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
+
     def parse_raw_reaction_event(self, payload: RawReactionActionEvent):
 
         return payload.message_id, payload.channel_id, payload.emoji, payload.user_id

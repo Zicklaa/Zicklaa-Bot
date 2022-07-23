@@ -24,7 +24,7 @@ class Help(commands.Cog):
         embed.add_field(
             name="+dc/bc", value='Discordle oder Bildcordle', inline=False)
         embed.add_field(
-            name="+fav", value="Faven mit 🦶, Löschen mit 🗑️\nFormat: +fav [FAV NAME] | +allfavs | +rfav", inline=False)
+            name="+fav", value="Faven mit 🦶, Löschen mit 🗑️\nFormat: +fav [FAV NAME] | +allfavs | +rfav | +delfav [ID] | +namefav [ID] [NAME]", inline=False)
         embed.add_field(
             name="+git", value="Poschded den link zum Github Repository", inline=False)
         embed.add_field(
