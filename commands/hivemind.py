@@ -1,27 +1,17 @@
-import json
 import logging
-import os
-import random
-import re
-
 import discord
-import markovify
-from discord import message
 from discord.ext import commands
 
 logger = logging.getLogger("ZicklaaBot.Hivemind")
 
-with open('/home/zicklaa/Zicklaa-Bot/static/hivemind.json') as json_file:
-    hivemind_json = json.load(json_file)
-json_model = markovify.Text.from_json(hivemind_json)
-print("hivemind.json loaded")
 
-'''with open('/home/zicklaa/Zicklaa-Bot/static/hivemind_new.txt','r') as f:
+'''with open('/home/zicklaa/Zicklaa-Bot/static/25-07-2022/hivemind_merged.txt', 'r', encoding="utf-8") as f:
+    print("Chaining the Chain")
     text = f.read()
 text_model = markovify.NewlineText(text, state_size=3, well_formed=True)
 text_model = text_model.compile()
 model_json = text_model.to_json()
-with open('hivemind_new.json', 'w') as f:
+with open('hivemind.json', 'w', encoding='utf-8') as f:
     json.dump(model_json, f)
 print("compiled")'''
 
@@ -33,17 +23,21 @@ am = discord.AllowedMentions(
     replied_user=False,  # Whether to ping on replies to messages
 )
 
+ratio = 0.7
+
 
 class Hivemind(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot, json_model):
         self.bot = bot
+        self.json_model = json_model
 
     @commands.command()
     async def hm(self, ctx):
         try:
             while True:
                 # satz = json_model.make_short_sentence(140)
-                satz = json_model.make_sentence(max_overlap_ratio=.67,)
+                satz = self.json_model.make_sentence(
+                    max_overlap_ratio=ratio,)
                 if satz:
                     await ctx.reply(satz, allowed_mentions=am)
                     break
@@ -61,7 +55,8 @@ class Hivemind(commands.Cog):
                 for _ in range(5):
                     while True:
                         # satz = json_model.make_short_sentence(140)
-                        satz = json_model.make_sentence(max_overlap_ratio=.67,)
+                        satz = self.json_model.make_sentence(
+                            max_overlap_ratio=ratio,)
                         if satz:
                             await ctx.reply(satz, allowed_mentions=am)
                             break
@@ -76,23 +71,30 @@ class Hivemind(commands.Cog):
             logger.error(f"Hippomode ERROR von {ctx.author.name}")
 
     '''@commands.command()
-    async def scrap(self, ctx):
+    async def scrape(self, ctx):
         try:
-            print("scrapping")
-            messages = await ctx.channel.history(limit=500000).flatten()
-            f = open("/home/zicklaa/Zicklaa-Bot/static/hivemind_new.txt", "a")
-            for message in messages:
-                try:
-                    if message.content == '' or message.content.startswith('<') or message.content.startswith('https') or message.content.startswith('+') or message.content.startswith('$'):
-                        print('passed')
-                    else:
-                        f.write(message.content + "\n")
-                except:
-                    print('ERROR')
-                    pass
-            f.close()
-            print("done")
-            #logger.info("Hivemind Scrap für: " + ctx.author.name)
+            if ctx.author.id == 288413759117066241:
+                print("scraping")
+                await ctx.reply("Scrape 10.000 Nachrichten von diesem Channel")
+                messages = await ctx.channel.history(limit=10000).flatten()
+                with open("/home/zicklaa/Zicklaa-Bot/static/25-07-2022/hivemind_durstaufwurst.txt", "a", encoding="utf-8") as f:
+                    for message in messages:
+                        try:
+                            if message.content == '' or message.content.startswith('<') or message.content.startswith('https') \
+                                    or message.content.startswith('+') or message.content.startswith('$') or message.author.bot \
+                                    or message.content.startswith('http') or message.content.startswith('.') or message.content.startswith('!')\
+                                    or message.content.startswith('?'):
+                                print('passed')
+                            else:
+                                f.write(message.content + "\n")
+                                print(message.content)
+                        except:
+                            print('ERROR')
+                            pass
+                print("done")
+                #logger.info("Hivemind Scrap für: " + ctx.author.name)
+            else:
+                await ctx.reply("Nur für Chads, Moruk")
 
         except Exception as e:
             await ctx.reply("Klappt nit lol 🤷")
@@ -100,4 +102,4 @@ class Hivemind(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Hivemind(bot))
+    bot.add_cog(Hivemind(bot, bot.json_model))

@@ -2,13 +2,8 @@ import asyncio
 import logging
 import time
 from datetime import datetime, timedelta
-
-from discord import message
 from dateutil import parser, tz
-
 from discord.ext import commands
-import discord
-from discord.raw_models import RawReactionActionEvent
 
 logger = logging.getLogger("ZicklaaBot.RemindMe")
 
@@ -26,11 +21,13 @@ def is_datetime(msg, dateOnly=False):
 
 def parse_time(msg):
     try:
-        dt = datetime.combine(datetime.today(), datetime.strptime(msg, "%H:%M").time())
+        dt = datetime.combine(
+            datetime.today(), datetime.strptime(msg, "%H:%M").time())
         return dt
     except ValueError:
         try:
-            dt = datetime.combine(datetime.today(), datetime.strptime(msg, "%-H:%M").time())
+            dt = datetime.combine(
+                datetime.today(), datetime.strptime(msg, "%-H:%M").time())
             return dt
         except ValueError:
             return None
@@ -56,9 +53,10 @@ def reminder_from_record(record):
 
 
 class RemindMe(commands.Cog):
-    def __init__(self, bot, db):
+    def __init__(self, bot, db, json_model):
         self.bot = bot
         self.db = db
+        self.json_model = json_model
         self.cursor = db.cursor()
 
     @commands.command(aliases=["rm"])
@@ -83,9 +81,11 @@ class RemindMe(commands.Cog):
                 return
             elif is_datetime(method, dateOnly=True):
                 if text and is_datetime(text[0]):
-                    absTime = parser.parse(f"{method} {text[0]}", dayfirst=True)
+                    absTime = parser.parse(
+                        f"{method} {text[0]}", dayfirst=True)
                 else:
-                    absTime = parser.parse(f"{method}", dayfirst=True) + timedelta(hours=12)
+                    absTime = parser.parse(
+                        f"{method}", dayfirst=True) + timedelta(hours=12)
                 reason = " ".join(text[1:])
                 absTime = absTime.replace(tzinfo=tz.tzlocal())
             elif method.isdigit():
@@ -118,7 +118,8 @@ class RemindMe(commands.Cog):
             return
         except Exception as e:
             await ctx.message.reply("Klappt nit lol 🤷")
-            logger.error("Remindme Fehler wahrsch falsches Zeitformat?: " + str(e))
+            logger.error(
+                "Remindme Fehler wahrsch falsches Zeitformat?: " + str(e))
 
     '''async def wait_for_reminder(self, reminder: Reminder):
         try:
@@ -208,13 +209,24 @@ class RemindMe(commands.Cog):
             if reminder.message_id > 0:
                 message = await channel.fetch_message(reminder.message_id)
                 if reminder.text == "":
-                    await message.reply(
-                        "Ich werde dich wissen lassen:\n**Kein Grund angegeben lol**",
-                        mention_author=True)
+                    while True:
+                        # satz = json_model.make_short_sentence(140)
+                        satz = self.json_model.make_sentence(
+                            max_overlap_ratio=0.7,)
+                        if satz:
+                            await message.reply(
+                                "Ich werde dich wissen lassen:\n**" + satz + "**",
+                                mention_author=True)
+                            break
                 else:
-                    await message.reply(
-                        "Ich werde dich wissen lassen:\n**{}**".format(
-                            reminder.text), mention_author=True)
+                    if message.author.id == 413068385962819584:
+                        await message.reply(
+                            "**Ali {}**".format(
+                                reminder.text), mention_author=True)
+                    else:
+                        await message.reply(
+                            "Ich werde dich wissen lassen:\n**{}**".format(
+                                reminder.text), mention_author=True)
                 logger.info("Auf Reminder geantortet: " + str(reminder._id))
             else:
                 await channel.send(
@@ -282,4 +294,4 @@ class RemindMe(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(RemindMe(bot, bot.db))
+    bot.add_cog(RemindMe(bot, bot.db, bot.json_model))

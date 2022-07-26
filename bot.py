@@ -1,17 +1,16 @@
 import discord
-from discord.ext.commands.errors import CheckFailure
-from praw.config import Config
 import config
 import discord
 from discord.ext import commands
-from datetime import datetime
 import sqlite3
 import logging
 from logging.handlers import TimedRotatingFileHandler
-from commands import help
 import time
 import traceback
 import sys
+import random
+import json
+import markovify
 
 
 def create_log_file(path):
@@ -78,6 +77,7 @@ class ZicklaaBot(discord.ext.commands.Bot):
         self.CLIENT_ID = config.CLIENT_ID
         self.CLIENT_SECRET = config.CLIENT_SECRET
         self.create_tables()
+        self.json_model = json_model()
 
         for extension in initial_extensions:
             try:
@@ -114,6 +114,14 @@ class ZicklaaBot(discord.ext.commands.Bot):
             pass
 
 
+def json_model():
+    with open('/home/zicklaa/Zicklaa-Bot/static/hivemind.json', encoding="utf-8") as json_file:
+        hivemind_json = json.load(json_file)
+    json_model = markovify.Text.from_json(hivemind_json)
+    print("hivemind.json loaded")
+    return json_model
+
+
 bot = ZicklaaBot()
 
 
@@ -128,6 +136,25 @@ async def is_on_cooldown(ctx):
         user_last_command[str(ctx.author)] = time.time()
         return True
     return False
+
+
+@bot.event
+async def on_message(message):
+    if not message.author.id == 571051961256902671:
+        if "crazy" in message.content.lower():
+            await message.reply(message.content.lower().replace("crazy", "***normal***"))
+        elif random.random() < 0.15:
+            if message.content.lower() == "hi":
+                await message.reply("Hallo!")
+            elif message.content.lower() == "lol":
+                await message.reply("xD")
+            elif message.content.lower() == "xd":
+                await message.reply("lol")
+            elif message.content.lower() == "uff":
+                await message.reply("uff")
+            elif message.content.lower() == "gumo":
+                await message.reply("GuMo")
+    await bot.process_commands(message)
 
 
 @bot.event
