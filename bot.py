@@ -61,6 +61,7 @@ initial_extensions = [
     "commands.girlboss",
     "commands.star",
     "commands.discordle",
+    "commands.voice",
 ]
 
 
@@ -141,10 +142,12 @@ async def is_on_cooldown(ctx):
 @bot.event
 async def on_message(message):
     if not message.author.id == 571051961256902671:
-        if "crazy" in message.content.lower():
-            await message.reply(message.content.lower().replace("crazy", "***normal***"))
-        elif random.random() < 0.15:
-            if message.content.lower() == "hi":
+        if random.random() < config.SECRET_PROBABILITY:
+            if "crazy" in message.content.lower():
+                await message.reply(message.content.lower().replace("crazy", "***normal***"))
+            elif "kult" in message.content.lower():
+                await message.reply("***KEIN KULT***")
+            elif message.content.lower() == "hi":
                 await message.reply("Hallo!")
             elif message.content.lower() == "lol":
                 await message.reply("xD")
@@ -157,7 +160,7 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-@bot.event
+@ bot.event
 async def on_command_error(ctx, error):
     if hasattr(ctx.command, "on_error"):
         return

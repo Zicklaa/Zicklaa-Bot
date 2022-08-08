@@ -212,7 +212,7 @@ class RemindMe(commands.Cog):
                     while True:
                         # satz = json_model.make_short_sentence(140)
                         satz = self.json_model.make_sentence(
-                            max_overlap_ratio=0.7,)
+                            max_overlap_ratio=0.65,)
                         if satz:
                             await message.reply(
                                 "Ich werde dich wissen lassen:\n**" + satz + "**",

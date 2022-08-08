@@ -1,5 +1,7 @@
 import logging
 import discord
+import json
+import markovify
 from discord.ext import commands
 
 logger = logging.getLogger("ZicklaaBot.Hivemind")
@@ -8,10 +10,10 @@ logger = logging.getLogger("ZicklaaBot.Hivemind")
 '''with open('/home/zicklaa/Zicklaa-Bot/static/25-07-2022/hivemind_merged.txt', 'r', encoding="utf-8") as f:
     print("Chaining the Chain")
     text = f.read()
-text_model = markovify.NewlineText(text, state_size=3, well_formed=True)
+text_model = markovify.NewlineText(text, state_size=2, well_formed=True)
 text_model = text_model.compile()
 model_json = text_model.to_json()
-with open('hivemind.json', 'w', encoding='utf-8') as f:
+with open('hivemind_ss2.json', 'w', encoding='utf-8') as f:
     json.dump(model_json, f)
 print("compiled")'''
 
@@ -23,7 +25,7 @@ am = discord.AllowedMentions(
     replied_user=False,  # Whether to ping on replies to messages
 )
 
-ratio = 0.7
+ratio = 0.65
 
 
 class Hivemind(commands.Cog):
@@ -37,7 +39,7 @@ class Hivemind(commands.Cog):
             while True:
                 # satz = json_model.make_short_sentence(140)
                 satz = self.json_model.make_sentence(
-                    max_overlap_ratio=ratio,)
+                    max_overlap_ratio=ratio)
                 if satz:
                     await ctx.reply(satz, allowed_mentions=am)
                     break

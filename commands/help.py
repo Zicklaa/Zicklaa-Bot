@@ -16,7 +16,7 @@ class Help(commands.Cog):
         )
         # embed.add_field(name="+benwach", value="Ben wach?", inline=False)
         embed.add_field(
-            name="+choose", value='+choose [Option 1] [Option 2] [...]\nBei mehreren Wörtern pro Option bitte jede Option in " " setzen.', inline=False)
+            name="+choose", value='+choose [Option 1] [Option 2] [...]', inline=False)
         embed.add_field(
             name="+ck", value='+ck [Zutat] ODER +ck [rotd] für das Rezept des Tages!', inline=False)
         embed.add_field(
@@ -41,9 +41,9 @@ class Help(commands.Cog):
             name="+lyrics", value="Format: +lyrics (full/link) [USERNAME]", inline=False)
         embed.add_field(name="+magic8", value="+magic8 [FRAGE]", inline=False)
         embed.add_field(
-            name="+mdc/mdd", value="+mdc für die aktuell heißesten Dealz und +mdd für 3 heißesten ~~Singles~~ Dealz des Tages.", inline=False)
+            name="+mdc/mdd", value="Koschdelos!", inline=False)
         embed.add_field(name="+obm | +oow | +obr | +ali",
-                        value="Postet ein  Random Meme aus hot von r/OkBrudiMongo oder dem Ösi/US Pendant.", inline=False)
+                        value="Lets get retarded in here.", inline=False)
         embed.add_field(
             name="+ofen", value="Mariam only >:(", inline=False)
         embed.add_field(
@@ -61,11 +61,9 @@ class Help(commands.Cog):
         embed.add_field(name="+tr +tren",
                         value="Übersetzt nach Deutsch und nach Englisch jeweils.", inline=False)
         embed.add_field(
+            name="+tts", value="Format: +tts [TEXT] | +ttshm | +join | +leave", inline=False)
+        embed.add_field(
             name="+wetter", value="Format: +wetter/asciiwetter [ORTNAME]", inline=False)
-        embed.add_field(
-            name="+wiki", value="Format: +wiki [SUCHBEGRIFF]", inline=False)
-        embed.add_field(
-            name="+wishlist", value="Format: +wishlist [WUNSCH]", inline=False)
 
         embed.set_author(
             name="Gott",
@@ -75,6 +73,19 @@ class Help(commands.Cog):
         dm_channel = await ctx.author.create_dm()
         await ctx.message.delete()
         await dm_channel.send(embed=embed)
+        embed2 = discord.Embed(
+            title="Help", description="Hier wird Ihnen geholfen!", color=0x00FF00
+        )
+        embed2.add_field(
+            name="+wiki", value="Format: +wiki [SUCHBEGRIFF]", inline=False)
+        embed2.add_field(
+            name="+wishlist", value="Format: +wishlist [WUNSCH]", inline=False)
+        embed2.set_author(
+            name="Gott",
+            icon_url="https://cdn.psychologytoday.com/sites"
+            "/default/files/field_blog_entry_images/God_the_Father.jpg",
+        )
+        await dm_channel.send(embed=embed2)
 
 
 def setup(bot):

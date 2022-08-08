@@ -154,4 +154,5 @@ ZicklaaBotLog.log*
 *.jpeg
 *.gif
 *.ttf
-
+vibecheck.py
+*.mp3
