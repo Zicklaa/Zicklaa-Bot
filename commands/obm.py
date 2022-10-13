@@ -1,12 +1,7 @@
 import logging
-import os
 import random
-import discord
-import config
-import urllib.request
-import requests
 from discord.ext import commands
-import praw
+import asyncpraw
 
 logger = logging.getLogger("ZicklaaBot.Okbrudimongo")
 
@@ -23,127 +18,104 @@ class Okbrudimongo(commands.Cog):
 
     @commands.command()
     async def obm(self, ctx):
-        # try:
-        reddit = praw.Reddit(
-            client_id=self.bot.CLIENT_ID,
-            client_secret=self.bot.CLIENT_SECRET,
-            user_agent="by u/zicklaa"
-        )
-        random_submission = reddit.subreddit('okbrudimongo').random()
-        if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif"):
-            urllib.request.urlretrieve(
-                random_submission.url, "/home/zicklaa/Zicklaa-Bot/static/SPOILER_obm.png")
-            await ctx.channel.send(file=discord.File(r"/home/zicklaa/Zicklaa-Bot/static/SPOILER_obm.png"))
-            if 'imgur' in random_submission.url:
-                await ctx.channel.send('imgur 🤮')
-            await ctx.message.delete()
-            '''submissions = [submission for submission in reddit.subreddit("okbrudimongo").hot(limit=limit)]
-            await ctx.reply(submissions[random.randint(0, limit)].url)'''
-            logger.info("Redditlink gepostet für: " + ctx.author.name)
-        else:
-            random_submission = reddit.subreddit('okbrudimongo').random()
-            if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif"):
-                urllib.request.urlretrieve(
-                    random_submission.url, "/home/zicklaa/Zicklaa-Bot/static/SPOILER_obm.png")
-                await ctx.channel.send(file=discord.File(r"/home/zicklaa/Zicklaa-Bot/static/SPOILER_obm.png"))
-                if 'imgur' in random_submission.url:
-                    await ctx.channel.send('imgur 🤮')
-                await ctx.message.delete()
-                '''submissions = [submission for submission in reddit.subreddit("okbrudimongo").hot(limit=limit)]
-                await ctx.reply(submissions[random.randint(0, limit)].url)'''
-                logger.info("Redditlink gepostet für: " + ctx.author.name)
-
-        '''except Exception as e:
-            await ctx.reply("Klappt nit lol 🤷")
-            logger.error(f"OBM ERROR von {ctx.author.name}: {e}")'''
-
-    @commands.command()
-    async def oow(self, ctx):
         try:
-            reddit = praw.Reddit(
+            reddit = asyncpraw.Reddit(
                 client_id=self.bot.CLIENT_ID,
                 client_secret=self.bot.CLIENT_SECRET,
                 user_agent="by u/zicklaa"
             )
-            random_submission = reddit.subreddit('okoidawappler').random()
-            if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif"):
-                urllib.request.urlretrieve(
-                    random_submission.url, "/home/zicklaa/Zicklaa-Bot/static/SPOILER_oow.png")
-                await ctx.channel.send(file=discord.File(r"/home/zicklaa/Zicklaa-Bot/static/SPOILER_oow.png"))
+            memes = await reddit.subreddit('okbrudimongo')
+            random_submission = random.choice([meme async for meme in memes.hot(limit=limit)])
+            await reddit.close()
+            if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif") or 'v.' in random_submission.url:
+                await ctx.channel.send("|| " + random_submission.url + " ||")
                 if 'imgur' in random_submission.url:
                     await ctx.channel.send('imgur 🤮')
                 await ctx.message.delete()
-                '''submissions = [submission for submission in reddit.subreddit("okbrudimongo").hot(limit=limit)]
-                await ctx.reply(submissions[random.randint(0, limit)].url)'''
                 logger.info("Redditlink gepostet für: " + ctx.author.name)
             else:
-                random_submission = reddit.subreddit('okoidawappler').random()
-                if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif"):
-                    urllib.request.urlretrieve(
-                        random_submission.url, "/home/zicklaa/Zicklaa-Bot/static/SPOILER_oow.png")
-                    await ctx.channel.send(file=discord.File(r"/home/zicklaa/Zicklaa-Bot/static/SPOILER_oow.png"))
-                    if 'imgur' in random_submission.url:
-                        await ctx.channel.send('imgur 🤮')
-                    await ctx.message.delete()
-                    '''submissions = [submission for submission in reddit.subreddit("okbrudimongo").hot(limit=limit)]
-                    await ctx.reply(submissions[random.randint(0, limit)].url)'''
-                    logger.info("Redditlink gepostet für: " + ctx.author.name)
+                await ctx.reply("Comment oder Gallery Post erwischt, probier es nochmal :^)")
+                logger.error(f"OBM ERROR von {ctx.author.name}: {e}")
+
         except Exception as e:
-            await ctx.reply("Klappt nit lol 🤷")
-            logger.error(f"OOW ERROR von {ctx.author.name}: {e}")
+            await reddit.close()
+            logger.error(f"OBM ERROR von {ctx.author.name}: {e}")
+
+    @commands.command()
+    async def oow(self, ctx):
+        try:
+            reddit = asyncpraw.Reddit(
+                client_id=self.bot.CLIENT_ID,
+                client_secret=self.bot.CLIENT_SECRET,
+                user_agent="by u/zicklaa"
+            )
+            memes = await reddit.subreddit('okoidawappler')
+            random_submission = random.choice([meme async for meme in memes.hot(limit=limit)])
+            await reddit.close()
+            if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif") or 'v.' in random_submission.url:
+                await ctx.channel.send("|| " + random_submission.url + " ||")
+                if 'imgur' in random_submission.url:
+                    await ctx.channel.send('imgur 🤮')
+                await ctx.message.delete()
+                logger.info("Redditlink gepostet für: " + ctx.author.name)
+            else:
+                await ctx.reply("Comment oder Gallery Post erwischt, probier es nochmal :^)")
+                logger.error(f"OBM ERROR von {ctx.author.name}: {e}")
+
+        except Exception as e:
+            await reddit.close()
+            logger.error(f"OBM ERROR von {ctx.author.name}: {e}")
 
     @commands.command()
     @commands.check(is_hallo_anna)
     async def ali(self, ctx):
         try:
-            reddit = praw.Reddit(
+            reddit = asyncpraw.Reddit(
                 client_id=self.bot.CLIENT_ID,
                 client_secret=self.bot.CLIENT_SECRET,
                 user_agent="by u/zicklaa"
             )
-            submissions = [submission for submission in reddit.subreddit(
-                "kpopfap").hot(limit=limit)]
-            url = submissions[random.randint(0, limit)].url
-            if "gallery" in url:
-                submissions = [submission for submission in reddit.subreddit(
-                    "kpopfap").hot(limit=limit)]
-                url = submissions[random.randint(0, limit)].url
-                if "gallery" in url:
-                    submissions = [submission for submission in reddit.subreddit(
-                        "kpopfap").hot(limit=limit)]
-                    url = submissions[random.randint(0, limit)].url
-                    if "gallery" in url:
-                        submissions = [submission for submission in reddit.subreddit(
-                            "kpopfap").hot(limit=limit)]
-                        url = submissions[random.randint(0, limit)].url
-                        await ctx.reply("Nur Galleries ey smh")
-                    else:
-                        await ctx.reply(url)
-                else:
-                    await ctx.reply(url)
+            memes = await reddit.subreddit('kpopfap')
+            random_submission = random.choice([meme async for meme in memes.hot(limit=limit)])
+            await reddit.close()
+            if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif") or 'gfycat' in random_submission.url:
+                await ctx.channel.send("|| " + random_submission.url + " ||")
+                if 'imgur' in random_submission.url:
+                    await ctx.channel.send('imgur 🤮')
+                await ctx.message.delete()
+                logger.info("Redditlink gepostet für: " + ctx.author.name)
             else:
-                await ctx.reply(url)
-            logger.info("Redditlink gepostet für: " + ctx.author.name)
+                await ctx.reply("Comment oder Gallery Post erwischt, probier es nochmal :^)")
+                logger.error(f"OBM ERROR von {ctx.author.name}: {e}")
+
         except Exception as e:
-            await ctx.reply("Klappt nit lol 🤷")
-            logger.error(f"OBR ERROR von {ctx.author.name}: {e}")
+            await reddit.close()
+            logger.error(f"OBM ERROR von {ctx.author.name}: {e}")
 
     @commands.command()
     async def obr(self, ctx):
         try:
-            reddit = praw.Reddit(
+            reddit = asyncpraw.Reddit(
                 client_id=self.bot.CLIENT_ID,
                 client_secret=self.bot.CLIENT_SECRET,
                 user_agent="by u/zicklaa"
             )
-            submissions = [submission for submission in reddit.subreddit(
-                "okbuddyretard").hot(limit=limit)]
-            url = submissions[random.randint(0, limit)].url
-            await ctx.reply("||" + url + "||")
-            logger.info("Redditlink gepostet für: " + ctx.author.name)
+            memes = await reddit.subreddit('okbuddyretard')
+            random_submission = random.choice([meme async for meme in memes.hot(limit=limit)])
+            await reddit.close()
+            if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif") or 'v.' in random_submission.url:
+                await ctx.channel.send("|| " + random_submission.url + " ||")
+                if 'imgur' in random_submission.url:
+                    await ctx.channel.send('imgur 🤮')
+                await ctx.message.delete()
+                logger.info("Redditlink gepostet für: " + ctx.author.name)
+            else:
+                await ctx.reply("Comment oder Gallery Post erwischt, probier es nochmal :^)")
+                logger.error(f"OBM ERROR von {ctx.author.name}: {e}")
+
         except Exception as e:
-            await ctx.reply("Klappt nit lol 🤷")
-            logger.error(f"OBR ERROR von {ctx.author.name}: {e}")
+            await reddit.close()
+            logger.error(f"OBM ERROR von {ctx.author.name}: {e}")
 
 
 def setup(bot):

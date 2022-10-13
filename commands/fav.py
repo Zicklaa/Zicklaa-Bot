@@ -272,7 +272,7 @@ class Fav(commands.Cog):
                                 f"Allfavs ERROR von {ctx.author.name}: {e}")'''
 
                 except Exception as e:
-                    await ctx.message.reply("Klappt nit lol 🤷")
+                    await dm_channel.send("Opalla da is was schief gloffe hihi")
                     logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
             else:
                 await ctx.message.add_reaction("\N{NO ENTRY SIGN}")
