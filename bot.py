@@ -11,6 +11,7 @@ import sys
 import random
 import json
 import markovify
+import re
 
 
 def create_log_file(path):
@@ -163,7 +164,7 @@ async def on_message(message):
                 await message.reply("GuMo")
             elif 'tsg' in message.content.lower():
                 await message.add_reaction("💩")
-            elif "danke" in message.content.lower():
+            elif re.search(r'\bdanke\b', message.content.lower()) is not None:
                 await message.reply("Bitte!")
     await bot.process_commands(message)
 
