@@ -62,6 +62,8 @@ initial_extensions = [
     "commands.star",
     "commands.discordle",
     "commands.voice",
+    # "commands.urban",
+    # "commands.urbancog",
 ]
 
 
@@ -77,6 +79,8 @@ class ZicklaaBot(discord.ext.commands.Bot):
         self.LYRICS_KEY = config.LYRICS_KEY
         self.CLIENT_ID = config.CLIENT_ID
         self.CLIENT_SECRET = config.CLIENT_SECRET
+        self.RAPID_HOST = config.RAPID_HOST
+        self.RAPID_KEY = config.RAPID_KEY
         self.create_tables()
         self.json_model = json_model()
 
@@ -157,6 +161,10 @@ async def on_message(message):
                 await message.reply("uff")
             elif message.content.lower() == "gumo":
                 await message.reply("GuMo")
+            elif 'tsg' in message.content.lower():
+                await message.add_reaction("💩")
+            elif "danke" in message.content.lower():
+                await message.reply("Bitte!")
     await bot.process_commands(message)
 
 
