@@ -25,7 +25,7 @@ am = discord.AllowedMentions(
     replied_user=False,  # Whether to ping on replies to messages
 )
 
-ratio = 0.65
+ratio = 0.67
 
 
 class Hivemind(commands.Cog):

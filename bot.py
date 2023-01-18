@@ -33,36 +33,35 @@ logger = create_log_file("ZicklaaBotLog.log")
 user_last_command = {}
 
 initial_extensions = [
-    "commands.remindme",
-    "commands.choose",
-    "commands.wiki",
-    "commands.lyrics",
-    "commands.wetter",
     "commands.admin",
-    "commands.git",
-    "commands.wishlist",
+    "commands.chefkoch",
+    "commands.choose",
     "commands.datum",
-    "commands.spongebob",
-    "commands.magic8",
-    "commands.lustigebildchen",
-    "commands.obm",
+    "commands.discordle",
     "commands.fav",
+    "commands.git",
+    "commands.girlboss",
     "commands.help",
     "commands.hivemind",
     "commands.kindermörder",
-    "commands.trumpquote",
-    "commands.rezept",
-    "commands.chefkoch",
+    "commands.lyrics",
+    "commands.magic8",
     "commands.mydealz",
+    "commands.obm",
     "commands.ofen",
-    "commands.quote",
-    "commands.roll",
     "commands.poll",
-    "commands.translate",
-    "commands.girlboss",
+    "commands.quote",
+    "commands.remindme",
+    "commands.rezept",
+    "commands.roll",
     "commands.star",
-    "commands.discordle",
-    "commands.voice",
+    "commands.spongebob",
+    "commands.translate",
+    "commands.trumpquote",
+    "commands.wetter",
+    "commands.wishlist",
+    "commands.wiki",
+    # "commands.voice",
     # "commands.urban",
     # "commands.urbancog",
 ]
@@ -162,8 +161,6 @@ async def on_message(message):
                 await message.reply("uff")
             elif message.content.lower() == "gumo":
                 await message.reply("GuMo")
-            elif 'tsg' in message.content.lower():
-                await message.add_reaction("💩")
             elif re.search(r'\bdanke\b', message.content.lower()) is not None:
                 await message.reply("Bitte!")
     await bot.process_commands(message)
