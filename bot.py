@@ -44,6 +44,7 @@ initial_extensions = [
     "commands.help",
     "commands.hivemind",
     "commands.kindermörder",
+    "commands.lustigebildchen",
     "commands.lyrics",
     "commands.magic8",
     "commands.mydealz",
