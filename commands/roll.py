@@ -24,6 +24,8 @@ class Roll(commands.Cog):
                     if isinstance(zahl, int):
                         if zahl > 0:
                             await ctx.reply(random.randint(1, zahl))
+                            logger.info("Dice Roll für: " +
+                                        ctx.message.author.name)
                         else:
                             await ctx.reply("Zahl ist zu klein, du Monger.")
                             logger.info(
@@ -59,6 +61,8 @@ class Roll(commands.Cog):
                                 embed.add_field(name=str(zahl1) + "d" +
                                                 str(zahl2), value=würfe, inline=False)
                                 await ctx.reply(embed=embed)
+                                logger.info("Dice Roll für: " +
+                                            ctx.message.author.name)
                         else:
                             await ctx.reply("Zahl ist zu klein, du Monger.")
                             logger.info(

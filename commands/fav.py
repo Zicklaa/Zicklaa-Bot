@@ -118,6 +118,8 @@ class Fav(commands.Cog):
                         embed.set_footer(text=str(fav[0]) + ' | ' + current_time + ' | #' +
                                          fav_message.channel.name + " | by: " + ctx.author.name + " | Name: " + fav[3])
                         await ctx.channel.send(embed=embed)
+                        logger.info("Fav gepostet für: " +
+                                    ctx.message.author.name)
                         await ctx.message.delete()
                     except Exception as e:
                         await ctx.message.reply("Klappt nit lol 🤷")
@@ -146,6 +148,8 @@ class Fav(commands.Cog):
                             embed.set_footer(text=str(fav[0]) + ' | ' + current_time + ' | #' +
                                              fav_message.channel.name + " | by: " + ctx.author.name + " | Name: " + fav[3])
                             await ctx.channel.send(embed=embed)
+                            logger.info("Fav gepostet für: " +
+                                        ctx.message.author.name)
                             await ctx.message.delete()
                         except Exception as e:
                             await ctx.message.reply("Klappt nit lol 🤷")
@@ -180,6 +184,8 @@ class Fav(commands.Cog):
                     embed.set_footer(text=current_time + ' | #' +
                                      fav_message.channel.name + " | Randomized by: " + ctx.author.name)
                     await ctx.channel.send(embed=embed)
+                    logger.info("Random Fav gepostet für: " +
+                                ctx.message.author.name)
                     await ctx.message.delete()
                 except Exception as e:
                     await ctx.message.reply("Klappt nit lol 🤷 Eventuell existiert der originale Kommentar nichtmehr. ID: " + str(fav[0]) + " <@288413759117066241>")
