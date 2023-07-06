@@ -25,21 +25,32 @@ class Poll(commands.Cog):
                     elif len(options) < 2:
                         await ctx.reply("Bidde gib mindestens 2 Optionen kthxbye")
                     elif len(question) > 200:
-                        await ctx.reply("Frage bitte nicht länger als ~~mein Cock~~ 200 Chars kthxbye")
+                        await ctx.reply(
+                            "Frage bitte nicht länger als ~~mein Cock~~ 200 Chars kthxbye"
+                        )
                     else:
                         text = ""
                         i = 1
                         for option in options:
                             if len(option) > 200:
-                                await ctx.reply("Optionen bitte nicht länger als ~~mein Cock~~ 200 Chars kthxbye")
+                                await ctx.reply(
+                                    "Optionen bitte nicht länger als ~~mein Cock~~ 200 Chars kthxbye"
+                                )
                             else:
                                 text = text + str(i) + ": " + option + "\n"
                                 i = i + 1
-                        embed = discord.Embed(title="Poll", url="https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-                        embed.set_thumbnail(url="https://cdn-icons-png.flaticon.com/512/3100/3100212.png")
+                        embed = discord.Embed(
+                            title="Poll",
+                            url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                        )
+                        embed.set_thumbnail(
+                            url="https://cdn-icons-png.flaticon.com/512/3100/3100212.png"
+                        )
                         embed.add_field(name=question, value=text, inline=False)
                         embed.timestamp = datetime.datetime.utcnow()
-                        embed.set_footer(text='Umfragedauer: ' + str(umfragedauer) + ' Minuten')
+                        embed.set_footer(
+                            text="Umfragedauer: " + str(umfragedauer) + " Minuten"
+                        )
                         poll_message = await ctx.reply(embed=embed)
                         for i in range(len(options)):
                             if i == 0:
@@ -53,18 +64,28 @@ class Poll(commands.Cog):
                             elif i == 4:
                                 emoji = "5️⃣"
                             await poll_message.add_reaction(emoji)
-                        await asyncio.sleep(umfragedauer*60)
-                        cache_msg = discord.utils.get(self.bot.cached_messages, id=poll_message.id)
+                        await asyncio.sleep(umfragedauer * 60)
+                        cache_msg = discord.utils.get(
+                            self.bot.cached_messages, id=poll_message.id
+                        )
                         reactions = cache_msg.reactions
                         await poll_message.add_reaction("❌")
                         poll_dict = {}
                         for i in range(len(options)):
                             poll_dict.update({reactions[i].emoji: reactions[i].count})
-                        sorted_dict = dict(sorted(poll_dict.items(), key=lambda item: item[1], reverse=True))
+                        sorted_dict = dict(
+                            sorted(
+                                poll_dict.items(),
+                                key=lambda item: item[1],
+                                reverse=True,
+                            )
+                        )
                         first_pair = list(sorted_dict.items())[0]
                         second_pair = list(sorted_dict.items())[1]
                         if int(first_pair[1]) == int(second_pair[1]):
-                            await poll_message.reply("Es gab keinen eindeutigen Sieger :(")
+                            await poll_message.reply(
+                                "Es gab keinen eindeutigen Sieger :("
+                            )
                         else:
                             if first_pair[0] == "1️⃣":
                                 text = "Option 1: **" + options[0] + "** hat gewonnen!"

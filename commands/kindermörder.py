@@ -25,7 +25,9 @@ class Kindermörder(commands.Cog):
     @commands.command()
     async def raul(self, ctx):
         try:
-            await ctx.channel.send("https://cdn.discordapp.com/attachments/122739462210846721/873703041889607720/raul2.gif")
+            await ctx.channel.send(
+                "https://cdn.discordapp.com/attachments/122739462210846721/873703041889607720/raul2.gif"
+            )
             await ctx.message.delete()
             logger.info("Kindermörder gepostet für " + ctx.author.name)
         except Exception as e:

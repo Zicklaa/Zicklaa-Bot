@@ -24,12 +24,14 @@ class Chefkoch(commands.Cog):
             if len(text) > 100:
                 await ctx.reply("Zu viel Junge.")
                 logger.info(
-                    f"Request from {ctx.author.name}. Chefkoch zu viele Zutaten.")
+                    f"Request from {ctx.author.name}. Chefkoch zu viele Zutaten."
+                )
             else:
                 if text == "":
                     await ctx.reply("Gib halt wenigstens ne Zutat.")
                     logger.info(
-                        f"Request from {ctx.author.name}. Chefkoch keine Zutaten.")
+                        f"Request from {ctx.author.name}. Chefkoch keine Zutaten."
+                    )
                 else:
                     if text == "rotd":
                         recipe = Search().recipeOfTheDay()

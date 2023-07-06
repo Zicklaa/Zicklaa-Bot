@@ -7,7 +7,8 @@ from bs4 import BeautifulSoup
 
 logger = logging.getLogger("ZicklaaBot.MyDealz")
 header = {
-    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36 OPR/55.0.2994.61"}
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36 OPR/55.0.2994.61"
+}
 
 
 class MyDealz(commands.Cog):
@@ -18,10 +19,12 @@ class MyDealz(commands.Cog):
     async def mdc(self, ctx):
         try:
             response = requests.get("https://www.mydealz.de/deals", headers=header)
-            soup = BeautifulSoup(response.content, 'html.parser')
+            soup = BeautifulSoup(response.content, "html.parser")
             hot3 = ""
-            for link in soup.findAll('a', {'class': 'cept-tt thread-link linkPlain thread-title--list'})[:3]:
-                hot3 = hot3 + link['href'] + "\n"
+            for link in soup.findAll(
+                "a", {"class": "cept-tt thread-link linkPlain thread-title--list"}
+            )[:3]:
+                hot3 = hot3 + link["href"] + "\n"
             await ctx.reply(hot3)
             logger.info("MyDealz für: " + ctx.author.name)
 
@@ -33,10 +36,12 @@ class MyDealz(commands.Cog):
     async def mdd(self, ctx):
         try:
             response = requests.get("https://www.mydealz.de", headers=header)
-            soup = BeautifulSoup(response.content, 'html.parser')
+            soup = BeautifulSoup(response.content, "html.parser")
             hot3 = ""
-            for link in soup.findAll('a', {'class': 'cept-tt thread-link linkPlain thread-title--list'})[:3]:
-                hot3 = hot3 + link['href'] + "\n"
+            for link in soup.findAll(
+                "a", {"class": "cept-tt thread-link linkPlain thread-title--list"}
+            )[:3]:
+                hot3 = hot3 + link["href"] + "\n"
             await ctx.reply(hot3)
             logger.info("MyDealz für: " + ctx.author.name)
 

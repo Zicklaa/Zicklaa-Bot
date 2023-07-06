@@ -19,14 +19,16 @@ class Wetter(commands.Cog):
                 """url = 'https://wttr.in/{}'.format(place) + "?n&T&2&lang=de"
                 res = requests.get(url)
                 await message.channel.send(
-                    "```" + res.text.replace("Folgen Sie https://twitter.com/igor_chubin für wttr.in Updates", "") + "```")"""
-                url_png = "https://de.wttr.in/{}".format(
-                    location) + "_m" + ".png"
+                    "```" + res.text.replace("Folgen Sie https://twitter.com/igor_chubin für wttr.in Updates", "") + "```")
+                """
+                url_png = "https://de.wttr.in/{}".format(location) + "_m" + ".png"
                 urllib.request.urlretrieve(
-                    url_png, "/home/zicklaa/Zicklaa-Bot/static/wetter.png")
-                await ctx.reply(file=discord.File(r"/home/zicklaa/Zicklaa-Bot/static/wetter.png"))
-                logger.info("Wetter gepostet für " +
-                            ctx.author.name + ": " + location)
+                    url_png, "/home/zicklaa/Zicklaa-Bot/static/wetter.png"
+                )
+                await ctx.reply(
+                    file=discord.File(r"/home/zicklaa/Zicklaa-Bot/static/wetter.png")
+                )
+                logger.info("Wetter gepostet für " + ctx.author.name + ": " + location)
             except Exception as e:
                 await ctx.reply("Wetter schmetter, sag ich schon immer.")
                 logger.error(f"Request from {ctx.author.name}: {e}")

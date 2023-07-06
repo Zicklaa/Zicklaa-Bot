@@ -7,7 +7,7 @@ from discord.ext import commands
 logger = logging.getLogger("ZicklaaBot.Hivemind")
 
 
-'''with open('/home/zicklaa/Zicklaa-Bot/static/25-07-2022/hivemind_merged.txt', 'r', encoding="utf-8") as f:
+"""with open('/home/zicklaa/Zicklaa-Bot/static/25-07-2022/hivemind_merged.txt', 'r', encoding="utf-8") as f:
     print("Chaining the Chain")
     text = f.read()
 text_model = markovify.NewlineText(text, state_size=2, well_formed=True)
@@ -15,13 +15,13 @@ text_model = text_model.compile()
 model_json = text_model.to_json()
 with open('hivemind_ss2.json', 'w', encoding='utf-8') as f:
     json.dump(model_json, f)
-print("compiled")'''
+print("compiled")"""
 
 
 am = discord.AllowedMentions(
-    users=False,         # Whether to ping individual user @mentions
-    everyone=False,      # Whether to ping @everyone or @here mentions
-    roles=False,         # Whether to ping role @mentions
+    users=False,  # Whether to ping individual user @mentions
+    everyone=False,  # Whether to ping @everyone or @here mentions
+    roles=False,  # Whether to ping role @mentions
     replied_user=False,  # Whether to ping on replies to messages
 )
 
@@ -38,8 +38,7 @@ class Hivemind(commands.Cog):
         try:
             while True:
                 # satz = json_model.make_short_sentence(140)
-                satz = self.json_model.make_sentence(
-                    max_overlap_ratio=ratio)
+                satz = self.json_model.make_sentence(max_overlap_ratio=ratio)
                 if satz:
                     await ctx.reply(satz, allowed_mentions=am)
                     break
@@ -58,7 +57,8 @@ class Hivemind(commands.Cog):
                     while True:
                         # satz = json_model.make_short_sentence(140)
                         satz = self.json_model.make_sentence(
-                            max_overlap_ratio=ratio,)
+                            max_overlap_ratio=ratio,
+                        )
                         if satz:
                             await ctx.reply(satz, allowed_mentions=am)
                             break
@@ -72,7 +72,7 @@ class Hivemind(commands.Cog):
             await ctx.reply("Spam woanders, Moruk 🤷")
             logger.error(f"Hippomode ERROR von {ctx.author.name}")
 
-    '''@commands.command()
+    """@commands.command()
     async def scrape(self, ctx):
         try:
             if ctx.author.id == 288413759117066241:
@@ -100,7 +100,7 @@ class Hivemind(commands.Cog):
 
         except Exception as e:
             await ctx.reply("Klappt nit lol 🤷")
-            # logger.error(f"Hivemind ERROR von {ctx.author.name}: {e}")'''
+            # logger.error(f"Hivemind ERROR von {ctx.author.name}: {e}")"""
 
 
 def setup(bot):

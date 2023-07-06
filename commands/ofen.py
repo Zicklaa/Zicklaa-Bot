@@ -36,9 +36,7 @@ class Ofen(commands.Cog):
             message = ctx.message
             if int(ctx.author.id) == int(134574105109331968):
                 reason = "BEI GOTT MARIAM, dein Essen verbrennt!"
-                reminder_time = round(
-                    time.time() + (10*60), 2
-                )
+                reminder_time = round(time.time() + (10 * 60), 2)
                 reminder = Reminder(
                     message.id, ctx.channel.id, ctx.author.id, reason, reminder_time
                 )
@@ -66,8 +64,7 @@ class Ofen(commands.Cog):
             self.db.commit()
             self.cursor.execute(
                 "SELECT id FROM reminders WHERE user_id=? AND reminder_text=? AND reminder_time=? AND message_id=?",
-                (reminder.user_id, reminder.text,
-                 reminder.time, reminder.message_id),
+                (reminder.user_id, reminder.text, reminder.time, reminder.message_id),
             )
             id = self.cursor.fetchall()[0][0]
             logger.info("Neuer Reminder in die DB gepusht: " + str(id))

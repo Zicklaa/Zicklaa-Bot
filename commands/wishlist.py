@@ -34,10 +34,10 @@ class Wishlist(commands.Cog):
                         all_wishes = "Folgendes wünscht ihr euch: \n\n"
                         x = 1
                         for wish in wishes:
-                            all_wishes = all_wishes + "ID: " + \
-                                str(wish[0]) + ": " + "\n"
-                            all_wishes = all_wishes + \
-                                "**" + wish[2] + "**" + "\n"
+                            all_wishes = (
+                                all_wishes + "ID: " + str(wish[0]) + ": " + "\n"
+                            )
+                            all_wishes = all_wishes + "**" + wish[2] + "**" + "\n"
                             all_wishes = (
                                 all_wishes
                                 + "<@"
@@ -61,8 +61,7 @@ class Wishlist(commands.Cog):
                                 )
                                 break
                         await ctx.channel.send(all_wishes)
-                        logger.info(
-                            "Wishlist: Liste gepostet für " + ctx.author.name)
+                        logger.info("Wishlist: Liste gepostet für " + ctx.author.name)
                 except Exception as e:
                     await ctx.channel.send(
                         "Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: showlist()"
@@ -73,7 +72,9 @@ class Wishlist(commands.Cog):
                 if len(wishtext_join) < 250:
                     user_id = ctx.author.id
                     ts = datetime.now().strftime("%d-%b-%Y | %H:%M:%S")
-                    sql = "INSERT INTO wishlist (user_id, wishtext, ts) VALUES (?, ?, ?)"
+                    sql = (
+                        "INSERT INTO wishlist (user_id, wishtext, ts) VALUES (?, ?, ?)"
+                    )
                     val = (user_id, wishtext_join, ts)
                     self.cursor.execute(sql, val)
                     self.db.commit()
@@ -81,8 +82,7 @@ class Wishlist(commands.Cog):
                     logger.info("Wishlist: neuer Wunsch + Reaktion")
                 else:
                     await ctx.channel.send("Wunsch zu lang, maximal 250 Chars.")
-                    logger.info("Wishlist: Wunsch zu lang von " +
-                                ctx.author.name)
+                    logger.info("Wishlist: Wunsch zu lang von " + ctx.author.name)
         except Exception as e:
             await ctx.channel.send(
                 "Irgendwas klappt nedde. Scheiß Zicklaa zsamme gschwind. Hint: wishlist()"
@@ -104,8 +104,7 @@ class Wishlist(commands.Cog):
                 await ctx.channel.send("Ein Wunsch mit der ID gibts nedde")
                 logger.info("delete_wish: Wish beim Löschen nicht gefunden")
             else:
-                self.cursor.execute(
-                    "DELETE FROM wishlist WHERE id=?", (intid,))
+                self.cursor.execute("DELETE FROM wishlist WHERE id=?", (intid,))
                 self.db.commit()
                 await ctx.message.add_reaction("\N{THUMBS UP SIGN}")
                 logger.info("delete_wish: Wish gelöscht mit der ID: " + id)

@@ -21,8 +21,7 @@ class Fav(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
-        message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(
-            payload)
+        message_id, channel_id, emoji, user_id = self.parse_raw_reaction_event(payload)
 
         if str(emoji) == "🗑️":
             try:
@@ -53,8 +52,12 @@ class Fav(commands.Cog):
             try:
                 user = await self.bot.fetch_user(payload.user_id)
                 dm_channel = await user.create_dm()
-                await dm_channel.send("Antworte bitte mit dem gewünschten Namen für den Fav.")
-                response = await self.bot.wait_for('message', check=message_check(channel=dm_channel))
+                await dm_channel.send(
+                    "Antworte bitte mit dem gewünschten Namen für den Fav."
+                )
+                response = await self.bot.wait_for(
+                    "message", check=message_check(channel=dm_channel)
+                )
                 name = response.content
                 if len(name) < 250:
                     sql = "INSERT INTO favs (user_id, message_id, name, channel_id) VALUES (?, ?, ?, ?)"
@@ -67,11 +70,12 @@ class Fav(commands.Cog):
                     self.cursor.execute(sql, val)
                     self.db.commit()
                     await response.add_reaction("\N{THUMBS UP SIGN}")
-                    logger.info("Neuer Fav angelegt für: " +
-                                response.author.name)
+                    logger.info("Neuer Fav angelegt für: " + response.author.name)
                 else:
                     await response.reply("Zu lang. Bidde unter 250chars")
-                    response = await self.bot.wait_for('message', check=message_check(channel=dm_channel))
+                    response = await self.bot.wait_for(
+                        "message", check=message_check(channel=dm_channel)
+                    )
                     name = response.content
                     if len(name) < 250:
                         sql = "INSERT INTO favs (user_id, message_id, name, channel_id) VALUES (?, ?, ?, ?)"
@@ -84,42 +88,58 @@ class Fav(commands.Cog):
                         self.cursor.execute(sql, val)
                         self.db.commit()
                         await response.add_reaction("\N{THUMBS UP SIGN}")
-                        logger.info("Neuer Fav angelegt für: " +
-                                    response.author.name)
+                        logger.info("Neuer Fav angelegt für: " + response.author.name)
                     else:
                         await response.reply("Dummkopf")
             except Exception as e:
                 await response.reply("Klappt nit lol 🤷")
-                logger.error(
-                    f"Lustiges Bilchen ERROR von {response.author.name}: {e}")
+                logger.error(f"Lustiges Bilchen ERROR von {response.author.name}: {e}")
 
     @commands.command()
     async def fav(self, ctx, *name):
         try:
             name = " ".join(name)
             if name:
-                name = '%' + name + '%'
+                name = "%" + name + "%"
                 fav = self.cursor.execute(
-                    "SELECT * FROM favs WHERE user_id=? AND name LIKE ? ORDER BY RANDOM()", (ctx.author.id, name,)
+                    "SELECT * FROM favs WHERE user_id=? AND name LIKE ? ORDER BY RANDOM()",
+                    (
+                        ctx.author.id,
+                        name,
+                    ),
                 ).fetchone()
                 if fav:
                     try:
                         channel = self.bot.get_channel(fav[4])
                         fav_message = await channel.fetch_message(fav[2])
                         embed = discord.Embed(
-                            title="", description=fav_message.content, color=0x00ff00)
-                        current_time = (pytz.utc.localize(fav_message.created_at).astimezone(tz.tzlocal())
-                                        ).strftime("%d.%m.%Y, %H:%M:%S")
+                            title="", description=fav_message.content, color=0x00FF00
+                        )
+                        current_time = (
+                            pytz.utc.localize(fav_message.created_at).astimezone(
+                                tz.tzlocal()
+                            )
+                        ).strftime("%d.%m.%Y, %H:%M:%S")
                         if fav_message.attachments:
-                            embed.set_image(
-                                url=str(fav_message.attachments[0].url))
+                            embed.set_image(url=str(fav_message.attachments[0].url))
                         embed.set_author(
-                            name=fav_message.author.name, icon_url=fav_message.author.avatar_url, url=fav_message.jump_url)
-                        embed.set_footer(text=str(fav[0]) + ' | ' + current_time + ' | #' +
-                                         fav_message.channel.name + " | by: " + ctx.author.name + " | Name: " + fav[3])
+                            name=fav_message.author.name,
+                            icon_url=fav_message.author.avatar_url,
+                            url=fav_message.jump_url,
+                        )
+                        embed.set_footer(
+                            text=str(fav[0])
+                            + " | "
+                            + current_time
+                            + " | #"
+                            + fav_message.channel.name
+                            + " | by: "
+                            + ctx.author.name
+                            + " | Name: "
+                            + fav[3]
+                        )
                         await ctx.channel.send(embed=embed)
-                        logger.info("Fav gepostet für: " +
-                                    ctx.message.author.name)
+                        logger.info("Fav gepostet für: " + ctx.message.author.name)
                         await ctx.message.delete()
                     except Exception as e:
                         await ctx.message.reply("Klappt nit lol 🤷")
@@ -130,31 +150,47 @@ class Fav(commands.Cog):
             else:
                 try:
                     fav = self.cursor.execute(
-                        "SELECT * FROM favs WHERE user_id=? ORDER BY RANDOM()", (ctx.author.id,)
+                        "SELECT * FROM favs WHERE user_id=? ORDER BY RANDOM()",
+                        (ctx.author.id,),
                     ).fetchone()
                     if fav:
                         try:
                             channel = self.bot.get_channel(fav[4])
                             fav_message = await channel.fetch_message(fav[2])
                             embed = discord.Embed(
-                                title="", description=fav_message.content, color=0x00ff00)
-                            current_time = (pytz.utc.localize(fav_message.created_at).astimezone(tz.tzlocal())
-                                            ).strftime("%d.%m.%Y, %H:%M:%S")
+                                title="",
+                                description=fav_message.content,
+                                color=0x00FF00,
+                            )
+                            current_time = (
+                                pytz.utc.localize(fav_message.created_at).astimezone(
+                                    tz.tzlocal()
+                                )
+                            ).strftime("%d.%m.%Y, %H:%M:%S")
                             if fav_message.attachments:
-                                embed.set_image(
-                                    url=str(fav_message.attachments[0].url))
+                                embed.set_image(url=str(fav_message.attachments[0].url))
                             embed.set_author(
-                                name=fav_message.author.name, icon_url=fav_message.author.avatar_url, url=fav_message.jump_url)
-                            embed.set_footer(text=str(fav[0]) + ' | ' + current_time + ' | #' +
-                                             fav_message.channel.name + " | by: " + ctx.author.name + " | Name: " + fav[3])
+                                name=fav_message.author.name,
+                                icon_url=fav_message.author.avatar_url,
+                                url=fav_message.jump_url,
+                            )
+                            embed.set_footer(
+                                text=str(fav[0])
+                                + " | "
+                                + current_time
+                                + " | #"
+                                + fav_message.channel.name
+                                + " | by: "
+                                + ctx.author.name
+                                + " | Name: "
+                                + fav[3]
+                            )
                             await ctx.channel.send(embed=embed)
-                            logger.info("Fav gepostet für: " +
-                                        ctx.message.author.name)
+                            logger.info("Fav gepostet für: " + ctx.message.author.name)
                             await ctx.message.delete()
                         except Exception as e:
                             await ctx.message.reply("Klappt nit lol 🤷")
-                            logger.error(
-                                f"Fav ERROR von {ctx.author.name}: {e}")
+                            logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
                 except Exception as e:
                     await ctx.message.reply("Klappt nit lol 🤷")
                     logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
@@ -165,30 +201,43 @@ class Fav(commands.Cog):
     @commands.command()
     async def rfav(self, ctx, *name):
         try:
-            fav = self.cursor.execute(
-                "SELECT * FROM favs ORDER BY RANDOM()").fetchone()
+            fav = self.cursor.execute("SELECT * FROM favs ORDER BY RANDOM()").fetchone()
             if fav:
                 try:
                     fav_user = await self.bot.fetch_user(fav[1])
                     channel = self.bot.get_channel(fav[4])
                     fav_message = await channel.fetch_message(fav[2])
                     embed = discord.Embed(
-                        title="", description=fav_message.content, color=0x00ff00)
-                    current_time = (pytz.utc.localize(fav_message.created_at).astimezone(tz.tzlocal())
-                                    ).strftime("%d.%m.%Y, %H:%M:%S")
+                        title="", description=fav_message.content, color=0x00FF00
+                    )
+                    current_time = (
+                        pytz.utc.localize(fav_message.created_at).astimezone(
+                            tz.tzlocal()
+                        )
+                    ).strftime("%d.%m.%Y, %H:%M:%S")
                     if fav_message.attachments:
-                        embed.set_image(
-                            url=str(fav_message.attachments[0].url))
+                        embed.set_image(url=str(fav_message.attachments[0].url))
                     embed.set_author(
-                        name=fav_message.author.name, icon_url=fav_message.author.avatar_url, url=fav_message.jump_url)
-                    embed.set_footer(text=current_time + ' | #' +
-                                     fav_message.channel.name + " | Randomized by: " + ctx.author.name)
+                        name=fav_message.author.name,
+                        icon_url=fav_message.author.avatar_url,
+                        url=fav_message.jump_url,
+                    )
+                    embed.set_footer(
+                        text=current_time
+                        + " | #"
+                        + fav_message.channel.name
+                        + " | Randomized by: "
+                        + ctx.author.name
+                    )
                     await ctx.channel.send(embed=embed)
-                    logger.info("Random Fav gepostet für: " +
-                                ctx.message.author.name)
+                    logger.info("Random Fav gepostet für: " + ctx.message.author.name)
                     await ctx.message.delete()
                 except Exception as e:
-                    await ctx.message.reply("Klappt nit lol 🤷 Eventuell existiert der originale Kommentar nichtmehr. ID: " + str(fav[0]) + " <@288413759117066241>")
+                    await ctx.message.reply(
+                        "Klappt nit lol 🤷 Eventuell existiert der originale Kommentar nichtmehr. ID: "
+                        + str(fav[0])
+                        + " <@288413759117066241>"
+                    )
                     logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
         except Exception as e:
             await ctx.message.reply("Klappt nit lol 🤷")
@@ -198,13 +247,16 @@ class Fav(commands.Cog):
     async def allfavs(self, ctx):
         try:
             all_favs = self.cursor.execute(
-                "SELECT * FROM favs WHERE user_id=?", (ctx.author.id,))
+                "SELECT * FROM favs WHERE user_id=?", (ctx.author.id,)
+            )
             if all_favs:
                 try:
                     dm_channel = await ctx.author.create_dm()
                     await ctx.message.delete()
 
-                    await dm_channel.send("Moin 👋 dauert ein paar Minütchen bis ich alle deine Favs zusammenhabe \nMuss ganz arg nachdenken und meinen kleines glattes süßes Gehirn anstrengen 😳")
+                    await dm_channel.send(
+                        "Moin 👋 dauert ein paar Minütchen bis ich alle deine Favs zusammenhabe \nMuss ganz arg nachdenken und meinen kleines glattes süßes Gehirn anstrengen 😳"
+                    )
 
                     path = "allfavs/" + str(ctx.author.id) + ".txt"
 
@@ -219,45 +271,76 @@ class Fav(commands.Cog):
                         try:
                             channel = self.bot.get_channel(fav[4])
                             fav_message = await channel.fetch_message(fav[2])
-                            current_time = (pytz.utc.localize(fav_message.created_at).astimezone(tz.tzlocal())
-                                            ).strftime("%d.%m.%Y, %H:%M:%S")
+                            current_time = (
+                                pytz.utc.localize(fav_message.created_at).astimezone(
+                                    tz.tzlocal()
+                                )
+                            ).strftime("%d.%m.%Y, %H:%M:%S")
                             author = fav_message.author.name
                             text = fav_message.content
-                            bottom_text = str(fav[0]) + ' | ' + current_time + ' | #' + \
-                                fav_message.channel.name + " | by: " + \
-                                ctx.author.name + " | Name: " + fav[3]
+                            bottom_text = (
+                                str(fav[0])
+                                + " | "
+                                + current_time
+                                + " | #"
+                                + fav_message.channel.name
+                                + " | by: "
+                                + ctx.author.name
+                                + " | Name: "
+                                + fav[3]
+                            )
                             if fav_message.content:
                                 text = fav_message.content
                                 if fav_message.attachments:
-                                    url = str(
-                                        fav_message.attachments[0].url)
-                                    message = author + "\n" + text + "\n" + url + "\n" + bottom_text + "\n \n"
+                                    url = str(fav_message.attachments[0].url)
+                                    message = (
+                                        author
+                                        + "\n"
+                                        + text
+                                        + "\n"
+                                        + url
+                                        + "\n"
+                                        + bottom_text
+                                        + "\n \n"
+                                    )
                                 else:
-                                    message = author + "\n" + text + "\n" + bottom_text + "\n \n"
+                                    message = (
+                                        author
+                                        + "\n"
+                                        + text
+                                        + "\n"
+                                        + bottom_text
+                                        + "\n \n"
+                                    )
                             else:
                                 if fav_message.attachments:
-                                    url = str(
-                                        fav_message.attachments[0].url)
-                                    message = author + "\n" + url + "\n" + bottom_text + "\n \n"
+                                    url = str(fav_message.attachments[0].url)
+                                    message = (
+                                        author
+                                        + "\n"
+                                        + url
+                                        + "\n"
+                                        + bottom_text
+                                        + "\n \n"
+                                    )
                                 else:
                                     message = author + "\n" + bottom_text + "\n \n"
                             whole_message = whole_message + message
 
                         except Exception as e:
-                            logger.error(
-                                f"Allfavs ERROR von {ctx.author.name}: {e}")
+                            logger.error(f"Allfavs ERROR von {ctx.author.name}: {e}")
 
-                    with open(path, 'w', encoding="utf-8") as f:
+                    with open(path, "w", encoding="utf-8") as f:
                         f.write(whole_message)
 
                     await dm_channel.send(file=discord.File(path))
 
-                    '''try:
+                    """try:
                         os.remove(path)
                     except OSError:
-                        pass'''
+                        pass"""
 
-                    '''for fav in all_favs:
+                    """for fav in all_favs:
                         try:
                             channel = self.bot.get_channel(fav[4])
                             fav_message = await channel.fetch_message(fav[2])
@@ -275,7 +358,7 @@ class Fav(commands.Cog):
                             await dm_channel.send(embed=embed)
                         except Exception as e:
                             logger.error(
-                                f"Allfavs ERROR von {ctx.author.name}: {e}")'''
+                                f"Allfavs ERROR von {ctx.author.name}: {e}")"""
 
                 except Exception as e:
                     await dm_channel.send("Opalla da is was schief gloffe hihi")
@@ -298,7 +381,8 @@ class Fav(commands.Cog):
                 ).fetchone()
                 if fav and fav[1] == ctx.author.id:
                     deletion = self.cursor.execute(
-                        "DELETE FROM favs WHERE id=?", (int(id),))
+                        "DELETE FROM favs WHERE id=?", (int(id),)
+                    )
                     if deletion:
                         self.db.commit()
                         await ctx.message.add_reaction("✅")
@@ -321,9 +405,11 @@ class Fav(commands.Cog):
     async def namefav(self, ctx, id, *name):
         try:
             if id and id.isdigit() and name:
-                name = ' '.join(name)
+                name = " ".join(name)
                 if len(name) > 250:
-                    await ctx.message.reply("Name bidde nit länger als 250 Charaktere 😤")
+                    await ctx.message.reply(
+                        "Name bidde nit länger als 250 Charaktere 😤"
+                    )
                     await ctx.message.add_reaction("❌")
                 else:
                     fav = self.cursor.execute(
@@ -331,7 +417,12 @@ class Fav(commands.Cog):
                     ).fetchone()
                     if fav and fav[1] == ctx.author.id:
                         update = self.cursor.execute(
-                            "UPDATE favs SET name=? WHERE id=?", (name, int(id),))
+                            "UPDATE favs SET name=? WHERE id=?",
+                            (
+                                name,
+                                int(id),
+                            ),
+                        )
                         if update:
                             self.db.commit()
                             await ctx.message.add_reaction("✅")
@@ -351,7 +442,6 @@ class Fav(commands.Cog):
             logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
 
     def parse_raw_reaction_event(self, payload: RawReactionActionEvent):
-
         return payload.message_id, payload.channel_id, payload.emoji, payload.user_id
 
 
@@ -387,6 +477,7 @@ def message_check(channel=None, author=None, content=None, ignore_bot=True, lowe
             if content and actual_content not in content:
                 return False
             return True
+
         return check
     except Exception as e:
         logger.error(e)

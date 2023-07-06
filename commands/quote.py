@@ -27,21 +27,29 @@ class Quote(commands.Cog):
                     channel = self.bot.get_channel(channel_id)
                     message = await channel.fetch_message(msg_id)
                     embed = discord.Embed(
-                        title="", description=message.content, color=0x00ff00)
-                    current_time = (pytz.utc.localize(message.created_at).astimezone(tz.tzlocal())
-                                    ).strftime("%d.%m.%Y, %H:%M:%S")
+                        title="", description=message.content, color=0x00FF00
+                    )
+                    current_time = (
+                        pytz.utc.localize(message.created_at).astimezone(tz.tzlocal())
+                    ).strftime("%d.%m.%Y, %H:%M:%S")
                     if message.attachments:
-                        embed.set_image(
-                            url=str(message.attachments[0].url))
+                        embed.set_image(url=str(message.attachments[0].url))
                     embed.set_author(
-                        name=message.author.name, icon_url=message.author.avatar_url, url=message.jump_url)
+                        name=message.author.name,
+                        icon_url=message.author.avatar_url,
+                        url=message.jump_url,
+                    )
                     embed.set_footer(
-                        text=current_time + ' | #' + message.channel.name + " | Quoted by: " + ctx.author.name)
+                        text=current_time
+                        + " | #"
+                        + message.channel.name
+                        + " | Quoted by: "
+                        + ctx.author.name
+                    )
                     await ctx.channel.send(embed=embed)
                     await ctx.message.delete()
 
-                    logger.info("quote(): Quote gepostet für: " +
-                                ctx.author.name)
+                    logger.info("quote(): Quote gepostet für: " + ctx.author.name)
                 except Exception as e:
                     await ctx.reply("Link br0ke 🤷")
                     logger.error(f"Quote from {ctx.author.name}: {e}")
@@ -49,8 +57,7 @@ class Quote(commands.Cog):
                 await ctx.reply(
                     "Wie soll ich das quoten wenn du nichtmal ne Link gibst, du Monger?"
                 )
-                logger.info(
-                    "Quote(): Kein Link gegeben von: " + ctx.author.name)
+                logger.info("Quote(): Kein Link gegeben von: " + ctx.author.name)
         except Exception as e:
             await ctx.reply("Klappt nit lol 🤷")
             logger.error(f"Quote from {ctx.author.name}: {e}")

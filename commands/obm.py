@@ -22,19 +22,28 @@ class Okbrudimongo(commands.Cog):
             reddit = asyncpraw.Reddit(
                 client_id=self.bot.CLIENT_ID,
                 client_secret=self.bot.CLIENT_SECRET,
-                user_agent="by u/zicklaa"
+                user_agent="by u/zicklaa",
             )
-            memes = await reddit.subreddit('okbrudimongo')
-            random_submission = random.choice([meme async for meme in memes.hot(limit=limit)])
+            memes = await reddit.subreddit("okbrudimongo")
+            random_submission = random.choice(
+                [meme async for meme in memes.hot(limit=limit)]
+            )
             await reddit.close()
-            if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif") or 'v.' in random_submission.url:
+            if (
+                random_submission.url.endswith("jpg")
+                or random_submission.url.endswith("png")
+                or random_submission.url.endswith("gif")
+                or "v." in random_submission.url
+            ):
                 await ctx.channel.send("|| " + random_submission.url + " ||")
-                if 'imgur' in random_submission.url:
-                    await ctx.channel.send('imgur 🤮')
+                if "imgur" in random_submission.url:
+                    await ctx.channel.send("imgur 🤮")
                 await ctx.message.delete()
                 logger.info("Redditlink gepostet für: " + ctx.author.name)
             else:
-                await ctx.reply("Comment oder Gallery Post erwischt, probier es nochmal :^)")
+                await ctx.reply(
+                    "Comment oder Gallery Post erwischt, probier es nochmal :^)"
+                )
                 logger.error(f"OBM ERROR von {ctx.author.name}: {e}")
 
         except Exception as e:
@@ -47,19 +56,28 @@ class Okbrudimongo(commands.Cog):
             reddit = asyncpraw.Reddit(
                 client_id=self.bot.CLIENT_ID,
                 client_secret=self.bot.CLIENT_SECRET,
-                user_agent="by u/zicklaa"
+                user_agent="by u/zicklaa",
             )
-            memes = await reddit.subreddit('okoidawappler')
-            random_submission = random.choice([meme async for meme in memes.hot(limit=limit)])
+            memes = await reddit.subreddit("okoidawappler")
+            random_submission = random.choice(
+                [meme async for meme in memes.hot(limit=limit)]
+            )
             await reddit.close()
-            if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif") or 'v.' in random_submission.url:
+            if (
+                random_submission.url.endswith("jpg")
+                or random_submission.url.endswith("png")
+                or random_submission.url.endswith("gif")
+                or "v." in random_submission.url
+            ):
                 await ctx.channel.send("|| " + random_submission.url + " ||")
-                if 'imgur' in random_submission.url:
-                    await ctx.channel.send('imgur 🤮')
+                if "imgur" in random_submission.url:
+                    await ctx.channel.send("imgur 🤮")
                 await ctx.message.delete()
                 logger.info("Redditlink gepostet für: " + ctx.author.name)
             else:
-                await ctx.reply("Comment oder Gallery Post erwischt, probier es nochmal :^)")
+                await ctx.reply(
+                    "Comment oder Gallery Post erwischt, probier es nochmal :^)"
+                )
                 logger.error(f"OBM ERROR von {ctx.author.name}: {e}")
 
         except Exception as e:
@@ -73,19 +91,28 @@ class Okbrudimongo(commands.Cog):
             reddit = asyncpraw.Reddit(
                 client_id=self.bot.CLIENT_ID,
                 client_secret=self.bot.CLIENT_SECRET,
-                user_agent="by u/zicklaa"
+                user_agent="by u/zicklaa",
             )
-            memes = await reddit.subreddit('kpopfap')
-            random_submission = random.choice([meme async for meme in memes.hot(limit=limit)])
+            memes = await reddit.subreddit("kpopfap")
+            random_submission = random.choice(
+                [meme async for meme in memes.hot(limit=limit)]
+            )
             await reddit.close()
-            if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif") or 'gfycat' in random_submission.url:
+            if (
+                random_submission.url.endswith("jpg")
+                or random_submission.url.endswith("png")
+                or random_submission.url.endswith("gif")
+                or "gfycat" in random_submission.url
+            ):
                 await ctx.channel.send("|| " + random_submission.url + " ||")
-                if 'imgur' in random_submission.url:
-                    await ctx.channel.send('imgur 🤮')
+                if "imgur" in random_submission.url:
+                    await ctx.channel.send("imgur 🤮")
                 await ctx.message.delete()
                 logger.info("Redditlink gepostet für: " + ctx.author.name)
             else:
-                await ctx.reply("Comment oder Gallery Post erwischt, probier es nochmal :^)")
+                await ctx.reply(
+                    "Comment oder Gallery Post erwischt, probier es nochmal :^)"
+                )
                 logger.error(f"OBM ERROR von {ctx.author.name}: {e}")
 
         except Exception as e:
@@ -98,19 +125,28 @@ class Okbrudimongo(commands.Cog):
             reddit = asyncpraw.Reddit(
                 client_id=self.bot.CLIENT_ID,
                 client_secret=self.bot.CLIENT_SECRET,
-                user_agent="by u/zicklaa"
+                user_agent="by u/zicklaa",
             )
-            memes = await reddit.subreddit('okbuddyretard')
-            random_submission = random.choice([meme async for meme in memes.hot(limit=limit)])
+            memes = await reddit.subreddit("okbuddyretard")
+            random_submission = random.choice(
+                [meme async for meme in memes.hot(limit=limit)]
+            )
             await reddit.close()
-            if random_submission.url.endswith("jpg") or random_submission.url.endswith("png") or random_submission.url.endswith("gif") or 'v.' in random_submission.url:
+            if (
+                random_submission.url.endswith("jpg")
+                or random_submission.url.endswith("png")
+                or random_submission.url.endswith("gif")
+                or "v." in random_submission.url
+            ):
                 await ctx.channel.send("|| " + random_submission.url + " ||")
-                if 'imgur' in random_submission.url:
-                    await ctx.channel.send('imgur 🤮')
+                if "imgur" in random_submission.url:
+                    await ctx.channel.send("imgur 🤮")
                 await ctx.message.delete()
                 logger.info("Redditlink gepostet für: " + ctx.author.name)
             else:
-                await ctx.reply("Comment oder Gallery Post erwischt, probier es nochmal :^)")
+                await ctx.reply(
+                    "Comment oder Gallery Post erwischt, probier es nochmal :^)"
+                )
                 logger.error(f"OBM ERROR von {ctx.author.name}: {e}")
 
         except Exception as e:

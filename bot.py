@@ -18,8 +18,7 @@ def create_log_file(path):
     logger = logging.getLogger("ZicklaaBot")
     logger.setLevel(logging.INFO)
 
-    handler = TimedRotatingFileHandler(
-        path, when="midnight", interval=1, backupCount=5)
+    handler = TimedRotatingFileHandler(path, when="midnight", interval=1, backupCount=5)
     formatter = logging.Formatter(
         "%(asctime)s::%(name)s::%(funcName)s::%(levelname)s - %(message)s"
     )
@@ -28,8 +27,7 @@ def create_log_file(path):
     return logger
 
 
-logger = create_log_file(
-    "/home/zicklaa/Zicklaa-Bot/Old Logs/ZicklaaBotLog.log")
+logger = create_log_file("/home/zicklaa/Zicklaa-Bot/Old Logs/ZicklaaBotLog.log")
 
 user_last_command = {}
 
@@ -63,6 +61,7 @@ initial_extensions = [
     "commands.wetter",
     "commands.wishlist",
     "commands.wiki",
+    "commands.chat",
     # "commands.voice",
     # "commands.urban",
     # "commands.urbancog",
@@ -73,9 +72,10 @@ class ZicklaaBot(discord.ext.commands.Bot):
     def __init__(self):
         intents = discord.Intents.default()
         intents.members = True
-        super().__init__(intents=intents, command_prefix=config.PREFIX, help_command=None)
-        self.db = sqlite3.connect(
-            "/home/zicklaa/Zicklaa-Bot/reminder-wishlist.db")
+        super().__init__(
+            intents=intents, command_prefix=config.PREFIX, help_command=None
+        )
+        self.db = sqlite3.connect("/home/zicklaa/Zicklaa-Bot/reminder-wishlist.db")
         self.LASTFM_API_KEY = config.API_KEY
         self.LASTFM_API_SECRET = config.API_SECRET
         self.LYRICS_KEY = config.LYRICS_KEY
@@ -83,6 +83,7 @@ class ZicklaaBot(discord.ext.commands.Bot):
         self.CLIENT_SECRET = config.CLIENT_SECRET
         self.RAPID_HOST = config.RAPID_HOST
         self.RAPID_KEY = config.RAPID_KEY
+        self.OPENAI_API_KEY = config.OPENAI_API_KEY
         self.create_tables()
         self.json_model = json_model()
 
@@ -94,8 +95,7 @@ class ZicklaaBot(discord.ext.commands.Bot):
 
     async def on_ready(self):
         print("Hallo I bim omnline :^)")
-        logger.info(
-            "=======================Startup=========================")
+        logger.info("=======================Startup=========================")
         remindme = self.get_cog("RemindMe")
         await remindme.check_reminder()
 
@@ -122,7 +122,9 @@ class ZicklaaBot(discord.ext.commands.Bot):
 
 
 def json_model():
-    with open('/home/zicklaa/Zicklaa-Bot/static/hivemind.json', encoding="utf-8") as json_file:
+    with open(
+        "/home/zicklaa/Zicklaa-Bot/static/hivemind.json", encoding="utf-8"
+    ) as json_file:
         hivemind_json = json.load(json_file)
     json_model = markovify.Text.from_json(hivemind_json)
     print("hivemind.json loaded")
@@ -150,7 +152,9 @@ async def on_message(message):
     if not message.author.id == 571051961256902671:
         if random.random() < config.SECRET_PROBABILITY:
             if "crazy" in message.content.lower():
-                await message.reply(message.content.lower().replace("crazy", "***normal***"))
+                await message.reply(
+                    message.content.lower().replace("crazy", "***normal***")
+                )
             elif "kult" in message.content.lower():
                 await message.reply("***KEIN KULT***")
             elif message.content.lower() == "hi":
@@ -163,7 +167,7 @@ async def on_message(message):
                 await message.reply("uff")
             elif message.content.lower() == "gumo":
                 await message.reply("GuMo")
-            elif re.search(r'\bdanke\b', message.content.lower()) is not None:
+            elif re.search(r"\bdanke\b", message.content.lower()) is not None:
                 await message.reply("Bitte!")
     await bot.process_commands(message)
 
@@ -187,8 +191,7 @@ async def on_command_error(ctx, error):
         logger.error(f"User {str(ctx.author)} triggered: {error}")
         return
     else:
-        print("Ignoring exception in command {}:".format(
-            ctx.command), file=sys.stderr)
+        print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
         traceback.print_exception(
             type(error), error, error.__traceback__, file=sys.stderr
         )

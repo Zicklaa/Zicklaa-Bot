@@ -10,17 +10,17 @@ class TrumpQuote(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-# Vermutlich machts Sinn Error handling zu machen wenn nix von der Api zurückkommt aber bin ich zu faul für
+    # Vermutlich machts Sinn Error handling zu machen wenn nix von der Api zurückkommt aber bin ich zu faul für
     async def get_random_quote(self):
-        api_response = requests.get(
-            'https://api.tronalddump.io/random/quote').json()
-        return api_response['value']
+        api_response = requests.get("https://api.tronalddump.io/random/quote").json()
+        return api_response["value"]
 
     async def build_embedd(ctx, quote):
         embed = discord.Embed(title="", color=16705372, description=quote)
-        embed.set_footer(text='- Donald Trump')
+        embed.set_footer(text="- Donald Trump")
         embed.set_thumbnail(
-            url="https://img.welt.de/img/politik/ausland/mobile232680235/9402500987-ci102l-w1024/Donald-Trump.jpg")
+            url="https://img.welt.de/img/politik/ausland/mobile232680235/9402500987-ci102l-w1024/Donald-Trump.jpg"
+        )
         return embed
 
     @commands.command()

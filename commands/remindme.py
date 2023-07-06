@@ -21,13 +21,13 @@ def is_datetime(msg, dateOnly=False):
 
 def parse_time(msg):
     try:
-        dt = datetime.combine(
-            datetime.today(), datetime.strptime(msg, "%H:%M").time())
+        dt = datetime.combine(datetime.today(), datetime.strptime(msg, "%H:%M").time())
         return dt
     except ValueError:
         try:
             dt = datetime.combine(
-                datetime.today(), datetime.strptime(msg, "%-H:%M").time())
+                datetime.today(), datetime.strptime(msg, "%-H:%M").time()
+            )
             return dt
         except ValueError:
             return None
@@ -70,7 +70,7 @@ class RemindMe(commands.Cog):
                 "h": 60 * 60,
                 "d": 60 * 60 * 24,
                 "w": 60 * 60 * 24 * 7,
-                "mon": 60 * 60 * 24 * 7 * 30,
+                "mon": 60 * 60 * 24 * 30,
             }
             remTime = parse_time(method)
             if remTime is not None:
@@ -81,11 +81,11 @@ class RemindMe(commands.Cog):
                 return
             elif is_datetime(method, dateOnly=True):
                 if text and is_datetime(text[0]):
-                    absTime = parser.parse(
-                        f"{method} {text[0]}", dayfirst=True)
+                    absTime = parser.parse(f"{method} {text[0]}", dayfirst=True)
                 else:
-                    absTime = parser.parse(
-                        f"{method}", dayfirst=True) + timedelta(hours=12)
+                    absTime = parser.parse(f"{method}", dayfirst=True) + timedelta(
+                        hours=12
+                    )
                 reason = " ".join(text[1:])
                 absTime = absTime.replace(tzinfo=tz.tzlocal())
             elif method.isdigit():
@@ -103,12 +103,13 @@ class RemindMe(commands.Cog):
             if absTime is not None:
                 reminder_time = absTime.timestamp()
                 if reminder_time - datetime.now().timestamp() < 0:
-                    await ctx.message.reply("Ich kann dich nicht in der Vergangenheit erinneren")
+                    await ctx.message.reply(
+                        "Ich kann dich nicht in der Vergangenheit erinneren"
+                    )
                     return
             else:
                 reminder_time = round(
-                    time.time() + (float(int(digits) *
-                                         int(unit_to_second[unit]))), 2
+                    time.time() + (float(int(digits) * int(unit_to_second[unit]))), 2
                 )
             reminder = Reminder(
                 message.id, ctx.channel.id, ctx.author.id, reason, reminder_time
@@ -118,10 +119,9 @@ class RemindMe(commands.Cog):
             return
         except Exception as e:
             await ctx.message.reply("Klappt nit lol 🤷")
-            logger.error(
-                "Remindme Fehler wahrsch falsches Zeitformat?: " + str(e))
+            logger.error("Remindme Fehler wahrsch falsches Zeitformat?: " + str(e))
 
-    '''async def wait_for_reminder(self, reminder: Reminder):
+    """async def wait_for_reminder(self, reminder: Reminder):
         try:
             if (reminder.time - time.time()) < 0:
                 await self.send_reminder(reminder)
@@ -130,13 +130,14 @@ class RemindMe(commands.Cog):
                 await asyncio.sleep(reminder.time - time.time())
                 await self.send_reminder(reminder)
         except Exception as e:
-            logger.error(e)'''
+            logger.error(e)"""
 
     async def check_reminder(self):
         try:
             while True:
                 self.cursor.execute(
-                    "SELECT * FROM reminders ORDER BY reminder_time ASC LIMIT 1")
+                    "SELECT * FROM reminders ORDER BY reminder_time ASC LIMIT 1"
+                )
                 results = self.cursor.fetchall()
                 if results:
                     reminder = reminder_from_record(results[0])
@@ -190,8 +191,7 @@ class RemindMe(commands.Cog):
             self.db.commit()
             self.cursor.execute(
                 "SELECT id FROM reminders WHERE user_id=? AND reminder_text=? AND reminder_time=? AND message_id=?",
-                (reminder.user_id, reminder.text,
-                 reminder.time, reminder.message_id),
+                (reminder.user_id, reminder.text, reminder.time, reminder.message_id),
             )
             id = self.cursor.fetchall()[0][0]
             logger.info("Neuer Reminder in die DB gepusht: " + str(id))
@@ -212,21 +212,26 @@ class RemindMe(commands.Cog):
                     while True:
                         # satz = json_model.make_short_sentence(140)
                         satz = self.json_model.make_sentence(
-                            max_overlap_ratio=0.65,)
+                            max_overlap_ratio=0.65,
+                        )
                         if satz:
                             await message.reply(
                                 "Ich werde dich wissen lassen:\n**" + satz + "**",
-                                mention_author=True)
+                                mention_author=True,
+                            )
                             break
                 else:
                     if message.author.id == 413068385962819584:
                         await message.reply(
-                            "**Ali {}**".format(
-                                reminder.text), mention_author=True)
+                            "**Ali {}**".format(reminder.text), mention_author=True
+                        )
                     else:
                         await message.reply(
                             "Ich werde dich wissen lassen:\n**{}**".format(
-                                reminder.text), mention_author=True)
+                                reminder.text
+                            ),
+                            mention_author=True,
+                        )
                 logger.info("Auf Reminder geantortet: " + str(reminder._id))
             else:
                 await channel.send(
@@ -254,11 +259,10 @@ class RemindMe(commands.Cog):
                 if not parent_reminder_record:
                     return False
                 try:
-                    parent_reminder = reminder_from_record(
-                        parent_reminder_record)
-                    await self.bot.get_channel(parent_reminder.channel_id).fetch_message(
-                        parent_reminder.message_id
-                    )
+                    parent_reminder = reminder_from_record(parent_reminder_record)
+                    await self.bot.get_channel(
+                        parent_reminder.channel_id
+                    ).fetch_message(parent_reminder.message_id)
                     return True
                 except:
                     return False
@@ -270,7 +274,9 @@ class RemindMe(commands.Cog):
         try:
             all_reminder_ids = [
                 x[0]
-                for x in self.cursor.execute("SELECT message_id FROM reminders").fetchall()
+                for x in self.cursor.execute(
+                    "SELECT message_id FROM reminders"
+                ).fetchall()
             ]
             if (
                 (message_id not in all_reminder_ids)
@@ -285,8 +291,7 @@ class RemindMe(commands.Cog):
 
     def delete_reminder(self, reminder: Reminder):
         try:
-            self.cursor.execute(
-                "DELETE FROM reminders WHERE id=?", (reminder._id,))
+            self.cursor.execute("DELETE FROM reminders WHERE id=?", (reminder._id,))
             self.db.commit()
             logger.info("Reminder gelöscht: " + str(reminder._id))
         except Exception as e:

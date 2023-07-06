@@ -13,7 +13,6 @@ class Rezept(commands.Cog):
     @commands.command()
     async def rezept(self, ctx):
         try:
-
             rezepte_channel = await self.bot.fetch_channel(860154286141997056)
             rezepte_pins = await rezepte_channel.pins()
             rezept = random.choice(rezepte_pins)
