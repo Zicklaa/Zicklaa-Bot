@@ -1,0 +1,30 @@
+rm =  method ws? (msg)?
+method = all / RemindTime
+RemindTime = (DateTime / Date / Time / Duration)
+msg = ~".+"
+all = "all"
+
+DateTime = Date ws Time
+Date = (YMD / DMY)
+Time = Hour ':' Minute ':'? Second?
+YMD = Year4 DateSep Month DateSep Day
+DMY = Day DateSep Month DateSep? Year?
+
+Duration = ~"(\d+)([smhd])"
+
+
+
+Hour = ~"[0-1][0-9]" / ~"2[0-4]"
+Minute = ~"[0-5][0-9]"
+Second = ~"[0-5][0-9]" / "60"
+
+
+DateSep = "-" / "."
+Year = Year4 / Year2
+Year4 = ~"[0-9][0-9][0-9][0-9]"
+Year2 =  ~"[0-9][0-9]"
+Month =   ~"0?[1-9]" / ~"1[0-2]"
+Day = ~"0[1-9]" / ~"[1-2][0-9]" / ~"3[0-1]"
+
+
+ws = ~"\s*"
