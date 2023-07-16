@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import os
 import time
 from datetime import datetime
 from dateutil import tz
@@ -34,7 +33,6 @@ class RemindMe(commands.Cog):
         self.db = db
         self.json_model = json_model
         self.cursor = db.cursor()
-        print(os.getcwd())
         with open("utils/rm_grammar.peg", 'r') as f:
             grm = f.read()
             self.parser = RemindmeParser(grm)
