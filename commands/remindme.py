@@ -1,37 +1,13 @@
 import asyncio
 import logging
+import os
 import time
-from datetime import datetime, timedelta
-from dateutil import parser, tz
+from datetime import datetime
+from dateutil import tz
 from discord.ext import commands
+from utils.parser import RemindmeParser
 
 logger = logging.getLogger("ZicklaaBot.RemindMe")
-
-
-def is_datetime(msg, dateOnly=False):
-    try:
-        dt = parser.parse(msg, fuzzy=False, default=datetime(1970, 1, 1))
-        if dateOnly:
-            if dt.year == 1970:
-                return False
-        return True
-    except ValueError:
-        return False
-
-
-def parse_time(msg):
-    try:
-        dt = datetime.combine(datetime.today(), datetime.strptime(msg, "%H:%M").time())
-        return dt
-    except ValueError:
-        try:
-            dt = datetime.combine(
-                datetime.today(), datetime.strptime(msg, "%-H:%M").time()
-            )
-            return dt
-        except ValueError:
-            return None
-
 
 class Reminder:
     def __init__(
@@ -58,63 +34,52 @@ class RemindMe(commands.Cog):
         self.db = db
         self.json_model = json_model
         self.cursor = db.cursor()
+        print(os.getcwd())
+        with open("utils/rm_grammar.peg", 'r') as f:
+            grm = f.read()
+            self.parser = RemindmeParser(grm)
 
     @commands.command(aliases=["rm"])
-    async def remindme(self, ctx, method: str, *text: str):
+    async def remindme(self, ctx, *text: str):
         try:
-            absTime = None
             message = ctx.message
-            unit_to_second = {
-                "s": 1,
-                "m": 60,
-                "h": 60 * 60,
-                "d": 60 * 60 * 24,
-                "w": 60 * 60 * 24 * 7,
-                "mon": 60 * 60 * 24 * 30,
-            }
-            remTime = parse_time(method)
-            if remTime is not None:
-                reason = " ".join(text[1:])
-                absTime = remTime.replace(tzinfo=tz.tzlocal())
-            elif method == "all":
+            parsed_msg = self.parser.parse(' '.join(text))
+            if "all" in parsed_msg:
                 await self.get_all_reminders(ctx)
                 return
-            elif is_datetime(method, dateOnly=True):
-                if text and is_datetime(text[0]):
-                    absTime = parser.parse(f"{method} {text[0]}", dayfirst=True)
-                else:
-                    absTime = parser.parse(f"{method}", dayfirst=True) + timedelta(
-                        hours=12
-                    )
-                reason = " ".join(text[1:])
-                absTime = absTime.replace(tzinfo=tz.tzlocal())
-            elif method.isdigit():
-                digits = method
-                unit = text[0]
-                reason = " ".join(text[1:])
+            print(parsed_msg)
+            parsed_time = parsed_msg["remind_time"]
+            abs_time = "duration_seconds" not in parsed_time
+            now = datetime.now()
+            if abs_time:
+                today = datetime.combine(datetime.today(),
+                                         datetime(hour=12, minute=0, second=0, year=now.year,month=now.month,day=now.day,tzinfo=tz.tzlocal()).time())
+                reminder_time = datetime(year=parsed_time.get('year') if parsed_time.get('year') is not None else today.year,
+                                        month=parsed_time.get('month') if parsed_time.get('month') is not None else today.month,
+                                        day=parsed_time.get('day') if parsed_time.get('day') is not None else today.day,
+                                        hour=parsed_time.get('hour') if parsed_time.get('hour') is not None else today.hour,
+                                        minute=parsed_time.get('minute') if parsed_time.get('minute') is not None else today.minute,
+                                        second=parsed_time.get('second') if parsed_time.get('second') is not None else today.second,
+                                        tzinfo=tz.tzlocal()).timestamp()
+                print(reminder_time)
             else:
-                if "mon" in method:
-                    unit = "mon"
-                    digits = method[:-3]
+                reminder_time = round(time.time() + float(parsed_time.get("duration_seconds")),2)
+            dt = reminder_time - now.timestamp()
+            if  dt < 0:
+                if dt < 43200: # less than 12 hrs ago -> remind tomorrow at that time
+                    reminder_time += 86400
                 else:
-                    unit = method[-1]
-                    digits = method[:-1]
-                reason = " ".join(text)
-            if absTime is not None:
-                reminder_time = absTime.timestamp()
-                if reminder_time - datetime.now().timestamp() < 0:
                     await ctx.message.reply(
                         "Ich kann dich nicht in der Vergangenheit erinneren"
                     )
                     return
-            else:
-                reminder_time = round(
-                    time.time() + (float(int(digits) * int(unit_to_second[unit]))), 2
-                )
+
+            reason = parsed_msg.get("msg") if not None else ""
+
             reminder = Reminder(
                 message.id, ctx.channel.id, ctx.author.id, reason, reminder_time
             )
-            reminder = self.insert_reminder(reminder)
+            self.insert_reminder(reminder)
             await message.add_reaction("\N{THUMBS UP SIGN}")
             return
         except Exception as e:
