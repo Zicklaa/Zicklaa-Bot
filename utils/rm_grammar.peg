@@ -10,7 +10,7 @@ Time = Hour ':' Minute ':'? Second?
 YMD = Year4 DateSep Month DateSep Day
 DMY = Day DateSep Month DateSep? Year?
 
-Duration = ~"(\d+)([smhd])"
+Duration = ~"(\d+)([smhdw])"
 
 
 
