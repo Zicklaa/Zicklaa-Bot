@@ -22,7 +22,7 @@ class Chat(commands.Cog):
                 text = text.replace('"', "")
                 if text:
                     completion = openai.ChatCompletion.create(
-                        model="gpt-3.5-turbo",
+                        model="gpt-4",
                         max_tokens=500,
                         messages=[{"role": "user", "content": text}],
                     )

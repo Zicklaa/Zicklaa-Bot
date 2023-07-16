@@ -20,6 +20,7 @@ lxml==4.9.1
 markovify==0.9.4
 multidict==6.0.4
 nftables==0.1
+parsimonious==0.10.0
 pexpect==4.8.0
 ply==3.11
 psutil==5.9.1
