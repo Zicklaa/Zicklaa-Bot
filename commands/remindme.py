@@ -33,7 +33,7 @@ class RemindMe(commands.Cog):
         self.db = db
         self.json_model = json_model
         self.cursor = db.cursor()
-        with open("utils/rm_grammar.peg", 'r') as f:
+        with open("/home/zicklaa/Zicklaa-Bot/utils/rm_grammar.peg", 'r') as f:
             grm = f.read()
             self.parser = RemindmeParser(grm)
 
@@ -45,7 +45,6 @@ class RemindMe(commands.Cog):
             if "all" in parsed_msg:
                 await self.get_all_reminders(ctx)
                 return
-            print(parsed_msg)
             parsed_time = parsed_msg["remind_time"]
             abs_time = "duration_seconds" not in parsed_time
             now = datetime.now()
@@ -59,7 +58,6 @@ class RemindMe(commands.Cog):
                                         minute=parsed_time.get('minute') if parsed_time.get('minute') is not None else today.minute,
                                         second=parsed_time.get('second') if parsed_time.get('second') is not None else today.second,
                                         tzinfo=tz.tzlocal()).timestamp()
-                print(reminder_time)
             else:
                 reminder_time = round(time.time() + float(parsed_time.get("duration_seconds")),2)
             dt = reminder_time - now.timestamp()
@@ -72,7 +70,7 @@ class RemindMe(commands.Cog):
                     )
                     return
 
-            reason = parsed_msg.get("msg") if not None else ""
+            reason = parsed_msg.get("msg") if parsed_msg.get("msg") is not None else ""
 
             reminder = Reminder(
                 message.id, ctx.channel.id, ctx.author.id, reason, reminder_time

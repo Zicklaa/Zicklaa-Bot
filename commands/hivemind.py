@@ -70,7 +70,7 @@ class Hivemind(commands.Cog):
                 logger.error(f"Hivemind ERROR von {ctx.author.name}: {e}")
         else:
             await ctx.reply("Spam woanders, Moruk 🤷")
-            logger.error(f"Hippomode ERROR von {ctx.author.name}")
+            logger.info(f"Hippomode ERROR von {ctx.author.name}")
 
     """@commands.command()
     async def scrape(self, ctx):

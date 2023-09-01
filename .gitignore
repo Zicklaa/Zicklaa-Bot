@@ -156,3 +156,4 @@ ZicklaaBotLog.log*
 *.ttf
 vibecheck.py
 *.mp3
+*.old
