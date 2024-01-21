@@ -167,6 +167,14 @@ async def on_message(message):
                 await message.reply("uff")
             elif message.content.lower() == "gumo":
                 await message.reply("GuMo")
+            elif "brazy" in message.content.lower():
+                await message.reply(
+                    message.content.lower().replace("crazy", "***banal***")
+                )
+            elif "halt echt" in message.content.lower():
+                await message.reply(
+                    message.content.lower().replace("halt echt", "***alt hecht***")
+                )    
             elif re.search(r"\bdanke\b", message.content.lower()) is not None:
                 await message.reply("Bitte!")
     await bot.process_commands(message)

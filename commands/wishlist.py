@@ -50,17 +50,21 @@ class Wishlist(commands.Cog):
                                 + "\n"
                             )
                             x = x + 1
-                            if len(all_wishes) > 1999:
-                                await ctx.channel.send(all_wishes)
-                                await ctx.channel.send(
-                                    "Es fehlen Wünsche da Discord Zeichenlimit lol"
-                                )
-                                logger.info(
-                                    "Wishlist: Inkomplette Liste gepostet für "
-                                    + ctx.author.name
-                                )
-                                break
-                        await ctx.channel.send(all_wishes)
+                        if len(all_wishes) > 1999:
+                            
+                            substrings = []
+
+                            for i in range(0, len(all_wishes), 2000):
+                                substring = all_wishes[i:i + 2000]
+                                substrings.append(substring)
+                            for substring in substrings:
+                                await ctx.channel.send(substring)
+                            logger.info(
+                                "Wishlist: Geteilte Liste gepostet für "
+                                + ctx.author.name
+                            )
+                        else:
+                            await ctx.channel.send(all_wishes)
                         logger.info("Wishlist: Liste gepostet für " + ctx.author.name)
                 except Exception as e:
                     await ctx.channel.send(

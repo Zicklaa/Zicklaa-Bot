@@ -14,7 +14,7 @@ import pytz
 logger = logging.getLogger("ZicklaaBot.Star")
 
 post_channel_id = 981543834129428560  # Mainchannel
-# post_channel_id = 567411189336768532  # Testchannel
+#post_channel_id = 567411189336768532  # Testchannel
 threshold = 5
 ext_list = [
     "3g2",
@@ -78,21 +78,23 @@ class Star(commands.Cog):
                                     value="[Video](" + message.attachments[0].url + ")",
                                     inline=True,
                                 )
+                                dateiEndung = ".mp4"
                             else:
                                 embed.set_image(url=str(message.attachments[0].url))
-                                try:
-                                    for i, attachements in enumerate(message.attachments):
-                                        filename = (
-                                            path
-                                            + "STERNBRETT_"
-                                            + str(message_id)
-                                            + "_"
-                                            + str(i)
-                                            + ".png"
-                                        )
-                                        await attachements.save(filename)
-                                except:
-                                    logger.error(f"Star Error beim LTB speichern: {e}")
+                                dateiEndung = ".png"
+                            try:
+                                for i, attachements in enumerate(message.attachments):
+                                    filename = (
+                                        path
+                                        + "STERNBRETT_"
+                                        + str(message_id)
+                                        + "_"
+                                        + str(i)
+                                        + dateiEndung
+                                    )
+                                    await attachements.save(filename)
+                            except:
+                                logger.error(f"Star Error beim LTB speichern: {e}")
 
                         embed.add_field(
                             name="Link zur Nachricht:",
@@ -177,14 +179,14 @@ class Star(commands.Cog):
                             channel = self.bot.get_channel(post_channel_id)
                             star_message = await channel.send(embed=embed)
                             await star_message.add_reaction("⭐")
-                            await ctx.add_reaction("✅")
+                            await message.add_reaction("✅")
                             try:
                                 sql = "INSERT INTO stars (message_id) VALUES (?)"
                                 val = (int(msg_id),)
                                 self.cursor.execute(sql, val)
                                 self.db.commit()
                             except Exception as e:
-                                await ctx.add_reaction("❌")
+                                await message.add_reaction("❌")
                                 logger.error(f"Star Error beim DB pushen: {e}")
 
                             logger.info("Star gepostet")
@@ -205,6 +207,7 @@ class Star(commands.Cog):
         except Exception as e:
             logger.error(f"Star from {ctx.author.name}: {e}")
 
+    '''
     @commands.command()
     async def topstar1(self, ctx):
         # Fixed channel ID
@@ -281,7 +284,7 @@ class Star(commands.Cog):
         # Output the sorted results
         for url, count in sorted_star_counts.items():
             print(f"{url} : {count} Sterne")
-
+'''
 
 def setup(bot):
     bot.add_cog(Star(bot, bot.db))

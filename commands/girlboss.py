@@ -26,7 +26,7 @@ girlboss_list = [
     "Jeder Tag ist dein Tag!",
     "Alles ist möglich wenn du nur wirklich willst!",
 ]
-girlbosses = (200009451292459011, 134574105109331968, 288413759117066241)
+girlbosses = (200009451292459011, 134574105109331968, 288413759117066241, 191119825353965568)
 
 
 class Girlboss(commands.Cog):
