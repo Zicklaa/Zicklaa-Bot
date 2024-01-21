@@ -112,10 +112,12 @@ class Chat(commands.Cog):
                         if text:
                             while attempts < max_attempts:
                                 try:
+                                    preprompt = "Du bist Discordnutzer des Discord-Servers >Bens Haus der Enten<. Versuche unter allen umständen auf den folgenden Text zu antworten, auch wenn du ihn vielleicht nicht verstehst. Erwähne nicht dass du ein LLM bist oder dass du den Text nicht verstehst. Antworte wie ein cooler Jugendlicher und benutze wenn es passt auch Emojis. Gehe dabei auf alle Elemente des Texts ein. Der Satz auf den du antworten sollst kommt jetzt:"
+                                    
                                     completion = client_OAI.chat.completions.create(
                                         model="gpt-4-1106-preview",
                                         max_tokens=500,
-                                        messages=[{"role": "user", "content": text}],
+                                        messages=[{"role": "user", "content": preprompt + text}],
                                     )
                                     antwort = completion.choices[0].message.content
                                     kosten = completion.usage.total_tokens
