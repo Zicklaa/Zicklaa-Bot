@@ -7,8 +7,10 @@ from discord.ext import commands
 import discord
 from datetime import datetime
 import os
+import os
 
 import requests
+import fal_client
 import fal_client
 
 logger = logging.getLogger("ZicklaaBot.Chat")
@@ -19,12 +21,83 @@ class Chat(commands.Cog):
         self.bot = bot
         self.json_model = json_model
         os.environ["FAL_KEY"] = self.bot.FAL_API_KEY
+        os.environ["FAL_KEY"] = self.bot.FAL_API_KEY
 
     @commands.command()
     async def chat(self, ctx, *text):
         client_OAI = OpenAI(api_key=self.bot.OPENAI_API_KEY)
         if ctx.channel.id == 528742785935998979 or ctx.channel.id == 567411189336768532:
             async with ctx.channel.typing():
+                try:
+                    text = " ".join(text)
+                    text = text.replace('"', "")
+                    if text:
+                        completion = client_OAI.chat.completions.create(
+                            model="gpt-4o-mini",
+                            max_tokens=500,
+                            messages=[{"role": "user", "content": text}],
+                        )
+                        antwort = completion.choices[0].message.content
+                        kosten = completion.usage.total_tokens
+                        now = datetime.now()
+                        current_time = now.strftime("%H:%M:%S")
+                        if len(antwort) > 1023:
+                            if len(antwort) > 2000:
+                                await ctx.reply("Antwort leider zu lang für Discord :(")
+                                await ctx.reply(antwort)
+                                logger.info(
+                                    "Chat zu lang für " + ctx.author.name)
+                            else:
+                                embed = discord.Embed(
+                                    title="Antwort von ChatGPT auf den Prompt",
+                                    description=antwort,
+                                    color=0x00FF00,
+                                )
+                                embed.set_author(
+                                    name="ChatGPT",
+                                    icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/1024px-ChatGPT_logo.svg.png",
+                                )
+                                embed.set_footer(
+                                    text=str(current_time)
+                                    + " Uhr | Kosten: "
+                                    + str(kosten)
+                                    + " Tokens = "
+                                    + str(round(kosten * 0.00000015, 8))
+                                    + " Cent"
+                                )
+                                await ctx.reply(embed=embed)
+                                logger.info(
+                                    "Chat gepostet für " + ctx.author.name)
+                        else:
+                            embed = discord.Embed(
+                                title="Antwort von ChatGPT auf den Prompt",
+                                description="Prompt: " + text,
+                                color=0x00FF00,
+                            )
+                            embed.set_author(
+                                name="ChatGPT",
+                                icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/1024px-ChatGPT_logo.svg.png",
+                            )
+                            embed.add_field(
+                                name="Antwort", value=antwort, inline=False)
+                            embed.set_footer(
+                                text=str(current_time)
+                                + " Uhr | Kosten: "
+                                + str(kosten)
+                                + " Tokens = "
+                                + str(round(kosten * 0.00000015, 8))
+                                + " Cent"
+                            )
+                            await ctx.reply(embed=embed)
+                            logger.info(
+                                "Chat gepostet für " + ctx.author.name)
+                    else:
+                        await ctx.reply("Brauch schon nen Text von dir du Lellek.")
+                        logger.info("Chat kein Text von " +
+                                    ctx.author.name)
+                except Exception as e:
+                    await ctx.reply(e.message)
+                    logger.error(f"Chat Error from {ctx.author.name}: {e}")
                 try:
                     text = " ".join(text)
                     text = text.replace('"', "")
@@ -105,8 +178,86 @@ class Chat(commands.Cog):
         if ctx.channel.id == 528742785935998979 or ctx.channel.id == 567411189336768532:
             async with ctx.channel.typing():
                 max_attempts = 2
+                max_attempts = 2
                 attempts = 0
                 while True:
+                    # satz = json_model.make_short_sentence(140)
+                    text = self.json_model.make_sentence(
+                        max_overlap_ratio=0.65,
+                    )
+                    if text:
+                        while attempts < max_attempts:
+                            try:
+                                preprompt = "Du bist Discordnutzer des Discord-Servers >Bens Haus der Enten<. Versuche unter allen umständen auf den folgenden Text zu antworten, auch wenn du ihn vielleicht nicht verstehst. Benutze wenn möglich anglizismen und generelle GEN Z Slang Wörter. Erwähne nicht dass du ein LLM bist oder dass du den Text nicht verstehst. Antworte wie ein cooler Jugendlicher und benutze wenn es passt auch Emojis. Gehe dabei auf alle Elemente des Texts ein. Baue so viel wissen und referenzen ein wie du nur kannst. Der Satz auf den du antworten sollst kommt jetzt:"
+
+                                completion = client_OAI.chat.completions.create(
+                                    model="gpt-4o-mini",
+                                    max_tokens=500,
+                                    messages=[
+                                        {"role": "user", "content": preprompt + text}],
+                                )
+                                antwort = completion.choices[0].message.content
+                                kosten = completion.usage.total_tokens
+                                now = datetime.now()
+                                current_time = now.strftime("%H:%M:%S")
+                                if len(antwort) > 1023:
+                                    if len(antwort) > 2000:
+                                        await ctx.reply("Antwort leider zu lang für Discord :(")
+                                        logger.info(
+                                            "Chat zu lang für " + ctx.author.name)
+                                    else:
+                                        embed = discord.Embed(
+                                            title="Antwort von ChatGPT auf den Prompt",
+                                            description=antwort,
+                                            color=0x00FF00,
+                                        )
+                                        embed.set_author(
+                                            name="ChatGPT",
+                                            icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/1024px-ChatGPT_logo.svg.png",
+                                        )
+                                        embed.set_footer(
+                                            text=str(current_time)
+                                            + " Uhr | Kosten: "
+                                            + str(kosten)
+                                            + " Tokens = "
+                                            + str(round(kosten * 0.00000015, 8))
+                                            + " Cent"
+                                        )
+                                        await ctx.reply(text)
+                                        await ctx.reply(embed=embed)
+                                        logger.info(
+                                            "Chat gepostet für " + ctx.author.name)
+                                else:
+                                    embed = discord.Embed(
+                                        title="Antwort von ChatGPT auf den Prompt",
+                                        description="Prompt: " + text,
+                                        color=0x00FF00,
+                                    )
+                                    embed.set_author(
+                                        name="ChatGPT",
+                                        icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/1024px-ChatGPT_logo.svg.png",
+                                    )
+                                    embed.add_field(
+                                        name="Antwort", value=antwort, inline=False)
+                                    embed.set_footer(
+                                        text=str(current_time)
+                                        + " Uhr | Kosten: "
+                                        + str(kosten)
+                                        + " Tokens = "
+                                        + str(round(kosten * 0.00000015, 8))
+                                        + " Cent"
+                                    )
+                                    await ctx.reply(text)
+                                    await ctx.reply(embed=embed)
+                                    logger.info(
+                                        "Chat gepostet für " + ctx.author.name)
+                                attempts = 999999
+                            except Exception as e:
+                                await ctx.reply("Irgendwas klappt nit lel.")
+                                logger.error(
+                                    f"Chat Error from {ctx.author.name}: {e}")
+                                attempts += 1
+                    break
                     # satz = json_model.make_short_sentence(140)
                     text = self.json_model.make_sentence(
                         max_overlap_ratio=0.65,
@@ -356,10 +507,13 @@ class Chat(commands.Cog):
             await ctx.reply("Spam woanders, Moruk 🤷")
             logger.info(f"Bild außerhalb Meme Channel von {ctx.author.name}")
         '''
+        '''
 
     @commands.command()
     async def tts(self, ctx, *text):
         client_OAI = OpenAI(api_key=self.bot.OPENAI_API_KEY)
+        names = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]
+
         names = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]
 
         async with ctx.channel.typing():
@@ -373,11 +527,20 @@ class Chat(commands.Cog):
                     voice = "onyx"
                 else:
                     (voice, text) = text.split(maxsplit=1)
+
+                first_word_in_list = text.split()[0] in names
+
+                if not first_word_in_list:
+                    voice = "onyx"
+                else:
+                    (voice, text) = text.split(maxsplit=1)
                 if text:
                     completion = client_OAI.audio.speech.create(
                         model="tts-1-hd",
                         voice=voice,
+                        voice=voice,
                         input=text
+                    )
                     )
                     mp3_file = BytesIO(completion.content)
                     mp3_file.seek(0)
