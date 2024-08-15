@@ -26,6 +26,7 @@ def create_log_file(path):
     logger.addHandler(handler)
     return logger
 
+print(discord.__version__)
 
 logger = create_log_file("/home/zicklaa/Zicklaa-Bot/Old Logs/ZicklaaBotLog.log")
 
@@ -62,6 +63,7 @@ initial_extensions = [
     "commands.wishlist",
     "commands.wiki",
     "commands.chat",
+    # "commands.threads",
     # "commands.voice",
     # "commands.urban",
     # "commands.urbancog",
@@ -72,6 +74,8 @@ class ZicklaaBot(discord.ext.commands.Bot):
     def __init__(self):
         intents = discord.Intents.default()
         intents.members = True
+        intents.messages = True
+        
         super().__init__(
             intents=intents, command_prefix=config.PREFIX, help_command=None
         )
@@ -84,6 +88,7 @@ class ZicklaaBot(discord.ext.commands.Bot):
         self.RAPID_HOST = config.RAPID_HOST
         self.RAPID_KEY = config.RAPID_KEY
         self.OPENAI_API_KEY = config.OPENAI_API_KEY
+        self.FAL_API_KEY = config.FAL_API_KEY
         self.create_tables()
         self.json_model = json_model()
 
@@ -94,10 +99,13 @@ class ZicklaaBot(discord.ext.commands.Bot):
                 print(f"Failed to load extension {extension}: {e}")
 
     async def on_ready(self):
+        
         print("Hallo I bim omnline :^)")
         logger.info("=======================Startup=========================")
         remindme = self.get_cog("RemindMe")
+        
         await remindme.check_reminder()
+    
 
     def create_tables(self):
         try:
