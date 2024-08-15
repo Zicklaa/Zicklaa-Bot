@@ -1,3 +1,5 @@
+from datetime import datetime
+import time
 import logging
 import discord
 import json
@@ -7,17 +9,6 @@ from discord.ext import commands
 logger = logging.getLogger("ZicklaaBot.Hivemind")
 
 
-"""with open('/home/zicklaa/Zicklaa-Bot/static/25-07-2022/hivemind_merged.txt', 'r', encoding="utf-8") as f:
-    print("Chaining the Chain")
-    text = f.read()
-text_model = markovify.NewlineText(text, state_size=2, well_formed=True)
-text_model = text_model.compile()
-model_json = text_model.to_json()
-with open('hivemind_ss2.json', 'w', encoding='utf-8') as f:
-    json.dump(model_json, f)
-print("compiled")"""
-
-
 am = discord.AllowedMentions(
     users=False,  # Whether to ping individual user @mentions
     everyone=False,  # Whether to ping @everyone or @here mentions
@@ -25,7 +16,7 @@ am = discord.AllowedMentions(
     replied_user=False,  # Whether to ping on replies to messages
 )
 
-ratio = 0.67
+ratio = 0.7
 
 
 class Hivemind(commands.Cog):
@@ -72,14 +63,20 @@ class Hivemind(commands.Cog):
             await ctx.reply("Spam woanders, Moruk 🤷")
             logger.info(f"Hippomode ERROR von {ctx.author.name}")
 
-    """@commands.command()
+    '''@commands.command()
     async def scrape(self, ctx):
+        
+        START_DATE = datetime(2024, 1, 4)
+        
         try:
             if ctx.author.id == 288413759117066241:
                 print("scraping")
-                await ctx.reply("Scrape 10.000 Nachrichten von diesem Channel")
-                messages = await ctx.channel.history(limit=10000).flatten()
-                with open("/home/zicklaa/Zicklaa-Bot/static/25-07-2022/hivemind_durstaufwurst.txt", "a", encoding="utf-8") as f:
+                #await ctx.reply("Scrape alle Nachrichten nach dem 20.05.2022 von diesem Channel.")
+                #time.sleep(10)
+                #await ctx.reply("o man das wird dauern 😂")
+                messages = await ctx.channel.history(limit=100000, after=START_DATE).flatten()
+                    
+                with open("/home/zicklaa/Zicklaa-Bot/static/20-05-2024/hivemind_main_7.txt", "a", encoding="utf-8") as f:
                     for message in messages:
                         try:
                             if message.content == '' or message.content.startswith('<') or message.content.startswith('https') \
@@ -91,7 +88,7 @@ class Hivemind(commands.Cog):
                                 f.write(message.content + "\n")
                                 print(message.content)
                         except:
-                            print('ERROR')
+                            print('ERROR' + message.content)
                             pass
                 print("done")
                 #logger.info("Hivemind Scrap für: " + ctx.author.name)
@@ -100,7 +97,20 @@ class Hivemind(commands.Cog):
 
         except Exception as e:
             await ctx.reply("Klappt nit lol 🤷")
-            # logger.error(f"Hivemind ERROR von {ctx.author.name}: {e}")"""
+            # logger.error(f"Hivemind ERROR von {ctx.author.name}: {e}")
+            '''
+    
+    '''@commands.command()
+    async def compile(self, ctx):
+        with open('/home/zicklaa/Zicklaa-Bot/static/20-05-2024/merged_file.txt', 'r', encoding="utf-8") as f:
+            print("Chaining the Chain")
+            text = f.read()
+        text_model = markovify.NewlineText(text, state_size=2, well_formed=False)
+        text_model = text_model.compile()
+        model_json = text_model.to_json()
+        with open('hivemind_20-05-2024-wff.json', 'w', encoding='utf-8') as f:
+            json.dump(model_json, f)
+        print("compiled")'''
 
 
 def setup(bot):
