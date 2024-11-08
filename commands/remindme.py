@@ -9,6 +9,7 @@ from config import globalPfad
 
 logger = logging.getLogger("ZicklaaBot.RemindMe")
 
+
 class Reminder:
     def __init__(
         self, message_id, channel_id, user_id, text, time, id=None, parent_id=None
@@ -51,19 +52,25 @@ class RemindMe(commands.Cog):
             now = datetime.now()
             if abs_time:
                 today = datetime.combine(datetime.today(),
-                                         datetime(hour=12, minute=0, second=0, year=now.year,month=now.month,day=now.day,tzinfo=tz.tzlocal()).time())
+                                         datetime(hour=12, minute=0, second=0, year=now.year, month=now.month, day=now.day, tzinfo=tz.tzlocal()).time())
                 reminder_time = datetime(year=parsed_time.get('year') if parsed_time.get('year') is not None else today.year,
-                                        month=parsed_time.get('month') if parsed_time.get('month') is not None else today.month,
-                                        day=parsed_time.get('day') if parsed_time.get('day') is not None else today.day,
-                                        hour=parsed_time.get('hour') if parsed_time.get('hour') is not None else today.hour,
-                                        minute=parsed_time.get('minute') if parsed_time.get('minute') is not None else today.minute,
-                                        second=parsed_time.get('second') if parsed_time.get('second') is not None else today.second,
-                                        tzinfo=tz.tzlocal()).timestamp()
+                                         month=parsed_time.get('month') if parsed_time.get(
+                                             'month') is not None else today.month,
+                                         day=parsed_time.get('day') if parsed_time.get(
+                                             'day') is not None else today.day,
+                                         hour=parsed_time.get('hour') if parsed_time.get(
+                                             'hour') is not None else today.hour,
+                                         minute=parsed_time.get('minute') if parsed_time.get(
+                                             'minute') is not None else today.minute,
+                                         second=parsed_time.get('second') if parsed_time.get(
+                                             'second') is not None else today.second,
+                                         tzinfo=tz.tzlocal()).timestamp()
             else:
-                reminder_time = round(time.time() + float(parsed_time.get("duration_seconds")),2)
+                reminder_time = round(
+                    time.time() + float(parsed_time.get("duration_seconds")), 2)
             dt = reminder_time - now.timestamp()
-            if  dt < 0:
-                if dt < 43200: # less than 12 hrs ago -> remind tomorrow at that time
+            if dt < 0:
+                if dt < 43200:  # less than 12 hrs ago -> remind tomorrow at that time
                     reminder_time += 86400
                 else:
                     await ctx.message.reply(
@@ -71,7 +78,8 @@ class RemindMe(commands.Cog):
                     )
                     return
 
-            reason = parsed_msg.get("msg") if parsed_msg.get("msg") is not None else ""
+            reason = parsed_msg.get("msg") if parsed_msg.get(
+                "msg") is not None else ""
 
             reminder = Reminder(
                 message.id, ctx.channel.id, ctx.author.id, reason, reminder_time
@@ -81,7 +89,8 @@ class RemindMe(commands.Cog):
             return
         except Exception as e:
             await ctx.message.reply("Klappt nit lol 🤷")
-            logger.error("Remindme Fehler wahrsch falsches Zeitformat?: " + str(e))
+            logger.error(
+                "Remindme Fehler wahrsch falsches Zeitformat?: " + str(e))
 
     """async def wait_for_reminder(self, reminder: Reminder):
         try:
@@ -105,11 +114,8 @@ class RemindMe(commands.Cog):
                     reminder = reminder_from_record(results[0])
                     if (reminder.time - time.time()) < 0:
                         await self.send_reminder(reminder)
-                        await asyncio.sleep(1)
-                    else:
-                        await asyncio.sleep(5)
-                else:
-                    await asyncio.sleep(5)
+                await asyncio.sleep(5)
+
         except Exception as e:
             logger.error(e)
 
@@ -153,7 +159,8 @@ class RemindMe(commands.Cog):
             self.db.commit()
             self.cursor.execute(
                 "SELECT id FROM reminders WHERE user_id=? AND reminder_text=? AND reminder_time=? AND message_id=?",
-                (reminder.user_id, reminder.text, reminder.time, reminder.message_id),
+                (reminder.user_id, reminder.text,
+                 reminder.time, reminder.message_id),
             )
             id = self.cursor.fetchall()[0][0]
             logger.info("Neuer Reminder in die DB gepusht: " + str(id))
@@ -221,7 +228,8 @@ class RemindMe(commands.Cog):
                 if not parent_reminder_record:
                     return False
                 try:
-                    parent_reminder = reminder_from_record(parent_reminder_record)
+                    parent_reminder = reminder_from_record(
+                        parent_reminder_record)
                     await self.bot.get_channel(
                         parent_reminder.channel_id
                     ).fetch_message(parent_reminder.message_id)
@@ -253,7 +261,8 @@ class RemindMe(commands.Cog):
 
     def delete_reminder(self, reminder: Reminder):
         try:
-            self.cursor.execute("DELETE FROM reminders WHERE id=?", (reminder._id,))
+            self.cursor.execute(
+                "DELETE FROM reminders WHERE id=?", (reminder._id,))
             self.db.commit()
             logger.info("Reminder gelöscht: " + str(reminder._id))
         except Exception as e:
