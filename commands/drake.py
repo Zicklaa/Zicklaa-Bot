@@ -9,7 +9,7 @@ from discord.ext import commands
 
 logger = logging.getLogger("ZicklaaBot.Drake")
 
-dir = "/home/zicklaa/Zicklaa-Bot/static/"
+dir = globalPfad + "static/"
 
 
 class Drake(commands.Cog):

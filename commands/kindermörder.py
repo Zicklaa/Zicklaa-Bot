@@ -1,6 +1,7 @@
 import logging
 import discord
 from discord.ext import commands
+from config import globalPfad
 
 logger = logging.getLogger("ZicklaaBot.Kindermörder")
 
@@ -12,7 +13,7 @@ class Kindermörder(commands.Cog):
     @commands.command()
     async def kindermörder(self, ctx):
         try:
-            file = discord.File("/home/zicklaa/Zicklaa-Bot/static/raul.gif")
+            file = discord.File(globalPfad + "static/raul.gif")
             await ctx.channel.send(file=file, content="RAUL CRUISEHAUSEN KINDERMÖRDER")
             await ctx.message.delete()
             logger.info("Kindermörder gepostet für " + ctx.author.name)

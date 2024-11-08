@@ -5,6 +5,7 @@ from datetime import datetime
 from dateutil import tz
 from discord.ext import commands
 from utils.parser import RemindmeParser
+from config import globalPfad
 
 logger = logging.getLogger("ZicklaaBot.RemindMe")
 
@@ -33,7 +34,7 @@ class RemindMe(commands.Cog):
         self.db = db
         self.json_model = json_model
         self.cursor = db.cursor()
-        with open("/home/zicklaa/Zicklaa-Bot/utils/rm_grammar.peg", 'r') as f:
+        with open(globalPfad + "utils/rm_grammar.peg", 'r') as f:
             grm = f.read()
             self.parser = RemindmeParser(grm)
 

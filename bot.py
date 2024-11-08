@@ -12,13 +12,15 @@ import random
 import json
 import markovify
 import re
+from config import globalPfad
 
 
 def create_log_file(path):
     logger = logging.getLogger("ZicklaaBot")
     logger.setLevel(logging.INFO)
 
-    handler = TimedRotatingFileHandler(path, when="midnight", interval=1, backupCount=5)
+    handler = TimedRotatingFileHandler(
+        path, when="midnight", interval=1, backupCount=5)
     formatter = logging.Formatter(
         "%(asctime)s::%(name)s::%(funcName)s::%(levelname)s - %(message)s"
     )
@@ -26,9 +28,11 @@ def create_log_file(path):
     logger.addHandler(handler)
     return logger
 
+
 print(discord.__version__)
 
-logger = create_log_file("/home/zicklaa/Zicklaa-Bot/Old Logs/ZicklaaBotLog.log")
+logger = create_log_file(
+    globalPfad + "Old Logs/ZicklaaBotLog.log")
 
 user_last_command = {}
 
@@ -75,11 +79,11 @@ class ZicklaaBot(discord.ext.commands.Bot):
         intents = discord.Intents.default()
         intents.members = True
         intents.messages = True
-        
+
         super().__init__(
             intents=intents, command_prefix=config.PREFIX, help_command=None
         )
-        self.db = sqlite3.connect("/home/zicklaa/Zicklaa-Bot/reminder-wishlist.db")
+        self.db = sqlite3.connect(globalPfad + "reminder-wishlist.db")
         self.LASTFM_API_KEY = config.API_KEY
         self.LASTFM_API_SECRET = config.API_SECRET
         self.LYRICS_KEY = config.LYRICS_KEY
@@ -99,13 +103,12 @@ class ZicklaaBot(discord.ext.commands.Bot):
                 print(f"Failed to load extension {extension}: {e}")
 
     async def on_ready(self):
-        
+
         print("Hallo I bim omnline :^)")
         logger.info("=======================Startup=========================")
         remindme = self.get_cog("RemindMe")
-        
+
         await remindme.check_reminder()
-    
 
     def create_tables(self):
         try:
@@ -131,7 +134,7 @@ class ZicklaaBot(discord.ext.commands.Bot):
 
 def json_model():
     with open(
-        "/home/zicklaa/Zicklaa-Bot/static/hivemind.json", encoding="utf-8"
+        globalPfad + "static/hivemind.json", encoding="utf-8"
     ) as json_file:
         hivemind_json = json.load(json_file)
     json_model = markovify.Text.from_json(hivemind_json)
@@ -177,12 +180,12 @@ async def on_message(message):
                 await message.reply("GuMo")
             elif "brazy" in message.content.lower():
                 await message.reply(
-                    message.content.lower().replace("crazy", "***banal***")
+                    message.content.lower().replace("brazy", "***banal***")
                 )
             elif "halt echt" in message.content.lower():
                 await message.reply(
                     message.content.lower().replace("halt echt", "***alt hecht***")
-                )    
+                )
             elif re.search(r"\bdanke\b", message.content.lower()) is not None:
                 await message.reply("Bitte!")
     await bot.process_commands(message)
@@ -207,7 +210,8 @@ async def on_command_error(ctx, error):
         logger.error(f"User {str(ctx.author)} triggered: {error}")
         return
     else:
-        print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
+        print("Ignoring exception in command {}:".format(
+            ctx.command), file=sys.stderr)
         traceback.print_exception(
             type(error), error, error.__traceback__, file=sys.stderr
         )

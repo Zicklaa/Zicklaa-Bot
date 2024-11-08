@@ -2,12 +2,12 @@ import logging
 import os
 import random
 import discord
-
+from config import globalPfad
 from discord.ext import commands
 
 logger = logging.getLogger("ZicklaaBot.LustigeBildchen")
 
-dir = "/home/zicklaa/Zicklaa-Bot/LustigeBildchen/"
+dir = globalPfad + "LustigeBildchen/"
 
 
 class LustigeBildchen(commands.Cog):

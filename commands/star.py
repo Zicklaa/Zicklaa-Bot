@@ -7,7 +7,7 @@ from discord.raw_models import RawReactionActionEvent
 from collections.abc import Sequence
 from dateutil import tz
 import re
-
+from config import globalPfad
 import pytz
 
 
@@ -32,7 +32,7 @@ ext_list = [
     "mpg",
     "webm",
 ]
-path = "/home/zicklaa/Zicklaa-Bot/LustigeBildchen/"
+path = globalPfad + "LustigeBildchen/"
 
 
 class Star(commands.Cog):
