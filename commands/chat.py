@@ -31,7 +31,7 @@ class Chat(commands.Cog):
                 try:
                     if text:
                         completion = client_OAI.chat.completions.create(
-                            model="gpt-4o-mini",
+                            model="gpt-4.1",
                             max_tokens=500,
                             messages=[{"role": "user", "content": text}],
                         )
@@ -273,7 +273,7 @@ class Chat(commands.Cog):
                 try:
                     if text:
                         completion = client_OAI.chat.completions.create(
-                            model="gpt-4o-mini",
+                            model="gpt-4.1",
                             max_tokens=500,
                             messages=[
                                 {"role": "user", "content": preprompt + text}],

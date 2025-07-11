@@ -35,6 +35,7 @@ class RemindMe(commands.Cog):
         self.db = db
         self.json_model = json_model
         self.cursor = db.cursor()
+        self.global_state = {}
         with open(globalPfad + "utils/rm_grammar.peg", 'r') as f:
             grm = f.read()
             self.parser = RemindmeParser(grm)
@@ -181,34 +182,25 @@ class RemindMe(commands.Cog):
                     while True:
                         # satz = json_model.make_short_sentence(140)
                         satz = self.json_model.make_sentence(
-                            max_overlap_ratio=0.65,
+                            max_overlap_ratio=0.66,
                         )
                         if satz:
-                            await message.reply(
-                                "Ich werde dich wissen lassen:\n**" + satz + "**",
-                                mention_author=True,
-                            )
+                            reminderText = "Ich werde dich wissen lassen:\n**" + satz + "**"
                             break
                 else:
                     if message.author.id == 413068385962819584:
-                        await message.reply(
-                            "**Ali {}**".format(reminder.text), mention_author=True
-                        )
+                        reminderText = "**Ali {}**".format(reminder.text)
                     else:
-                        await message.reply(
-                            "Ich werde dich wissen lassen:\n**{}**".format(
-                                reminder.text
-                            ),
-                            mention_author=True,
-                        )
-                logger.info("Auf Reminder geantortet: " + str(reminder._id))
+                        reminderText = "Ich werde dich wissen lassen:\n**{}**".format(
+                            reminder.text)
             else:
-                await channel.send(
-                    "<@{}>: Ich werde dich wissen lassen:\n**{}**".format(
-                        reminder.user_id, reminder.text
-                    )
-                )
+                reminderText = "<@{}>: Ich werde dich wissen lassen:\n**{}**".format(
+                    reminder.user_id, reminder.text)
+            if (reminderText != self.global_state.get('last_message')):
+                await message.reply(reminderText, mention_author=True)
+                self.global_state['last_message'] = reminderText
                 logger.info("Auf Reminder geantortet: " + str(reminder._id))
+
         except Exception as e:
             logger.error(f"Error while sending reminder: {e}")
         finally:

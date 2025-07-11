@@ -67,6 +67,7 @@ initial_extensions = [
     "commands.wishlist",
     "commands.wiki",
     "commands.chat",
+    "commands.jamesh",
     # "commands.threads",
     # "commands.voice",
     # "commands.urban",
