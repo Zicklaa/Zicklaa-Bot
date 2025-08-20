@@ -51,8 +51,8 @@ initial_extensions = [
     "commands.lustigebildchen",
     "commands.lyrics",
     "commands.magic8",
-    "commands.mydealz",
-    "commands.obm",
+    # "commands.mydealz",
+    # "commands.obm",
     "commands.ofen",
     "commands.poll",
     "commands.quote",
@@ -62,12 +62,13 @@ initial_extensions = [
     "commands.star",
     "commands.spongebob",
     "commands.translate",
-    "commands.trumpquote",
+    # "commands.trumpquote",
     "commands.wetter",
     "commands.wishlist",
     "commands.wiki",
     "commands.chat",
     "commands.jamesh",
+    "commands.buli",
     # "commands.threads",
     # "commands.voice",
     # "commands.urban",
@@ -94,6 +95,7 @@ class ZicklaaBot(discord.ext.commands.Bot):
         self.RAPID_KEY = config.RAPID_KEY
         self.OPENAI_API_KEY = config.OPENAI_API_KEY
         self.FAL_API_KEY = config.FAL_API_KEY
+        self.FOOTBALL_DATA_API_TOKEN = config.FOOTBALL_DATA_API_TOKEN
         self.create_tables()
         self.json_model = json_model()
 

@@ -115,7 +115,7 @@ class RemindMe(commands.Cog):
                     reminder = reminder_from_record(results[0])
                     if (reminder.time - time.time()) < 0:
                         await self.send_reminder(reminder)
-                await asyncio.sleep(5)
+                await asyncio.sleep(10)
 
         except Exception as e:
             logger.error(e)
@@ -196,15 +196,13 @@ class RemindMe(commands.Cog):
             else:
                 reminderText = "<@{}>: Ich werde dich wissen lassen:\n**{}**".format(
                     reminder.user_id, reminder.text)
-            if (reminderText != self.global_state.get('last_message')):
+            if (reminder._id != self.global_state.get('reminder_id')):
+                self.delete_reminder(reminder)
+                self.global_state['reminder_id'] = reminder._id
+                logger.info("Auf Reminder geantwortet: " + str(reminder._id))
                 await message.reply(reminderText, mention_author=True)
-                self.global_state['last_message'] = reminderText
-                logger.info("Auf Reminder geantortet: " + str(reminder._id))
-
         except Exception as e:
             logger.error(f"Error while sending reminder: {e}")
-        finally:
-            self.delete_reminder(reminder)
 
     async def check_reminder_exists(self, reminder: Reminder):
         try:
