@@ -42,7 +42,7 @@ class Fav(commands.Cog):
                             self.cursor.execute(
                                 "DELETE FROM favs WHERE id=?", (fav_id,)
                             )
-                            self.db.commit()  # HIER WAR ICH
+                            self.db.commit()  # commit deletion to database
                             logger.info("Fav gelöscht: " + str(fav_id))
                     else:
                         pass
