@@ -10,7 +10,7 @@ class Choose(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def choose(self, ctx, *options):
         try:
             if len(options) < 1:
@@ -43,5 +43,5 @@ class Choose(commands.Cog):
         pass
 
 
-def setup(bot):
-    bot.add_cog(Choose(bot))
+async def setup(bot):
+    await bot.add_cog(Choose(bot))

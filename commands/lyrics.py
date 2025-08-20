@@ -17,7 +17,7 @@ class Lyrics(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.check(is_f2_in_concert)
     async def lyrics(self, ctx, method: str, username: str):
         async with ctx.channel.typing():
@@ -185,5 +185,5 @@ class Lyrics(commands.Cog):
             await ctx.channel.send('Format: "+lyrics (full/link) [USERNAME]"')
 
 
-def setup(bot):
-    bot.add_cog(Lyrics(bot))
+async def setup(bot):
+    await bot.add_cog(Lyrics(bot))

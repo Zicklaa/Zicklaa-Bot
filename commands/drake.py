@@ -16,7 +16,7 @@ class Drake(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def drake(self, ctx, *sentences):
         # try:
         if len(sentences) == 2:
@@ -44,5 +44,5 @@ class Drake(commands.Cog):
             logger.error(f"Drake ERROR von {ctx.author.name}: {e}")"""
 
 
-def setup(bot):
-    bot.add_cog(Drake(bot))
+async def setup(bot):
+    await bot.add_cog(Drake(bot))

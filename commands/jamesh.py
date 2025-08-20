@@ -10,7 +10,7 @@ class JamesH(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def jamesh(self, ctx):
         try:
             await ctx.message.delete()
@@ -22,5 +22,5 @@ class JamesH(commands.Cog):
             logger.error(f"JamesH from {ctx.author.name}: {e}")
 
 
-def setup(bot):
-    bot.add_cog(JamesH(bot))
+async def setup(bot):
+    await bot.add_cog(JamesH(bot))

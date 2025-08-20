@@ -10,7 +10,7 @@ class Kindermörder(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def kindermörder(self, ctx):
         try:
             file = discord.File(globalPfad + "static/raul.gif")
@@ -23,7 +23,7 @@ class Kindermörder(commands.Cog):
             )
             logger.error(f"Kindermörder from {ctx.author.name}: {e}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def raul(self, ctx):
         try:
             await ctx.channel.send(
@@ -38,5 +38,5 @@ class Kindermörder(commands.Cog):
             logger.error(f"Kindermörder from {ctx.author.name}: {e}")
 
 
-def setup(bot):
-    bot.add_cog(Kindermörder(bot))
+async def setup(bot):
+    await bot.add_cog(Kindermörder(bot))

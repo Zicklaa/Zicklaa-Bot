@@ -11,7 +11,7 @@ class Roll(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def roll(self, ctx, *nummern):
         try:
             if nummern:
@@ -91,5 +91,5 @@ class Roll(commands.Cog):
             logger.error(f"Roll from {ctx.author.name}: {e}")
 
 
-def setup(bot):
-    bot.add_cog(Roll(bot))
+async def setup(bot):
+    await bot.add_cog(Roll(bot))

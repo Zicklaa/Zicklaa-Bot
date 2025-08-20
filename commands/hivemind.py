@@ -24,7 +24,7 @@ class Hivemind(commands.Cog):
         self.bot = bot
         self.json_model = json_model
 
-    @commands.command()
+    @commands.hybrid_command()
     async def hm(self, ctx):
         try:
             while True:
@@ -40,7 +40,7 @@ class Hivemind(commands.Cog):
             await ctx.reply("Klappt nit lol 🤷")
             logger.error(f"Hivemind ERROR von {ctx.author.name}: {e}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def hmm(self, ctx):
         if ctx.channel.id == 528742785935998979:
             try:
@@ -63,7 +63,7 @@ class Hivemind(commands.Cog):
             await ctx.reply("Spam woanders, Moruk 🤷")
             logger.info(f"Hippomode ERROR von {ctx.author.name}")
 
-    '''@commands.command()
+    '''@commands.hybrid_command()
     async def scrape(self, ctx):
         
         START_DATE = datetime(2024, 1, 4)
@@ -100,7 +100,7 @@ class Hivemind(commands.Cog):
             # logger.error(f"Hivemind ERROR von {ctx.author.name}: {e}")
             '''
     
-    '''@commands.command()
+    '''@commands.hybrid_command()
     async def compile(self, ctx):
         with open('/home/zicklaa/Zicklaa-Bot/static/20-05-2024/merged_file.txt', 'r', encoding="utf-8") as f:
             print("Chaining the Chain")
@@ -113,5 +113,5 @@ class Hivemind(commands.Cog):
         print("compiled")'''
 
 
-def setup(bot):
-    bot.add_cog(Hivemind(bot, bot.json_model))
+async def setup(bot):
+    await bot.add_cog(Hivemind(bot, bot.json_model))

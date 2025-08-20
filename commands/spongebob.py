@@ -10,7 +10,7 @@ class Spongebob(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def sponge(self, ctx, *text):
         try:
             if not text:
@@ -47,7 +47,7 @@ class Spongebob(commands.Cog):
             )
             logger.error(f"Request from {ctx.author.name}: {e}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def randomsponge(self, ctx, *text):
         try:
             if not text:
@@ -80,5 +80,5 @@ class Spongebob(commands.Cog):
             logger.error(f"Request from {ctx.author.name}: {e}")
 
 
-def setup(bot):
-    bot.add_cog(Spongebob(bot))
+async def setup(bot):
+    await bot.add_cog(Spongebob(bot))

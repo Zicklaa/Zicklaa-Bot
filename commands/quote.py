@@ -14,7 +14,7 @@ class Quote(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def quote(self, ctx, link):
         try:
             if link:
@@ -63,5 +63,5 @@ class Quote(commands.Cog):
             logger.error(f"Quote from {ctx.author.name}: {e}")
 
 
-def setup(bot):
-    bot.add_cog(Quote(bot))
+async def setup(bot):
+    await bot.add_cog(Quote(bot))

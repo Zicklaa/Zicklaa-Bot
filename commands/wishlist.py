@@ -20,7 +20,7 @@ class Wishlist(commands.Cog):
         self.db = db
         self.cursor = db.cursor()
 
-    @commands.command()
+    @commands.hybrid_command()
     async def wishlist(self, ctx, *wishtext):
         try:
             if len(wishtext) < 1:
@@ -93,7 +93,7 @@ class Wishlist(commands.Cog):
             )
             logger.error(ctx.author.name + ": " + str(e))
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.check(can_delete)
     async def delwish(self, ctx, id):
         try:
@@ -123,5 +123,5 @@ class Wishlist(commands.Cog):
             logger.error("delete_wish: Keine ID von " + ctx.author.name)
 
 
-def setup(bot):
-    bot.add_cog(Wishlist(bot, bot.db))
+async def setup(bot):
+    await bot.add_cog(Wishlist(bot, bot.db))

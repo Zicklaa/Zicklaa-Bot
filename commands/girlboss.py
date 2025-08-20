@@ -33,7 +33,7 @@ class Girlboss(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def girlboss(self, ctx):
         try:
             if int(ctx.author.id) in girlbosses:
@@ -48,5 +48,5 @@ class Girlboss(commands.Cog):
             logger.error(f"Girlboss Error from {ctx.author.name}: {e}")
 
 
-def setup(bot):
-    bot.add_cog(Girlboss(bot))
+async def setup(bot):
+    await bot.add_cog(Girlboss(bot))

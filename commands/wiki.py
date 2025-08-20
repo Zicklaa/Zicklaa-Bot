@@ -12,7 +12,7 @@ class Wiki(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def wiki(self, ctx, *search_term):
         try:
             if search_term[0] == "feet":
@@ -88,7 +88,7 @@ class Wiki(commands.Cog):
                 await ctx.reply("Jibtet nit. Probier doch mal selber: " + url)
                 logger.error(f"Request from {ctx.author.name}: {e}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def wikifeet(self, ctx, *args):
         await ctx.reply(
             "https://images.squarespace-cdn.com/content/v1/51323aa1e4b0b73e528cb71c/1567786369681-938Z512OX2Z03BDUGU62/Monty-Python-foot-1024x803.jpg"
@@ -96,5 +96,5 @@ class Wiki(commands.Cog):
         logger.info("Wikifeet gepostet für " + ctx.author.name)
 
 
-def setup(bot):
-    bot.add_cog(Wiki(bot))
+async def setup(bot):
+    await bot.add_cog(Wiki(bot))

@@ -11,7 +11,7 @@ class Datum(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def datum(self, ctx):
         try:
             heute = datetime.date.today().strftime("**%d. %B %Y**.")
@@ -22,5 +22,5 @@ class Datum(commands.Cog):
             logger.error(e)
 
 
-def setup(bot):
-    bot.add_cog(Datum(bot))
+async def setup(bot):
+    await bot.add_cog(Datum(bot))

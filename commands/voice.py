@@ -22,7 +22,7 @@ class Voice(commands.Cog):
         self.bot = bot
         self.json_model = json_model
 
-    @commands.command()
+    @commands.hybrid_command()
     async def ttshm(self, ctx):
         try:
             global vc
@@ -40,7 +40,7 @@ class Voice(commands.Cog):
             await ctx.message.delete()
             logger.error(f"Voicechat Play from {ctx.author.name}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def tts(self, ctx, *text):
         try:
             global vc
@@ -53,7 +53,7 @@ class Voice(commands.Cog):
             await ctx.message.delete()
             logger.error(f"Voicechat Play from {ctx.author.name}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def join(self, ctx):
         try:
             channel = self.bot.get_channel(voice_channel)
@@ -64,7 +64,7 @@ class Voice(commands.Cog):
             await ctx.message.delete()
             logger.error(f"Voicechat Join from {ctx.author.name}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def leave(self, ctx):
         try:
             server = ctx.message.guild.voice_client
@@ -75,5 +75,5 @@ class Voice(commands.Cog):
             logger.error(f"Voicechat Leave from {ctx.author.name}")
 
 
-def setup(bot):
-    bot.add_cog(Voice(bot, bot.json_model))
+async def setup(bot):
+    await bot.add_cog(Voice(bot, bot.json_model))

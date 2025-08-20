@@ -9,7 +9,7 @@ class Git(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def git(self, ctx):
         try:
             await ctx.reply("https://github.com/Zicklaa/Zicklaa-Bot")
@@ -21,5 +21,5 @@ class Git(commands.Cog):
             logger.error(f"Request from {ctx.author.name}: {e}")
 
 
-def setup(bot):
-    bot.add_cog(Git(bot))
+async def setup(bot):
+    await bot.add_cog(Git(bot))

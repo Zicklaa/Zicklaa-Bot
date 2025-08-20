@@ -23,7 +23,7 @@ class Chat(commands.Cog):
         os.environ["FAL_KEY"] = self.bot.FAL_API_KEY
         os.environ["FAL_KEY"] = self.bot.FAL_API_KEY
 
-    @commands.command()
+    @commands.hybrid_command()
     async def chat(self, ctx, *, text):
         client_OAI = OpenAI(api_key=self.bot.OPENAI_API_KEY)
         if ctx.channel.id == 528742785935998979 or ctx.channel.id == 567411189336768532:
@@ -100,7 +100,7 @@ class Chat(commands.Cog):
             await ctx.reply("Spam woanders, Moruk 🤷")
             logger.info(f"Chat außerhalb Meme Channel von {ctx.author.name}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def hmchat(self, ctx, *, text):
         client_OAI = OpenAI(api_key=self.bot.OPENAI_API_KEY)
         if ctx.channel.id == 528742785935998979 or ctx.channel.id == 567411189336768532:
@@ -190,7 +190,7 @@ class Chat(commands.Cog):
             await ctx.reply("Spam woanders, Moruk 🤷")
             logger.info(f"Chat außerhalb Meme Channel von {ctx.author.name}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def bild(self, ctx, *, text):
         if ctx.channel.id == 528742785935998979 or ctx.channel.id == 567411189336768532:
             async with ctx.channel.typing():
@@ -208,7 +208,7 @@ class Chat(commands.Cog):
             await ctx.reply("Spam woanders, Moruk 🤷")
             logger.info(f"Bild außerhalb Meme Channel von {ctx.author.name}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def nsfw(self, ctx, *, text):
         if ctx.channel.id == 528742785935998979 or ctx.channel.id == 567411189336768532:
             async with ctx.channel.typing():
@@ -226,7 +226,7 @@ class Chat(commands.Cog):
             await ctx.reply("Spam woanders, Moruk 🤷")
             logger.info(f"Porn außerhalb Meme Channel von {ctx.author.name}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def hd(self, ctx, *, text):
         if ctx.channel.id == 528742785935998979 or ctx.channel.id == 567411189336768532:
             async with ctx.channel.typing():
@@ -244,7 +244,7 @@ class Chat(commands.Cog):
             await ctx.reply("Spam woanders, Moruk 🤷")
             logger.info(f"HD außerhalb Meme Channel von {ctx.author.name}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def hdnsfw(self, ctx, *, text):
         if ctx.channel.id == 528742785935998979 or ctx.channel.id == 567411189336768532:
             async with ctx.channel.typing():
@@ -262,7 +262,7 @@ class Chat(commands.Cog):
             await ctx.reply("Spam woanders, Moruk 🤷")
             logger.info(f"HDNSFW außerhalb Meme Channel von {ctx.author.name}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def pipeline(self, ctx, *, text):
         client_OAI = OpenAI(api_key=self.bot.OPENAI_API_KEY)
 
@@ -322,7 +322,7 @@ class Chat(commands.Cog):
         response.raise_for_status()
         await ctx.reply(file=discord.File(BytesIO(response.content), imageName))
 
-    @commands.command()
+    @commands.hybrid_command()
     async def tts(self, ctx, *, text):
         client_OAI = OpenAI(api_key=self.bot.OPENAI_API_KEY)
         names = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]
@@ -362,5 +362,5 @@ def get_first_word(string):
         return None  # Return None if the string is empty
 
 
-def setup(bot):
-    bot.add_cog(Chat(bot, bot.json_model))
+async def setup(bot):
+    await bot.add_cog(Chat(bot, bot.json_model))

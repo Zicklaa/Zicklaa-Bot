@@ -16,7 +16,7 @@ class Okbrudimongo(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def obm(self, ctx):
         try:
             reddit = asyncpraw.Reddit(
@@ -50,7 +50,7 @@ class Okbrudimongo(commands.Cog):
             await reddit.close()
             logger.error(f"OBM ERROR von {ctx.author.name}: {e}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def oow(self, ctx):
         try:
             reddit = asyncpraw.Reddit(
@@ -84,7 +84,7 @@ class Okbrudimongo(commands.Cog):
             await reddit.close()
             logger.error(f"OBM ERROR von {ctx.author.name}: {e}")
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.check(is_hallo_anna)
     async def ali(self, ctx):
         try:
@@ -119,7 +119,7 @@ class Okbrudimongo(commands.Cog):
             await reddit.close()
             logger.error(f"OBM ERROR von {ctx.author.name}: {e}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def obr(self, ctx):
         try:
             reddit = asyncpraw.Reddit(
@@ -154,5 +154,5 @@ class Okbrudimongo(commands.Cog):
             logger.error(f"OBM ERROR von {ctx.author.name}: {e}")
 
 
-def setup(bot):
-    bot.add_cog(Okbrudimongo(bot))
+async def setup(bot):
+    await bot.add_cog(Okbrudimongo(bot))

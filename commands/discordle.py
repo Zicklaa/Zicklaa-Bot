@@ -113,7 +113,7 @@ class Discordle(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def dc(self, ctx):
         try:
             kanal_id, kanal_zeit = random.choice(list(channel_ids.items()))
@@ -212,7 +212,7 @@ class Discordle(commands.Cog):
             await ctx.reply("Was ist denn mit Karsten los??")
             logger.error("Discordle für: " + ctx.author.name)
 
-    @commands.command()
+    @commands.hybrid_command()
     async def bc(self, ctx):
         try:
             kanal_id, kanal_zeit = random.choice(list(channel_ids.items()))
@@ -319,5 +319,5 @@ def random_date(kanal_zeit):
     return datetime.fromtimestamp(random_unixstamp)
 
 
-def setup(bot):
-    bot.add_cog(Discordle(bot))
+async def setup(bot):
+    await bot.add_cog(Discordle(bot))

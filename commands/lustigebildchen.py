@@ -14,7 +14,7 @@ class LustigeBildchen(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def ltb(self, ctx):
         try:
             ltb = random.choice(os.listdir(dir))
@@ -28,5 +28,5 @@ class LustigeBildchen(commands.Cog):
         pass
 
 
-def setup(bot):
-    bot.add_cog(LustigeBildchen(bot))
+async def setup(bot):
+    await bot.add_cog(LustigeBildchen(bot))

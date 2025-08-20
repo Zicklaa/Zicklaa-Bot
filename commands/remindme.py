@@ -40,7 +40,7 @@ class RemindMe(commands.Cog):
             grm = f.read()
             self.parser = RemindmeParser(grm)
 
-    @commands.command(aliases=["rm"])
+    @commands.hybrid_command(aliases=["rm"])
     async def remindme(self, ctx, *text: str):
         try:
             message = ctx.message
@@ -259,5 +259,5 @@ class RemindMe(commands.Cog):
             logger.error("Remindme Fehler delete_reminder(): " + str(e))
 
 
-def setup(bot):
-    bot.add_cog(RemindMe(bot, bot.db, bot.json_model))
+async def setup(bot):
+    await bot.add_cog(RemindMe(bot, bot.db, bot.json_model))

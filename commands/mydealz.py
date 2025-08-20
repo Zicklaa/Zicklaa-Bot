@@ -15,7 +15,7 @@ class MyDealz(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def mdc(self, ctx):
         try:
             response = requests.get("https://www.mydealz.de/deals", headers=header)
@@ -32,7 +32,7 @@ class MyDealz(commands.Cog):
             await ctx.reply("Puh, schwierig")
             logger.error(f"Request from {ctx.author.name}. MyDealz.")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def mdd(self, ctx):
         try:
             response = requests.get("https://www.mydealz.de", headers=header)
@@ -50,5 +50,5 @@ class MyDealz(commands.Cog):
             logger.error(f"Request from {ctx.author.name}. MyDealz.")
 
 
-def setup(bot):
-    bot.add_cog(MyDealz(bot))
+async def setup(bot):
+    await bot.add_cog(MyDealz(bot))

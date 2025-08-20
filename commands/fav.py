@@ -95,7 +95,7 @@ class Fav(commands.Cog):
                 await response.reply("Klappt nit lol 🤷")
                 logger.error(f"Lustiges Bilchen ERROR von {response.author.name}: {e}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def fav(self, ctx, *name):
         try:
             name = " ".join(name)
@@ -198,7 +198,7 @@ class Fav(commands.Cog):
             await ctx.message.reply("Klappt nit lol 🤷")
             logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def rfav(self, ctx, *name):
         try:
             fav = self.cursor.execute("SELECT * FROM favs ORDER BY RANDOM()").fetchone()
@@ -243,7 +243,7 @@ class Fav(commands.Cog):
             await ctx.message.reply("Klappt nit lol 🤷")
             logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def allfavs(self, ctx):
         try:
             all_favs = self.cursor.execute(
@@ -372,7 +372,7 @@ class Fav(commands.Cog):
             await ctx.message.reply("Klappt nit lol 🤷")
             logger.error(f"Allfav ERROR von {ctx.author.name}: {e}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def delfav(self, ctx, id):
         try:
             if id and id.isdigit():
@@ -401,7 +401,7 @@ class Fav(commands.Cog):
             await ctx.message.reply("Klappt nit lol 🤷")
             logger.error(f"Fav ERROR von {ctx.author.name}: {e}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def namefav(self, ctx, id, *name):
         try:
             if id and id.isdigit() and name:
@@ -445,8 +445,8 @@ class Fav(commands.Cog):
         return payload.message_id, payload.channel_id, payload.emoji, payload.user_id
 
 
-def setup(bot):
-    bot.add_cog(Fav(bot, bot.db))
+async def setup(bot):
+    await bot.add_cog(Fav(bot, bot.db))
 
 
 def make_sequence(seq):

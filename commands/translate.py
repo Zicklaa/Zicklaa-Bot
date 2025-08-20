@@ -11,7 +11,7 @@ class Translate(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def tr(self, ctx, *text):
         async with ctx.channel.typing():
             try:
@@ -37,7 +37,7 @@ class Translate(commands.Cog):
                 await ctx.reply("Kann kein Italienisch :/")
                 logger.error(f"Translate Error from {ctx.author.name}: {e}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def tren(self, ctx, *text):
         async with ctx.channel.typing():
             try:
@@ -64,5 +64,5 @@ class Translate(commands.Cog):
                 logger.error(f"Translate Error from {ctx.author.name}: {e}")
 
 
-def setup(bot):
-    bot.add_cog(Translate(bot))
+async def setup(bot):
+    await bot.add_cog(Translate(bot))

@@ -21,7 +21,7 @@ chardet==4.0.0
 charset-normalizer==2.0.12
 cycler==0.11.0
 deep-translator==1.8.3
-discord.py==1.7.3
+discord.py>=2.3.2
 docopt==0.6.2
 ec2==0.4.0
 Eel==0.14.0

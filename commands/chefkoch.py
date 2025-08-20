@@ -11,7 +11,7 @@ class Chefkoch(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def ck(self, ctx, *options):
         try:
             if len(options) == 1:
@@ -51,5 +51,5 @@ class Chefkoch(commands.Cog):
             logger.error(f"Request from {ctx.author.name}. Chefkoch.")
 
 
-def setup(bot):
-    bot.add_cog(Chefkoch(bot))
+async def setup(bot):
+    await bot.add_cog(Chefkoch(bot))

@@ -19,7 +19,7 @@ class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(hidden=True)
+    @commands.hybrid_command(hidden=True)
     @commands.check(is_privileged)
     async def load(self, ctx, extension_name: str):
         try:
@@ -30,13 +30,13 @@ class Admin(commands.Cog):
             return
         await ctx.send("{} loaded.".format(extension_name))
 
-    @commands.command(hidden=True)
+    @commands.hybrid_command(hidden=True)
     @commands.check(is_privileged)
     async def unload(self, ctx, extension_name: str):
         self.bot.unload_extension(f"commands.{extension_name}")
         await ctx.send("{} unloaded.".format(extension_name))
 
-    @commands.command(hidden=True)
+    @commands.hybrid_command(hidden=True)
     @commands.check(is_privileged)
     async def reload(self, ctx, extension_name: str):
         self.bot.unload_extension(f"commands.{extension_name}")
@@ -50,5 +50,5 @@ class Admin(commands.Cog):
         await ctx.send("{} reloaded.".format(extension_name))
 
 
-def setup(bot):
-    bot.add_cog(Admin(bot))
+async def setup(bot):
+    await bot.add_cog(Admin(bot))

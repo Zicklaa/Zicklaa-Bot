@@ -10,7 +10,7 @@ class Rezept(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def rezept(self, ctx):
         try:
             rezepte_channel = await self.bot.fetch_channel(860154286141997056)
@@ -27,5 +27,5 @@ class Rezept(commands.Cog):
         pass
 
 
-def setup(bot):
-    bot.add_cog(Rezept(bot))
+async def setup(bot):
+    await bot.add_cog(Rezept(bot))

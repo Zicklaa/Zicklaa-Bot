@@ -12,7 +12,7 @@ class Wetter(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def wetter(self, ctx, location: str):
         async with ctx.channel.typing():
             try:
@@ -35,7 +35,7 @@ class Wetter(commands.Cog):
                 await ctx.reply("Wetter schmetter, sag ich schon immer.")
                 logger.error(f"Request from {ctx.author.name}: {e}")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def asciiwetter(self, ctx, location: str):
         async with ctx.channel.typing():
             try:
@@ -57,5 +57,5 @@ class Wetter(commands.Cog):
                 logger.error(f"Request from {ctx.author.name}: {e}")
 
 
-def setup(bot):
-    bot.add_cog(Wetter(bot))
+async def setup(bot):
+    await bot.add_cog(Wetter(bot))

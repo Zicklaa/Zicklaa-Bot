@@ -20,7 +20,7 @@ class Buli(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def buli(self, ctx):
         try:
             '''allowed_channel_id = 123456789012345678  
@@ -211,5 +211,5 @@ def fetch_next_matchday_with_scores(session: requests.Session) -> tuple[int, lis
     return next_md, fixtures, date_range
 
 
-def setup(bot):
-    bot.add_cog(Buli(bot))
+async def setup(bot):
+    await bot.add_cog(Buli(bot))

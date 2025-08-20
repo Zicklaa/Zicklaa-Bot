@@ -30,7 +30,7 @@ class Ofen(commands.Cog):
         self.db = db
         self.cursor = db.cursor()
 
-    @commands.command()
+    @commands.hybrid_command()
     async def ofen(self, ctx):
         try:
             message = ctx.message
@@ -74,5 +74,5 @@ class Ofen(commands.Cog):
             logger.error("Remindme Fehler insert_reminder(): " + e)
 
 
-def setup(bot):
-    bot.add_cog(Ofen(bot, bot.db))
+async def setup(bot):
+    await bot.add_cog(Ofen(bot, bot.db))

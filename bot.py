@@ -1,6 +1,5 @@
 import discord
 import config
-import discord
 from discord.ext import commands
 import sqlite3
 import logging
@@ -69,18 +68,19 @@ initial_extensions = [
     "commands.chat",
     "commands.jamesh",
     "commands.buli",
-    # "commands.threads",
+    "commands.threads",
     # "commands.voice",
     # "commands.urban",
     # "commands.urbancog",
 ]
 
 
-class ZicklaaBot(discord.ext.commands.Bot):
+class ZicklaaBot(commands.Bot):
     def __init__(self):
         intents = discord.Intents.default()
         intents.members = True
         intents.messages = True
+        intents.message_content = True
 
         super().__init__(
             intents=intents, command_prefix=config.PREFIX, help_command=None
@@ -99,14 +99,15 @@ class ZicklaaBot(discord.ext.commands.Bot):
         self.create_tables()
         self.json_model = json_model()
 
+    async def setup_hook(self):
         for extension in initial_extensions:
             try:
-                self.load_extension(extension)
+                await self.load_extension(extension)
             except Exception as e:
                 print(f"Failed to load extension {extension}: {e}")
+        await self.tree.sync()
 
     async def on_ready(self):
-
         print("Hallo I bim omnline :^)")
         logger.info("=======================Startup=========================")
         remindme = self.get_cog("RemindMe")
@@ -148,17 +149,26 @@ def json_model():
 bot = ZicklaaBot()
 
 
-# Cooldown check
-@bot.check
-async def is_on_cooldown(ctx):
+# Cooldown check for both message and slash commands
+def _cooldown_check(user: discord.abc.User) -> bool:
     global user_last_command
-    if str(ctx.author) not in user_last_command:
-        user_last_command[str(ctx.author)] = 10
-    elapsed = time.time() - user_last_command[str(ctx.author)]
+    if str(user) not in user_last_command:
+        user_last_command[str(user)] = 10
+    elapsed = time.time() - user_last_command[str(user)]
     if elapsed > 2:
-        user_last_command[str(ctx.author)] = time.time()
+        user_last_command[str(user)] = time.time()
         return True
     return False
+
+
+@bot.check
+async def is_on_cooldown(ctx: commands.Context) -> bool:
+    return _cooldown_check(ctx.author)
+
+
+@bot.tree.check
+async def is_on_cooldown_interaction(interaction: discord.Interaction) -> bool:
+    return _cooldown_check(interaction.user)
 
 
 @bot.event

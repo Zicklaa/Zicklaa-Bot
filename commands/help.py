@@ -9,7 +9,7 @@ class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def help(self, ctx):
         embed = discord.Embed(
             title="Help", description="Hier wird Ihnen geholfen!", color=0x00FF00
@@ -122,5 +122,5 @@ class Help(commands.Cog):
         await dm_channel.send(embed=embed2)
 
 
-def setup(bot):
-    bot.add_cog(Help(bot))
+async def setup(bot):
+    await bot.add_cog(Help(bot))

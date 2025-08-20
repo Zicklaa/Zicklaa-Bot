@@ -10,7 +10,7 @@ class Threads(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def join(self, ctx, channel_id: int):
         
         if channel_id is None:
@@ -30,5 +30,5 @@ class Threads(commands.Cog):
                 logger.error(f"Konnte den Thread nicht anschließen: {thread.name}, Error: {str(e)}")
             
 
-def setup(bot):
-    bot.add_cog(Threads(bot))
+async def setup(bot):
+    await bot.add_cog(Threads(bot))

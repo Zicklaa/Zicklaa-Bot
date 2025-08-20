@@ -44,7 +44,7 @@ class Magic8(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def magic8(self, ctx, *frage):
         try:
             if frage:
@@ -62,5 +62,5 @@ class Magic8(commands.Cog):
             logger.error(f"Request from {ctx.author.name}: {e}")
 
 
-def setup(bot):
-    bot.add_cog(Magic8(bot))
+async def setup(bot):
+    await bot.add_cog(Magic8(bot))

@@ -23,7 +23,7 @@ class TrumpQuote(commands.Cog):
         )
         return embed
 
-    @commands.command()
+    @commands.hybrid_command()
     async def trump(self, ctx, *text):
         try:
             message = await self.get_random_quote()
@@ -35,5 +35,5 @@ class TrumpQuote(commands.Cog):
             logger.error(f"Trumpquote from {ctx.author.name}: {e}")
 
 
-def setup(bot):
-    bot.add_cog(TrumpQuote(bot))
+async def setup(bot):
+    await bot.add_cog(TrumpQuote(bot))
